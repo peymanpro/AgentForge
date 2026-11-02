@@ -41,21 +41,23 @@ agentforge.net/
 │   ├── AgentForge.Agents.ReAct/
 │   ├── AgentForge.Agents.Planning/
 │   ├── AgentForge.Agents.Reflection/
-│   ├── AgentForge.Retrieval/
-│   ├── AgentForge.RAG/
-│   ├── AgentForge.Orchestration/
 │   ├── AgentForge.Models/
 │   ├── AgentForge.Tools/
+│   ├── AgentForge.Retrieval/
+│   ├── AgentForge.RAG/
 │   └── AgentForge.Orchestration/
-└── tests/
-    ├── AgentForge.Abstractions.Tests/
-    ├── AgentForge.Agents.ReAct.Tests/
-    ├── AgentForge.Agents.Planning.Tests/
-    ├── AgentForge.Agents.Reflection.Tests/
-    ├── AgentForge.Retrieval.Tests/
-    ├── AgentForge.RAG.Tests/
-    ├── AgentForge.Models.Tests/
-    └── AgentForge.Tools.Tests/
+├── tests/
+│   ├── AgentForge.Abstractions.Tests/
+│   ├── AgentForge.Agents.ReAct.Tests/
+│   ├── AgentForge.Agents.Planning.Tests/
+│   ├── AgentForge.Agents.Reflection.Tests/
+│   ├── AgentForge.Models.Tests/
+│   ├── AgentForge.Tools.Tests/
+│   ├── AgentForge.Retrieval.Tests/
+│   ├── AgentForge.RAG.Tests/
+│   └── AgentForge.Orchestration.Tests/
+└── samples/
+    └── AgentForge.Orchestration.Sample/
 ```
 
 ## Runnable sample
