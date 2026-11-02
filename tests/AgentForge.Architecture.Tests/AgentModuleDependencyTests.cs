@@ -109,6 +109,40 @@ public sealed class AgentModuleDependencyTests
         }
     }
 
+    [Fact]
+    public void EveryPublicAgentModule_ExposesAModuleSpecificFluentBuilder()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var sourceDirectory = Path.Combine(repositoryRoot, "src");
+        var publicModuleProjects = Directory
+            .EnumerateFiles(sourceDirectory, "AgentForge.Agents.*.csproj", SearchOption.AllDirectories)
+            .Where(path =>
+            {
+                var projectName = Path.GetFileNameWithoutExtension(path);
+                return !projectName.EndsWith(".Domain", StringComparison.Ordinal)
+                    && !projectName.EndsWith(".Application", StringComparison.Ordinal)
+                    && !projectName.EndsWith(".Infrastructure", StringComparison.Ordinal);
+            })
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(publicModuleProjects);
+
+        foreach (var projectPath in publicModuleProjects)
+        {
+            var moduleDirectory = Path.GetDirectoryName(projectPath)
+                ?? throw new InvalidOperationException("The module directory could not be resolved.");
+            var builderDirectory = Path.Combine(moduleDirectory, "Builders");
+            var builderFiles = Directory.Exists(builderDirectory)
+                ? Directory.GetFiles(builderDirectory, "*Builder.cs", SearchOption.TopDirectoryOnly)
+                : [];
+
+            Assert.True(
+                builderFiles.Length > 0,
+                $"{Path.GetFileNameWithoutExtension(projectPath)} must expose at least one module-specific Fluent builder.");
+        }
+    }
+
     private static void AssertProjectReferences(
         string projectRelativePath,
         params string[] expectedReferences)
