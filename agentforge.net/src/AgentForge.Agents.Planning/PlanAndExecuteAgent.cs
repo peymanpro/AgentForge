@@ -406,6 +406,10 @@ public sealed class PlanAndExecuteAgent : IAgent<string, PlanAndExecuteOutput>
         catch (OperationCanceledException) when (timeoutSource.IsCancellationRequested)
         {
             AddCancelledActiveStep(activeStep, activeStepStartedAt, stepResults);
+            if (plan is not null)
+            {
+                AddBlockedSteps(plan, stepResults.Count, stepResults);
+            }
 
             await PublishTerminalEventAsync(
                 options,
