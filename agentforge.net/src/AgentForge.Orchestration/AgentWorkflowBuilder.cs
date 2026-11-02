@@ -1,90 +1,45 @@
-using System.Collections.ObjectModel;
 using AgentForge.Abstractions.Execution;
 
 namespace AgentForge.Orchestration;
 
 /// <summary>
-/// Builds a bounded sequential workflow with explicit typed input mappings and conditional step selection.
+/// Builds an ordered workflow from application operations and agents with explicit data dependencies.
 /// </summary>
 public sealed class AgentWorkflowBuilder<TWorkflowInput>
 {
     private readonly string _workflowId;
+    private readonly WorkflowOptions _options;
     private readonly List<IWorkflowStep<TWorkflowInput>> _steps = [];
     private readonly Dictionary<string, WorkflowConditionDefinition<TWorkflowInput>> _conditions =
         new(StringComparer.Ordinal);
 
-    internal AgentWorkflowBuilder(string workflowId)
+    internal AgentWorkflowBuilder(string workflowId, WorkflowOptions? options)
     {
         ValidateIdentifier(workflowId, nameof(workflowId));
         _workflowId = workflowId;
+        _options = options ?? new WorkflowOptions();
     }
 
     /// <summary>
-    /// Adds a named condition. It is evaluated at most once per workflow run when first referenced by a step.
+    /// Adds an application-defined asynchronous operation to the workflow.
     /// </summary>
-    /// <param name="conditionId">A stable condition identifier.</param>
-    /// <param name="inputReferences">Earlier step outputs explicitly exposed to the condition.</param>
-    /// <param name="evaluator">An application-defined condition evaluator.</param>
-    public AgentWorkflowBuilder<TWorkflowInput> AddCondition(
-        string conditionId,
-        IEnumerable<string> inputReferences,
-        Func<WorkflowStepExecutionContext<TWorkflowInput>, CancellationToken, Task<bool>> evaluator)
-    {
-        ValidateIdentifier(conditionId, nameof(conditionId));
-        ArgumentNullException.ThrowIfNull(inputReferences);
-        ArgumentNullException.ThrowIfNull(evaluator);
-
-        if (_conditions.ContainsKey(conditionId))
-        {
-            throw new ArgumentException($"A workflow condition named '{conditionId}' is already registered.", nameof(conditionId));
-        }
-
-        _conditions.Add(
-            conditionId,
-            new WorkflowConditionDefinition<TWorkflowInput>(
-                conditionId,
-                NormalizeReferences(inputReferences, nameof(inputReferences)),
-                (context, cancellationToken) => evaluator(context, cancellationToken)));
-
-        return this;
-    }
-
-    /// <summary>
-    /// Adds a synchronous application-defined condition.
-    /// </summary>
-    public AgentWorkflowBuilder<TWorkflowInput> AddCondition(
-        string conditionId,
-        IEnumerable<string> inputReferences,
-        Func<WorkflowStepExecutionContext<TWorkflowInput>, bool> evaluator)
-    {
-        ArgumentNullException.ThrowIfNull(evaluator);
-
-        return AddCondition(
-            conditionId,
-            inputReferences,
-            (context, _) => Task.FromResult(evaluator(context)));
-    }
-
-    /// <summary>
-    /// Adds an application-defined asynchronous workflow operation.
-    /// </summary>
-    /// <typeparam name="TOutput">The output type produced by the operation.</typeparam>
-    /// <param name="stepId">A stable step identifier.</param>
+    /// <typeparam name="TOutput">The type produced by the step.</typeparam>
+    /// <param name="stepId">A unique step identifier.</param>
     /// <param name="operation">The operation to execute.</param>
-    /// <param name="inputReferences">Earlier step outputs explicitly exposed to the operation.</param>
-    /// <param name="runWhen">An optional condition and expected value required for execution.</param>
+    /// <param name="inputReferences">Identifiers of prior step outputs explicitly exposed to this step.</param>
+    /// <param name="runWhen">An optional previously declared condition.</param>
     public AgentWorkflowBuilder<TWorkflowInput> AddStep<TOutput>(
         string stepId,
         Func<WorkflowStepExecutionContext<TWorkflowInput>, CancellationToken, Task<TOutput>> operation,
         IEnumerable<string>? inputReferences = null,
         WorkflowStepCondition? runWhen = null)
     {
-        ValidateIdentifier(stepId, nameof(stepId));
         ArgumentNullException.ThrowIfNull(operation);
+        var references = ValidateReferences(inputReferences, stepId);
 
         _steps.Add(new DelegateWorkflowStep<TWorkflowInput, TOutput>(
             stepId,
-            NormalizeReferences(inputReferences ?? Array.Empty<string>(), nameof(inputReferences)),
+            references,
             runWhen,
             operation));
 
@@ -92,15 +47,15 @@ public sealed class AgentWorkflowBuilder<TWorkflowInput>
     }
 
     /// <summary>
-    /// Adds an existing AgentForge agent through an explicit typed input mapping.
+    /// Adds an agent as a workflow step without exposing its internal implementation to the orchestrator.
     /// </summary>
     /// <typeparam name="TAgentInput">The input type expected by the agent.</typeparam>
     /// <typeparam name="TAgentOutput">The output type produced by the agent.</typeparam>
-    /// <param name="stepId">A stable step identifier.</param>
-    /// <param name="agent">The agent to invoke as a nested run.</param>
-    /// <param name="inputFactory">Maps workflow input and declared prior outputs into the agent input.</param>
-    /// <param name="inputReferences">Earlier step outputs explicitly exposed to the input factory.</param>
-    /// <param name="runWhen">An optional condition and expected value required for execution.</param>
+    /// <param name="stepId">A unique step identifier.</param>
+    /// <param name="agent">The independently implemented agent.</param>
+    /// <param name="inputFactory">Maps the workflow input and explicitly referenced outputs to the agent input.</param>
+    /// <param name="inputReferences">Identifiers of prior step outputs explicitly exposed to the mapping function.</param>
+    /// <param name="runWhen">An optional previously declared condition.</param>
     public AgentWorkflowBuilder<TWorkflowInput> AddAgentStep<TAgentInput, TAgentOutput>(
         string stepId,
         IAgent<TAgentInput, TAgentOutput> agent,
@@ -108,13 +63,13 @@ public sealed class AgentWorkflowBuilder<TWorkflowInput>
         IEnumerable<string>? inputReferences = null,
         WorkflowStepCondition? runWhen = null)
     {
-        ValidateIdentifier(stepId, nameof(stepId));
         ArgumentNullException.ThrowIfNull(agent);
         ArgumentNullException.ThrowIfNull(inputFactory);
+        var references = ValidateReferences(inputReferences, stepId);
 
         _steps.Add(new AgentWorkflowStep<TWorkflowInput, TAgentInput, TAgentOutput>(
             stepId,
-            NormalizeReferences(inputReferences ?? Array.Empty<string>(), nameof(inputReferences)),
+            references,
             runWhen,
             agent,
             inputFactory));
@@ -123,114 +78,172 @@ public sealed class AgentWorkflowBuilder<TWorkflowInput>
     }
 
     /// <summary>
-    /// Validates step ordering and references, then builds an immutable workflow.
+    /// Declares an application-defined condition using only outputs from earlier steps.
     /// </summary>
-    public AgentWorkflow<TWorkflowInput> Build(
-        AgentWorkflowOptions? options = null,
-        TimeProvider? timeProvider = null)
+    /// <param name="conditionId">A unique condition identifier.</param>
+    /// <param name="evaluator">The application-owned condition evaluator.</param>
+    /// <param name="inputReferences">Identifiers of prior step outputs explicitly exposed to the evaluator.</param>
+    public AgentWorkflowBuilder<TWorkflowInput> AddCondition(
+        string conditionId,
+        Func<WorkflowStepExecutionContext<TWorkflowInput>, CancellationToken, Task<bool>> evaluator,
+        IEnumerable<string>? inputReferences = null)
+    {
+        ValidateIdentifier(conditionId, nameof(conditionId));
+        ArgumentNullException.ThrowIfNull(evaluator);
+
+        if (_conditions.ContainsKey(conditionId))
+        {
+            throw new ArgumentException($"Condition '{conditionId}' is already defined.", nameof(conditionId));
+        }
+
+        var references = ValidateExistingReferences(inputReferences, conditionId);
+        _conditions.Add(
+            conditionId,
+            new WorkflowConditionDefinition<TWorkflowInput>(
+                conditionId,
+                references,
+                _steps.Count,
+                evaluator));
+
+        return this;
+    }
+
+    /// <summary>
+    /// Declares a synchronous application-owned condition.
+    /// </summary>
+    public AgentWorkflowBuilder<TWorkflowInput> AddCondition(
+        string conditionId,
+        Func<WorkflowStepExecutionContext<TWorkflowInput>, bool> evaluator,
+        IEnumerable<string>? inputReferences = null)
+    {
+        ArgumentNullException.ThrowIfNull(evaluator);
+
+        return AddCondition(
+            conditionId,
+            (context, cancellationToken) =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return Task.FromResult(evaluator(context));
+            },
+            inputReferences);
+    }
+
+    /// <summary>
+    /// Validates and creates the immutable workflow definition.
+    /// </summary>
+    public AgentWorkflow<TWorkflowInput> Build()
     {
         if (_steps.Count == 0)
         {
             throw new InvalidOperationException("A workflow must contain at least one step.");
         }
 
-        var seenSteps = new HashSet<string>(StringComparer.Ordinal);
-        var firstConditionUse = new HashSet<string>(StringComparer.Ordinal);
-
-        foreach (var step in _steps)
+        for (var index = 0; index < _steps.Count; index++)
         {
-            if (!seenSteps.Add(step.Id))
+            var step = _steps[index];
+            if (step.RunWhen is not { } condition)
             {
-                throw new InvalidOperationException($"Workflow step identifier '{step.Id}' is duplicated.");
+                continue;
             }
 
-            ValidateEarlierReferences(step.Id, step.InputReferences, seenSteps);
-
-            if (step.RunWhen is not null)
+            if (!_conditions.TryGetValue(condition.ConditionId, out var definition))
             {
-                if (!_conditions.TryGetValue(step.RunWhen.ConditionId, out var condition))
-                {
-                    throw new InvalidOperationException(
-                        $"Workflow step '{step.Id}' references unknown condition '{step.RunWhen.ConditionId}'.");
-                }
+                throw new InvalidOperationException(
+                    $"Step '{step.Id}' references unknown condition '{condition.ConditionId}'.");
+            }
 
-                if (firstConditionUse.Add(condition.Id))
-                {
-                    ValidateEarlierReferences(step.Id, condition.InputReferences, seenSteps);
-                }
+            if (definition.DeclaredAfterStepCount > index)
+            {
+                throw new InvalidOperationException(
+                    $"Condition '{condition.ConditionId}' must be declared before step '{step.Id}'.");
             }
         }
 
-        var conditionCopy = new ReadOnlyDictionary<string, WorkflowConditionDefinition<TWorkflowInput>>(
+        var steps = Array.AsReadOnly(_steps.ToArray());
+        var conditions = new System.Collections.ObjectModel.ReadOnlyDictionary<string, WorkflowConditionDefinition<TWorkflowInput>>(
             new Dictionary<string, WorkflowConditionDefinition<TWorkflowInput>>(_conditions, StringComparer.Ordinal));
 
         return new AgentWorkflow<TWorkflowInput>(
-            new WorkflowDefinition<TWorkflowInput>(
-                _workflowId,
-                Array.AsReadOnly(_steps.ToArray()),
-                conditionCopy),
-            options ?? new AgentWorkflowOptions(),
-            timeProvider ?? TimeProvider.System);
+            new WorkflowDefinition<TWorkflowInput>(_workflowId, steps, conditions),
+            _options);
     }
 
-    private static IReadOnlyList<string> NormalizeReferences(
-        IEnumerable<string> references,
-        string parameterName)
+    private IReadOnlyList<string> ValidateReferences(IEnumerable<string>? inputReferences, string ownerId)
     {
-        var materialized = references.ToArray();
+        var references = inputReferences?.ToArray() ?? [];
+        var seen = new HashSet<string>(StringComparer.Ordinal);
 
-        foreach (var reference in materialized)
-        {
-            ValidateIdentifier(reference, parameterName);
-        }
-
-        if (materialized.Distinct(StringComparer.Ordinal).Count() != materialized.Length)
-        {
-            throw new ArgumentException("Input references cannot contain duplicates.", parameterName);
-        }
-
-        return Array.AsReadOnly(materialized);
-    }
-
-    private static void ValidateEarlierReferences(
-        string currentStepId,
-        IReadOnlyList<string> references,
-        IReadOnlySet<string> earlierStepIds)
-    {
         foreach (var reference in references)
         {
-            if (!earlierStepIds.Contains(reference) ||
-                string.Equals(reference, currentStepId, StringComparison.Ordinal))
+            ValidateIdentifier(reference, nameof(inputReferences));
+
+            if (!seen.Add(reference))
             {
-                throw new InvalidOperationException(
-                    $"Workflow step '{currentStepId}' can reference only outputs from earlier steps; '{reference}' is not an earlier step.");
+                throw new ArgumentException(
+                    $"Output reference '{reference}' is repeated for '{ownerId}'.",
+                    nameof(inputReferences));
+            }
+
+            if (!_steps.Any(step => string.Equals(step.Id, reference, StringComparison.Ordinal)))
+            {
+                throw new ArgumentException(
+                    $"Output reference '{reference}' must refer to a step added before '{ownerId}'.",
+                    nameof(inputReferences));
             }
         }
+
+        return Array.AsReadOnly(references);
     }
 
-    private static void ValidateIdentifier(string value, string parameterName)
+    private IReadOnlyList<string> ValidateExistingReferences(IEnumerable<string>? inputReferences, string ownerId)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value);
+        var references = inputReferences?.ToArray() ?? [];
+        var seen = new HashSet<string>(StringComparer.Ordinal);
 
-        if (value.Length > 64 ||
+        foreach (var reference in references)
+        {
+            ValidateIdentifier(reference, nameof(inputReferences));
+
+            if (!seen.Add(reference))
+            {
+                throw new ArgumentException(
+                    $"Output reference '{reference}' is repeated for condition '{ownerId}'.",
+                    nameof(inputReferences));
+            }
+
+            if (!_steps.Any(step => string.Equals(step.Id, reference, StringComparison.Ordinal)))
+            {
+                throw new ArgumentException(
+                    $"Condition '{ownerId}' can reference only outputs from earlier steps.",
+                    nameof(inputReferences));
+            }
+        }
+
+        return Array.AsReadOnly(references);
+    }
+
+    private void ValidateReferences(IEnumerable<string>? inputReferences, string stepId)
+    {
+        ValidateIdentifier(stepId, nameof(stepId));
+
+        if (_steps.Any(step => string.Equals(step.Id, stepId, StringComparison.Ordinal)))
+        {
+            throw new ArgumentException($"Step '{stepId}' is already defined.", nameof(stepId));
+        }
+
+        _ = ValidateReferences(inputReferences, stepId);
+    }
+
+    internal static void ValidateIdentifier(string value, string parameterName)
+    {
+        if (string.IsNullOrWhiteSpace(value) ||
+            value.Length > 64 ||
             !value.All(static character =>
                 char.IsAsciiLetterOrDigit(character) || character is '_' or '-'))
         {
             throw new ArgumentException(
-                "Workflow identifiers must be 1–64 ASCII letters, digits, underscores, or hyphens.",
+                "Identifiers must contain 1–64 ASCII letters, digits, underscores, or hyphens.",
                 parameterName);
         }
-    }
-}
-
-/// <summary>
-/// Provides the entry point for building typed AgentForge workflows.
-/// </summary>
-public static class AgentWorkflow
-{
-    /// <summary>Creates a workflow builder for the supplied application input type.</summary>
-    public static AgentWorkflowBuilder<TWorkflowInput> Create<TWorkflowInput>(string workflowId = "workflow")
-    {
-        return new AgentWorkflowBuilder<TWorkflowInput>(workflowId);
     }
 }

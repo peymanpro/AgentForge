@@ -9,16 +9,20 @@ internal sealed class WorkflowConditionDefinition<TWorkflowInput>
     public WorkflowConditionDefinition(
         string id,
         IReadOnlyList<string> inputReferences,
+        int declaredAfterStepCount,
         WorkflowConditionEvaluator<TWorkflowInput> evaluator)
     {
         Id = id;
         InputReferences = inputReferences;
+        DeclaredAfterStepCount = declaredAfterStepCount;
         Evaluator = evaluator;
     }
 
     public string Id { get; }
 
     public IReadOnlyList<string> InputReferences { get; }
+
+    public int DeclaredAfterStepCount { get; }
 
     public WorkflowConditionEvaluator<TWorkflowInput> Evaluator { get; }
 }
