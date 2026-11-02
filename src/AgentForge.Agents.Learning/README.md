@@ -4,7 +4,7 @@ A standalone, feedback-driven Learning Agent module. It selects candidate action
 
 ## Quick Start
 
-~~~csharp
+```csharp
 using AgentForge.Agents.Learning.Builders;
 using AgentForge.Agents.Learning.Domain.Models;
 
@@ -21,7 +21,7 @@ for (var round = 0; round < 1_000; round++)
     var reward = selected == "search-primary" ? 1.0 : 0.2;
     state = state.Observe(selected, reward);
 }
-~~~
+```
 
 ## Learning model
 
@@ -34,9 +34,9 @@ The initial implementation uses a stationary multi-armed bandit model:
 
 The sample mean is updated incrementally:
 
-~~~text
+```text
 Q(n) = Q(n-1) + (r(n) - Q(n-1)) / n
-~~~
+```
 
 The policy tries unseen candidates first, then explores with probability epsilon and otherwise selects the highest estimated mean reward.
 
@@ -60,9 +60,9 @@ The policy tries unseen candidates first, then explores with probability epsilon
 
 After publication to NuGet.org:
 
-~~~bash
+```bash
 dotnet add package AgentForge.Agents.Learning
-~~~
+```
 
 ## Architecture
 
