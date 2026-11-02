@@ -2,17 +2,19 @@
 
 A deterministic agent that updates an explicit internal state from the previous state and current percept before selecting an action.
 
+## Installation
+
+After this package is published to NuGet.org, install it with:
+
+```bash
+dotnet add package AgentForge.Agents.ModelBasedReflex
+```
+
 ## Quick Start
-
-Add a project reference:
-
-\`\`\`bash
-dotnet add path/to/YourApp.csproj reference src/AgentForge.Agents.ModelBasedReflex/AgentForge.Agents.ModelBasedReflex.csproj
-\`\`\`
 
 Define the percept, state, and action types. Supply the state transition and ordered rules:
 
-\`\`\`csharp
+```csharp
 using AgentForge.Agents.ModelBasedReflex.Builders;
 using AgentForge.Agents.ModelBasedReflex.Domain.Decisions;
 
@@ -63,7 +65,7 @@ public enum ThermostatAction
     Cool,
     Heat
 }
-\`\`\`
+```
 
 ## Behavior
 

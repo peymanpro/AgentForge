@@ -2,11 +2,19 @@
 
 A tool-using agent that alternates model decisions, authorized tool execution, and observations until it receives a final response or reaches a run limit.
 
+## Installation
+
+After this package is published to NuGet.org, install it with:
+
+```bash
+dotnet add package AgentForge.Agents.ReAct
+```
+
 ## Quick Start
 
-Register an \`IToolCallingChatModel\` provider adapter, the tools available to this application, and an \`IToolAuthorizationPolicy\` with your application's dependency injection container.
+Register an `IToolCallingChatModel` provider adapter, the tools available to this application, and an `IToolAuthorizationPolicy` with your application's dependency injection container.
 
-\`\`\`csharp
+```csharp
 using AgentForge.Abstractions.Execution;
 using AgentForge.Agents.ReAct;
 using AgentForge.Models.Contracts;
@@ -29,7 +37,7 @@ var result = await agent.RunAsync(
     cancellationToken);
 
 Console.WriteLine(result.Output?.FinalResponse);
-\`\`\`
+```
 
 The host must register the provider adapter, explicitly approved tools, and authorization policy. The model's tool-call proposal is never treated as authorization.
 

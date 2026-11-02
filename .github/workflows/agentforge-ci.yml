@@ -38,7 +38,7 @@ concurrency:
 
 jobs:
   build-and-test:
-    name: Build and test (.NET 10)
+    name: Build, test, and pack (.NET 10)
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -59,3 +59,57 @@ jobs:
 
       - name: Test
         run: dotnet test AgentForge.sln --configuration Release --no-build --no-restore
+
+      - name: Pack agent modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/packages
+          for project in \
+            src/AgentForge.Agents.SimpleReflex/AgentForge.Agents.SimpleReflex.csproj \
+            src/AgentForge.Agents.ModelBasedReflex/AgentForge.Agents.ModelBasedReflex.csproj \
+            src/AgentForge.Agents.ReAct/AgentForge.Agents.ReAct.csproj \
+            src/AgentForge.Agents.Planning/AgentForge.Agents.Planning.csproj \
+            src/AgentForge.Agents.Reflection/AgentForge.Agents.Reflection.csproj
+          do
+            dotnet pack "$project" --configuration Release --no-build --no-restore --output artifacts/packages
+          done
+
+      - name: Verify NuGet package readmes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import glob
+          import xml.etree.ElementTree as ET
+          import zipfile
+          from pathlib import Path
+
+          expected = [
+              "AgentForge.Agents.SimpleReflex",
+              "AgentForge.Agents.ModelBasedReflex",
+              "AgentForge.Agents.ReAct",
+              "AgentForge.Agents.Planning",
+              "AgentForge.Agents.Reflection",
+          ]
+
+          for package_id in expected:
+              matches = [Path(path) for path in glob.glob("artifacts/packages/*.nupkg")
+                         if Path(path).name.startswith(package_id + ".")]
+              assert len(matches) == 1, f"Expected one package for {package_id}, found {matches}"
+
+              with zipfile.ZipFile(matches[0]) as package:
+                  entries = set(package.namelist())
+                  assert "README.md" in entries, f"{package_id} does not contain README.md"
+
+                  nuspec_name = next(name for name in entries if name.endswith(".nuspec"))
+                  nuspec = ET.fromstring(package.read(nuspec_name))
+                  readme_element = next((node for node in nuspec.iter() if node.tag.endswith("readme")), None)
+                  assert readme_element is not None and readme_element.text == "README.md", \
+                      f"{package_id} does not declare README.md in its nuspec"
+
+                  markdown = package.read("README.md").decode("utf-8")
+                  assert "## Quick Start" in markdown, f"{package_id} is missing Quick Start"
+                  assert "```csharp" in markdown, f"{package_id} is missing a C# code example"
+
+              print(f"Verified NuGet README: {package_id}")
+          PY

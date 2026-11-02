@@ -2,17 +2,19 @@
 
 A deterministic agent that selects an action from the current percept using ordered condition-action rules.
 
+## Installation
+
+After this package is published to NuGet.org, install it with:
+
+```bash
+dotnet add package AgentForge.Agents.SimpleReflex
+```
+
 ## Quick Start
-
-Add a project reference:
-
-\`\`\`bash
-dotnet add path/to/YourApp.csproj reference src/AgentForge.Agents.SimpleReflex/AgentForge.Agents.SimpleReflex.csproj
-\`\`\`
 
 Define the percept and action types, then build and run the agent:
 
-\`\`\`csharp
+```csharp
 using AgentForge.Agents.SimpleReflex.Builders;
 
 var agent = SimpleReflexAgentBuilder
@@ -44,7 +46,7 @@ public enum ThermostatAction
     Cool,
     Heat
 }
-\`\`\`
+```
 
 ## Behavior
 
