@@ -428,9 +428,25 @@ public sealed class RagPipeline : IAgent<RagQuery, RagPipelineOutput>
             ? null
             : CreateOutput(null, retrieval, assembled, null);
 
+        var failure = new AgentFailure(category, code, message);
+        if (status == AgentRunStatus.PartiallyCompleted)
+        {
+            return AgentRunResult<RagPipelineOutput>.PartiallyCompleted(
+                output ?? new RagPipelineOutput(
+                    null,
+                    RetrievalStatus.Failed,
+                    Array.Empty<RetrievedChunk>(),
+                    Array.Empty<RetrievedChunk>(),
+                    Array.Empty<string>(),
+                    null),
+                failure,
+                startedAt,
+                _timeProvider.GetUtcNow());
+        }
+
         return AgentRunResult<RagPipelineOutput>.Stopped(
             status,
-            new AgentFailure(category, code, message),
+            failure,
             startedAt,
             _timeProvider.GetUtcNow(),
             output);

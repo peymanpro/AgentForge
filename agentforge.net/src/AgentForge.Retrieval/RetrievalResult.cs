@@ -25,7 +25,7 @@ public sealed class RetrievalResult
             throw new ArgumentException("A non-successful retrieval cannot contain items.", nameof(items));
         }
 
-        if (status is RetrievalStatus.Denied or RetrievalStatus.Failed && failure is null)
+        if ((status is RetrievalStatus.Denied or RetrievalStatus.Failed) && failure is null)
         {
             throw new ArgumentNullException(nameof(failure), "Denied and failed retrievals must explain the outcome.");
         }
