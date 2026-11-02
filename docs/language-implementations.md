@@ -60,13 +60,13 @@ Before an implementation is presented as active or supported, it should have:
 
 A placeholder directory or proof of concept should be labeled accordingly.
 
-## 4. Model integrations
+## 5. Model integrations
 
 Model integrations should be replaceable and should expose provider-specific capabilities honestly. Do not claim that an adapter supports tool calling, streaming, structured output, embeddings, or multimodal inputs unless those features are implemented and tested.
 
 Credentials should be supplied by the consuming application or a secure configuration mechanism, never committed to the repository.
 
-## 5. Package and release strategy
+## 6. Package and release strategy
 
 Choose package boundaries based on actual user needs, dependency isolation, and independent versioning. Avoid publishing one package per class or creating many packages before their boundaries are understood.
 
@@ -82,13 +82,13 @@ Publishing should be isolated so that a change to one language does not release 
 
 Where supported, prefer trusted publishing or OIDC-based registry authentication over long-lived publish tokens. Registry-specific setup must be documented and verified before enabling releases.
 
-## 6. Shared behavioral conformance
+## 7. Shared behavioral conformance
 
 Implementations should add tests for shared behavior where that behavior is defined by the specification. Tests may use language-neutral fixtures, test vectors, or equivalent scenarios.
 
 Conformance does not require identical public APIs or identical internal state representation. Differences that affect observable behavior must be documented.
 
-## 7. Maintainer responsibilities
+## 8. Maintainer responsibilities
 
 Language Maintainers review implementation-specific changes, keep tests and examples healthy, own releases, document unsupported features, and coordinate shared specification updates.
 
