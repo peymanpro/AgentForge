@@ -15,6 +15,6 @@
     <ProjectReference Include="..\AgentForge.Agents.GoalBased.Domain\AgentForge.Agents.GoalBased.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="README.md" Pack="true" PackagePath="\\" />
+    <None Update="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
