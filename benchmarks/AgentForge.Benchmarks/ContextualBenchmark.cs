@@ -15,6 +15,10 @@ internal static class ContextualBenchmark
 
     public static async Task RunAsync(string outputDirectory, int seedCount, int horizon)
     {
+        // Warm up both selectors so first-use JIT costs do not contaminate latency samples.
+        _ = RunLinUcb(0, 100);
+        _ = RunLinearThompsonSampling(0, 100);
+
         var results = new List<ContextualRunResult>();
         for (var seed = 1; seed <= seedCount; seed++)
         {
