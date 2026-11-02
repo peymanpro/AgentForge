@@ -21,6 +21,7 @@ Each independently useful agent architecture has its own module, focused API, an
   - [Reflection](#reflection-quick-start)
   - [Utility-Based](#utility-based-quick-start)
   - [Goal-Based](#goal-based-quick-start)
+  - [Learning](#learning-quick-start)
 - [NuGet packages](#nuget-packages)
 - [Architecture](#architecture)
 - [Development](#development)
@@ -52,6 +53,7 @@ Choose an agent to jump directly to its Quick Start. Full behavior, extension po
 | **Reflection** | Candidate generation, independent evaluation, and refinement. | [Build and run](#reflection-quick-start) |
 | **Utility-Based** | Candidate evaluation and maximum-utility action selection. | [Build and run](#utility-based-quick-start) |
 | **Goal-Based** | Bounded state-space search for a shortest goal-reaching action sequence. | [Build and run](#goal-based-quick-start) |
+| **Learning** | Feedback-driven action selection using an epsilon-greedy bandit policy. | [Build and run](#learning-quick-start) |
 
 ## Agent Modules
 
@@ -460,6 +462,41 @@ if (result.Output?.Plan is { } plan)
 - The agent proposes a plan; the host authorizes and executes actions.
 - No LLM, tool registry, or external infrastructure is required.
 
+
+### Learning
+
+A feedback-driven agent that improves action selection from reward observations using an epsilon-greedy multi-armed bandit policy.
+
+#### Installation
+
+~~~bash
+dotnet add package AgentForge.Agents.Learning
+~~~
+
+#### Learning Quick Start
+
+~~~csharp
+using AgentForge.Agents.Learning.Builders;
+using AgentForge.Agents.Learning.Domain.Models;
+
+var agent = LearningAgentBuilder.Create<string>().WithEpsilonGreedy(0.1).Build();
+var state = new LearningState<string>();
+var decision = await agent.RunAsync(new LearningAgentInput<string>(["search", "fallback"], state), cancellationToken);
+var selected = decision.Output!.SelectedAction;
+
+// The host executes and evaluates the action, then records the reward.
+var reward = selected == "search" ? 1.0 : 0.2;
+state = state.Observe(selected, reward);
+~~~
+
+#### Behavior
+
+- Unobserved candidates are tried before exploitation.
+- Epsilon-greedy exploration balances trying alternatives with selecting the highest estimated reward.
+- The host owns execution, authorization, reward evaluation, and persistence.
+- Learning state is immutable; the host controls how it is persisted.
+- The initial implementation is a stationary, context-free bandit learner, not general reinforcement learning.
+
 ## NuGet packages
 
 Each agent is distributed as an independent package. The package IDs and package-specific READMEs are:
@@ -473,6 +510,7 @@ Each agent is distributed as an independent package. The package IDs and package
 | `AgentForge.Agents.Reflection` | [Reflection](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Reflection/README.md) |
 | `AgentForge.Agents.UtilityBased` | [Utility-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.UtilityBased/README.md) |
 | `AgentForge.Agents.GoalBased` | [Goal-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.GoalBased/README.md) |
+| `AgentForge.Agents.Learning` | [Learning](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Learning/README.md) |
 
 Each package project declares its module README through `PackageReadmeFile` and includes that Markdown file in the `.nupkg`. NuGet.org therefore displays the matching agent's description and Quick Start on that package's page.
 

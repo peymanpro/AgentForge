@@ -76,12 +76,36 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.GoalBased
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.GoalBased.Tests", "tests\AgentForge.Agents.GoalBased.Tests\AgentForge.Agents.GoalBased.Tests.csproj", "{A17B0001-0000-4000-8000-000000000004}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.Learning.Domain", "src\AgentForge.Agents.Learning.Domain\AgentForge.Agents.Learning.Domain.csproj", "{B17A0001-0000-4000-8000-000000000001}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.Learning.Application", "src\AgentForge.Agents.Learning.Application\AgentForge.Agents.Learning.Application.csproj", "{B17A0001-0000-4000-8000-000000000002}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.Learning", "src\AgentForge.Agents.Learning\AgentForge.Agents.Learning.csproj", "{B17A0001-0000-4000-8000-000000000003}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.Learning.Tests", "tests\AgentForge.Agents.Learning.Tests\AgentForge.Agents.Learning.Tests.csproj", "{B17A0001-0000-4000-8000-000000000004}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {B17A0001-0000-4000-8000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {B17A0001-0000-4000-8000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {B17A0001-0000-4000-8000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {B17A0001-0000-4000-8000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
+        {B17A0001-0000-4000-8000-000000000002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {B17A0001-0000-4000-8000-000000000002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {B17A0001-0000-4000-8000-000000000002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {B17A0001-0000-4000-8000-000000000002}.Release|Any CPU.Build.0 = Release|Any CPU
+        {B17A0001-0000-4000-8000-000000000003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {B17A0001-0000-4000-8000-000000000003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {B17A0001-0000-4000-8000-000000000003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {B17A0001-0000-4000-8000-000000000003}.Release|Any CPU.Build.0 = Release|Any CPU
+        {B17A0001-0000-4000-8000-000000000004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {B17A0001-0000-4000-8000-000000000004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {B17A0001-0000-4000-8000-000000000004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {B17A0001-0000-4000-8000-000000000004}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1A3D8274-4F51-49C0-AC2D-6D7A03A07341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A3D8274-4F51-49C0-AC2D-6D7A03A07341}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A3D8274-4F51-49C0-AC2D-6D7A03A07341}.Release|Any CPU.ActiveCfg = Release|Any CPU
