@@ -235,7 +235,7 @@ The .NET MVP is complete only when all applicable criteria are met:
 - [ ] Planning creates and executes a validated plan with bounded behavior.
 - [ ] Reflection evaluates and revises output with bounded attempts and a clear stop condition.
 - [ ] Basic retrieval can be composed into a model-backed workflow.
-- [ ] Basic sequential and conditional orchestration works through public contracts.
+- [x] Basic sequential and conditional orchestration works through public contracts.
 
 ### Reliability and safety
 
@@ -248,8 +248,8 @@ The .NET MVP is complete only when all applicable criteria are met:
 
 ### Developer experience and delivery
 
-- [ ] Each module has algorithm-level documentation.
-- [ ] There are runnable samples using deterministic fakes.
+- [x] Each module has algorithm-level documentation.
+- [x] There is a runnable deterministic workflow sample; dedicated samples for every integration remain follow-up work.
 - [ ] The .NET solution builds reproducibly.
 - [ ] Automated tests and quality checks pass.
 - [ ] Package boundaries and dependencies are reviewed.
