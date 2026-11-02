@@ -493,7 +493,7 @@ Each agent module follows Clean Architecture where it adds value:
 - **Infrastructure:** optional external adapters, only when required.
 - **Public API:** the module's construction and composition surface.
 
-Agent modules use the shared execution contract and do not depend on other agents' concrete implementations. See [Module Architecture](docs/agent-modules.md) and [System Architecture](docs/architecture.md).
+Agent modules use the shared execution contract and do not depend on other agents' concrete implementations. See [Module Architecture](docs/agent-modules.md), [System Architecture](docs/architecture.md), and the [Goal-Based search design](docs/goal-based-agent-design.md).
 
 ## Development
 
