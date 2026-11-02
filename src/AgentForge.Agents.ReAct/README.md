@@ -17,20 +17,21 @@ Register an `IToolCallingChatModel` provider adapter, the tools available to thi
 ```csharp
 using AgentForge.Abstractions.Execution;
 using AgentForge.Agents.ReAct;
+using AgentForge.Agents.ReAct.Builders;
 using AgentForge.Models.Contracts;
 using AgentForge.Tools;
 using Microsoft.Extensions.DependencyInjection;
 
-var agent = new AgentHandle<string, ReActAgentOutput>(
-    new ReActAgent(
+var agent = ReActAgentBuilder.Create()
+    .WithDecisionStrategy(
         new NativeToolCallingDecisionStrategy(
-            services.GetRequiredService<IToolCallingChatModel>()),
-        new ToolRegistry(services.GetServices<ITool>()),
-        services.GetRequiredService<IToolAuthorizationPolicy>(),
-        new ReActAgentOptions(
-            systemPrompt: "Use available tools when needed.",
-            maxModelTurns: 8,
-            maxToolInvocations: 12)));
+            services.GetRequiredService<IToolCallingChatModel>()))
+    .WithTools(services.GetServices<ITool>())
+    .WithAuthorization(services.GetRequiredService<IToolAuthorizationPolicy>())
+    .WithSystemPrompt("Use available tools when needed.")
+    .WithMaxModelTurns(8)
+    .WithMaxToolInvocations(12)
+    .Build();
 
 var result = await agent.RunAsync(
     "Find the status of order 123.",
@@ -46,4 +47,4 @@ The host must register the provider adapter, explicitly approved tools, and auth
 - Every tool call is validated and authorized before execution.
 - Model turns, tool invocations, steps, observation size, and elapsed time are bounded.
 - Provider adapters are application-supplied; no vendor SDK is bundled.
-- The current preview uses constructor-based composition. A module-specific fluent builder is part of the planned module migration.
+- The fluent builder is the recommended construction API. Advanced hosts may still instantiate `ReActAgent` directly when they need explicit low-level composition.
