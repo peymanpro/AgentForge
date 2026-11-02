@@ -38,10 +38,11 @@ public sealed class ChatMessageTests
     [Fact]
     public void ModelToolCall_ClonesArguments()
     {
-        using var document = JsonDocument.Parse("""{"id":"original"}""");
-        var call = new ModelToolCall("call-1", "lookup", document.RootElement);
-
-        document.Dispose();
+        ModelToolCall call;
+        using (var document = JsonDocument.Parse("""{"id":"original"}"""))
+        {
+            call = new ModelToolCall("call-1", "lookup", document.RootElement);
+        }
 
         Assert.Equal("original", call.Arguments.GetProperty("id").GetString());
     }
