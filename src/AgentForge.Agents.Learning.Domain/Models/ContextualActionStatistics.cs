@@ -7,10 +7,12 @@ public sealed class ContextualActionStatistics
     private readonly double[] _rewardVector;
 
     /// <summary>Creates statistics from a symmetric positive-definite design matrix and reward vector.</summary>
-    public ContextualActionStatistics(double[,] designMatrix, IEnumerable<double> rewardVector)
+    public ContextualActionStatistics(double[,] designMatrix, IEnumerable<double> rewardVector, long observationCount = 0)
     {
         ArgumentNullException.ThrowIfNull(designMatrix);
         ArgumentNullException.ThrowIfNull(rewardVector);
+        if (observationCount < 0) throw new ArgumentOutOfRangeException(nameof(observationCount));
+        ObservationCount = observationCount;
         var dimension = designMatrix.GetLength(0);
         if (dimension == 0 || designMatrix.GetLength(1) != dimension)
             throw new ArgumentException("The design matrix must be non-empty and square.", nameof(designMatrix));
@@ -38,6 +40,9 @@ public sealed class ContextualActionStatistics
 
     /// <summary>Gets the number of context features.</summary>
     public int FeatureCount => _rewardVector.Length;
+
+    /// <summary>Gets the number of reward observations represented by these statistics.</summary>
+    public long ObservationCount { get; }
 
     /// <summary>Gets a defensive copy of the design matrix.</summary>
     public double[,] DesignMatrix => (double[,])_designMatrix.Clone();
