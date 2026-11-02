@@ -71,7 +71,7 @@ jobs:
             src/AgentForge.Agents.ReAct/AgentForge.Agents.ReAct.csproj \
             src/AgentForge.Agents.Planning/AgentForge.Agents.Planning.csproj \
             src/AgentForge.Agents.Reflection/AgentForge.Agents.Reflection.csproj \
-            src/AgentForge.Agents.UtilityBased/AgentForge.Agents.UtilityBased.csproj \\
+            src/AgentForge.Agents.UtilityBased/AgentForge.Agents.UtilityBased.csproj \
             src/AgentForge.Agents.GoalBased/AgentForge.Agents.GoalBased.csproj
           do
             dotnet pack "$project" --configuration Release --no-build --no-restore --output artifacts/packages
