@@ -256,11 +256,15 @@ public sealed class ReflectionAgentTests
         }
     }
 
-    private sealed class ScriptedEvaluator(
-        params ReflectionEvaluation[] evaluations) : IReflectionEvaluator
+    private sealed class ScriptedEvaluator : IReflectionEvaluator
     {
-        private readonly Queue<ReflectionEvaluation> _evaluations = new(evaluations);
-        private readonly bool _throwOnEvaluation = false;
+        private readonly Queue<ReflectionEvaluation> _evaluations;
+        private readonly bool _throwOnEvaluation;
+
+        public ScriptedEvaluator(params ReflectionEvaluation[] evaluations)
+        {
+            _evaluations = new Queue<ReflectionEvaluation>(evaluations);
+        }
 
         public ScriptedEvaluator(bool throwOnEvaluation)
         {
