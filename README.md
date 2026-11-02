@@ -22,6 +22,7 @@ Each independently useful agent architecture has its own module, focused API, an
   - [Utility-Based](#utility-based-quick-start)
   - [Goal-Based](#goal-based-quick-start)
   - [Learning](#learning-quick-start)
+  - [Contextual LinUCB](#contextual-linucb-quick-start)
 - [NuGet packages](#nuget-packages)
 - [Architecture](#architecture)
 - [Development](#development)
