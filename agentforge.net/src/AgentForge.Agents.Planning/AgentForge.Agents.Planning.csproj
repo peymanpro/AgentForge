@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Agents.Planning</AssemblyName>
+    <RootNamespace>AgentForge.Agents.Planning</RootNamespace>
+    <PackageId>AgentForge.Agents.Planning</PackageId>
+    <Description>A structured, validated Plan-and-Execute agent for AgentForge.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;planning;plan-and-execute;agent-engineering</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+  </ItemGroup>
+</Project>
