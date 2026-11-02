@@ -20,7 +20,7 @@ public sealed class ChatMessageTests
     [Fact]
     public void AssistantToolCalls_RejectsDuplicateCallIdentifiers()
     {
-        var calls =
+        ModelToolCall[] calls =
         [
             CreateToolCall("same-id", "lookup"),
             CreateToolCall("same-id", "search")

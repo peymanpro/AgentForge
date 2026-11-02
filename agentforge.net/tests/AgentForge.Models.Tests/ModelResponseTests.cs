@@ -14,7 +14,7 @@ public sealed class ModelResponseTests
             new ModelUsage(inputTokens: 5, outputTokens: 3, totalTokens: 8));
 
         Assert.Equal(ModelFinishReason.Stop, response.FinishReason);
-        Assert.Equal(8, response.Usage?.TotalTokens);
+        Assert.Equal(8L, response.Usage?.TotalTokens);
     }
 
     [Fact]
