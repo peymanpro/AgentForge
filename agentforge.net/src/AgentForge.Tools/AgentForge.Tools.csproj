@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Tools</AssemblyName>
+    <RootNamespace>AgentForge.Tools</RootNamespace>
+    <PackageId>AgentForge.Tools</PackageId>
+    <Description>Tool contracts and policy-controlled execution for AgentForge agents.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;tools;agent-engineering</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+  </ItemGroup>
+</Project>
