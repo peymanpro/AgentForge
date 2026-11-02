@@ -1,22 +1,38 @@
 # AgentForge.Agents.Reflection
 
-An independently implemented bounded Reflection and iterative refinement agent.
+A bounded candidate-refinement agent that separates generation from independent evaluation.
 
-## Algorithm
+## Quick Start
 
-1. IReflectionGenerationStrategy produces an initial candidate.
-2. IReflectionEvaluator assesses the candidate against application-defined acceptance criteria.
-3. Rejected feedback is passed, together with the prior candidate, to the next generation attempt.
-4. The agent retains the highest-scoring candidate when scores are provided.
-5. If the evaluator does not provide comparable scores, the agent retains the latest evaluated candidate.
-6. The run stops when a candidate is accepted, the configured no-improvement rule fires, or the attempt/time budget is exhausted.
+Register an application-specific \`IReflectionGenerationStrategy\` and an \`IReflectionEvaluator\`. The evaluator owns the acceptance criteria and returns actionable feedback for rejected candidates.
 
-## Design boundary
+\`\`\`csharp
+using AgentForge.Abstractions.Execution;
+using AgentForge.Agents.Reflection;
+using AgentForge.Agents.Reflection.Evaluation;
+using AgentForge.Agents.Reflection.Generation;
+using Microsoft.Extensions.DependencyInjection;
 
-Generation and evaluation are separate injected collaborators. The agent does not assume a model can reliably judge its own output.
+var agent = new AgentHandle<string, ReflectionAgentOutput>(
+    new ReflectionAgent(
+        services.GetRequiredService<IReflectionGenerationStrategy>(),
+        services.GetRequiredService<IReflectionEvaluator>(),
+        new ReflectionAgentOptions(
+            maxAttempts: 3,
+            timeout: TimeSpan.FromSeconds(90))));
 
-Scores are meaningful only within the evaluator that produced them. Scores from different evaluators are not comparable. Acceptance criteria and evaluation quality remain application responsibilities.
+var result = await agent.RunAsync(
+    "Write a concise explanation of the CAP theorem.",
+    cancellationToken);
 
-## Limits and outcomes
+Console.WriteLine(result.Output?.BestCandidate);
+Console.WriteLine($"Accepted: {result.Output?.IsAccepted}");
+\`\`\`
 
-The agent enforces an attempt limit and overall timeout, propagates cancellation, and preserves the best candidate and attempt history on generation or evaluation failure.
+## Behavior
+
+- Generation and evaluation are independent application-supplied strategies.
+- Rejected feedback is passed to the next generation attempt.
+- The best-scoring candidate is retained when comparable scores are supplied.
+- Execution stops on acceptance, configured no-improvement, attempt limit, timeout, or cancellation.
+- Scores from different evaluators are not comparable.

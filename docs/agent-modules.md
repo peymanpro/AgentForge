@@ -156,3 +156,12 @@ A module README should cover, where relevant:
 The root README MUST link to every agent module that currently exists. The Agent Catalog records planned and research candidates; it must not imply that a planned agent already has a module. When a module is added or its public API changes, update its module README and the root README in the same change.
 
 Cross-cutting architecture decisions belong in the central docs/ tree. Avoid copying a complete module specification into the root README: the root document is the map, while the module README is the detailed guide for that module.
+
+
+## 8. Quick Start contract
+
+Every implemented public agent module MUST expose a concise \`## Quick Start\` section in its own README. Use the stable \`#quick-start\` heading anchor so the root README and agent catalog can link directly to the runnable example.
+
+The Quick Start must use the module's actual public API and show the minimum required composition and execution. Do not document a proposed builder or capability as available before it exists. If required collaborators are application-supplied, show how they are injected and name the required contracts.
+
+The root README is a short entry point. The module README owns the agent-specific explanation and Quick Start; the catalog links to that exact section.
