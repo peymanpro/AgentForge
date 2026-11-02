@@ -36,9 +36,10 @@ This phase prioritizes the developer experience: every implemented agent should 
 
 - [ ] Refactor ReAct into Domain, Application, optional Infrastructure adapters, and a public fluent composition root.
 - [x] Add a module-specific ReAct builder with a concise Build()/RunAsync() happy path.
-- [ ] Add a fluent ReAct builder for model, tool registry, authorization, limits, memory, and observability.
+- [x] Add a fluent ReAct builder for decision strategy, tool registry, authorization, generation options, and finite limits.
 - [ ] Refactor Plan-and-Execute into clean module layers and a fluent builder; validate package independence.
-- [ ] Refactor Reflection into clean module layers and a fluent builder; validate package independence.
+- [x] Add a module-specific Reflection builder with a concise Build()/RunAsync() happy path.
+- [ ] Refactor Reflection into clean module layers and validate package independence.
 - [ ] Add Planner-Replanner as its own module.
 - [ ] Add Router/Dispatcher and tool-selection agent module.
 - [ ] Add Reflexion and persistent experience feedback.
