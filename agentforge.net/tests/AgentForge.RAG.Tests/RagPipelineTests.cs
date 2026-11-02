@@ -28,6 +28,24 @@ public sealed class RagPipelineTests
     }
 
     [Fact]
+    public async Task RunAsync_RetrievalDenialRejectsBeforeModelGeneration()
+    {
+        var retriever = new FakeAuthorizedRetriever(RetrievalResult.Denied());
+        var model = new FakeChatModel(FinalResponse("This must not be generated."));
+        var pipeline = CreatePipeline(retriever, model);
+        var runContext = AgentRunContext.Create();
+
+        var result = await pipeline.RunAsync(
+            CreateQuery(runContext),
+            runContext,
+            new AgentRunOptions());
+
+        Assert.Equal(AgentRunStatus.Rejected, result.Status);
+        Assert.Equal("rag.retrieval_denied", result.Failure?.Code);
+        Assert.Equal(0, model.CallCount);
+    }
+
+    [Fact]
     public async Task RunAsync_PassesEvidenceAsUserDataAndPreservesProvenance()
     {
         var chunks = new[]
@@ -262,8 +280,6 @@ public sealed class RagPipelineTests
             question,
             new RetrievalExecutionContext("user-1", "tenant-a", run));
     }
-
-    private static AgentRunContext CreateRunContext() => AgentRunContext.Create();
 
     private static RetrievedChunk CreateRetrievedChunk(string chunkId, string documentId, string content)
     {
