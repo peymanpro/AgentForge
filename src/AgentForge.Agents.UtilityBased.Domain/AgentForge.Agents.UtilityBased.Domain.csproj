@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Agents.UtilityBased.Domain</AssemblyName>
+    <RootNamespace>AgentForge.Agents.UtilityBased.Domain</RootNamespace>
+    <PackageId>AgentForge.Agents.UtilityBased.Domain</PackageId>
+    <Description>Domain model for the Utility-Based agent module.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;utility-based;domain</PackageTags>
+  </PropertyGroup>
+</Project>

@@ -19,6 +19,7 @@ Each independently useful agent architecture has its own module, focused API, an
   - [ReAct](#react-quick-start)
   - [Plan-and-Execute](#plan-and-execute-quick-start)
   - [Reflection](#reflection-quick-start)
+  - [Utility-Based](#utility-based-quick-start)
 - [NuGet packages](#nuget-packages)
 - [Architecture](#architecture)
 - [Development](#development)
@@ -48,6 +49,7 @@ Choose an agent to jump directly to its Quick Start. Full behavior, extension po
 | **ReAct** | Model decisions, authorized tool calls, and observations. | [Build and run](#react-quick-start) |
 | **Plan-and-Execute** | Validated plans and registered sequential step handlers. | [Build and run](#plan-and-execute-quick-start) |
 | **Reflection** | Candidate generation, independent evaluation, and refinement. | [Build and run](#reflection-quick-start) |
+| **Utility-Based** | Candidate evaluation and maximum-utility action selection. | [Build and run](#utility-based-quick-start) |
 
 ## Agent Modules
 
@@ -330,6 +332,78 @@ Console.WriteLine($"Accepted: {result.Output?.IsAccepted}");
 - Execution stops on acceptance, configured no-improvement, attempt limit, timeout, or cancellation.
 - Scores from different evaluators are not comparable.
 
+### Utility-Based
+
+A decision agent that evaluates the available candidate actions and proposes the action with the greatest utility score.
+
+#### Installation
+
+After this package is published to NuGet.org, install it with:
+
+```bash
+dotnet add package AgentForge.Agents.UtilityBased
+```
+
+#### Utility-Based Quick Start
+
+The candidate provider defines the actions available for the current percept. The utility evaluator assigns a score to each candidate:
+
+```csharp
+using AgentForge.Agents.UtilityBased.Builders;
+using AgentForge.Agents.UtilityBased.Domain.Policies;
+
+var agent = UtilityBasedAgentBuilder
+    .Create<ThermostatPercept, ThermostatAction>()
+    .WithCandidates(_ => new[]
+    {
+        ThermostatAction.Cool,
+        ThermostatAction.Heat,
+        ThermostatAction.Maintain
+    })
+    .WithUtility((percept, action) => action switch
+    {
+        ThermostatAction.Cool =>
+            percept.TemperatureCelsius - percept.TargetCelsius,
+        ThermostatAction.Heat =>
+            percept.TargetCelsius - percept.TemperatureCelsius,
+        ThermostatAction.Maintain =>
+            -Math.Abs(percept.TemperatureCelsius - percept.TargetCelsius),
+        _ => throw new ArgumentOutOfRangeException(nameof(action))
+    })
+    .WithTieBreakPolicy(UtilityTieBreakPolicy.FirstCandidate)
+    .Build();
+
+var result = await agent.RunAsync(
+    new ThermostatPercept(29, 22),
+    cancellationToken);
+
+if (result.Output?.Decision.HasAction == true)
+{
+    Console.WriteLine(result.Output.Decision.Action);
+    Console.WriteLine(result.Output.Decision.Utility);
+}
+
+public sealed record ThermostatPercept(double TemperatureCelsius, double TargetCelsius);
+
+public enum ThermostatAction
+{
+    Cool,
+    Heat,
+    Maintain
+}
+```
+
+#### Behavior
+
+- Every candidate is evaluated exactly once and in the supplied order.
+- The candidate with the greatest finite utility score is selected.
+- Negative and zero scores are valid; NaN and infinite scores fail the run.
+- An empty candidate set returns a successful no-action decision.
+- Equal maximum scores follow the configured `FirstCandidate`, `LastCandidate`, or `RejectAmbiguous` policy.
+- The output preserves all candidate evaluations, not only the winner.
+- The agent proposes an action; the host performs the side effect.
+- The utility function is application-supplied. No model provider, tool registry, or database is required.
+
 ## NuGet packages
 
 Each agent is distributed as an independent package. The package IDs and package-specific READMEs are:
@@ -341,6 +415,7 @@ Each agent is distributed as an independent package. The package IDs and package
 | `AgentForge.Agents.ReAct` | [ReAct](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.ReAct/README.md) |
 | `AgentForge.Agents.Planning` | [Plan-and-Execute](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Planning/README.md) |
 | `AgentForge.Agents.Reflection` | [Reflection](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Reflection/README.md) |
+| `AgentForge.Agents.UtilityBased` | [Utility-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.UtilityBased/README.md) |
 
 Each package project declares its module README through `PackageReadmeFile` and includes that Markdown file in the `.nupkg`. NuGet.org therefore displays the matching agent's description and Quick Start on that package's page.
 
