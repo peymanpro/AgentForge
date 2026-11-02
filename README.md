@@ -101,6 +101,8 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [language implementation g
 
 - [Vision](docs/vision.md)
 - [Competitive landscape and positioning](docs/competitive-analysis.md)
+- [Proposed MVP scope](docs/mvp-scope.md)
+- [Design proposals](docs/design/README.md)
 - [Architecture](docs/architecture.md)
 - [Concepts and terminology](docs/concepts.md)
 - [Language implementation guide](docs/language-implementations.md)
