@@ -25,6 +25,7 @@ The APIs are **not stable**. No NuGet packages have been published.
 | `AgentForge.Agents.Reflection` | Bounded candidate generation, independent evaluation, and iterative refinement | Experimental |
 | `AgentForge.Retrieval` | Tenant-scoped retrieval contracts, authorization wrapper, provenance, and lexical baseline | Experimental |
 | `AgentForge.RAG` | Bounded evidence context assembly and provider-neutral generation pipeline | Experimental |
+| `AgentForge.Orchestration` | Bounded sequential and conditional composition of agents and application operations | Experimental |
 
 No vendor-specific provider adapter is included yet. Applications will be able to implement `IChatModel` and, where supported, `IToolCallingChatModel` using their preferred provider SDK or HTTP integration.
 
@@ -40,20 +41,32 @@ agentforge.net/
 │   ├── AgentForge.Agents.ReAct/
 │   ├── AgentForge.Agents.Planning/
 │   ├── AgentForge.Agents.Reflection/
+│   ├── AgentForge.Models/
+│   ├── AgentForge.Tools/
 │   ├── AgentForge.Retrieval/
 │   ├── AgentForge.RAG/
-│   ├── AgentForge.Models/
-│   └── AgentForge.Tools/
-└── tests/
-    ├── AgentForge.Abstractions.Tests/
-    ├── AgentForge.Agents.ReAct.Tests/
-    ├── AgentForge.Agents.Planning.Tests/
-    ├── AgentForge.Agents.Reflection.Tests/
-    ├── AgentForge.Retrieval.Tests/
-    ├── AgentForge.RAG.Tests/
-    ├── AgentForge.Models.Tests/
-    └── AgentForge.Tools.Tests/
+│   └── AgentForge.Orchestration/
+├── tests/
+│   ├── AgentForge.Abstractions.Tests/
+│   ├── AgentForge.Agents.ReAct.Tests/
+│   ├── AgentForge.Agents.Planning.Tests/
+│   ├── AgentForge.Agents.Reflection.Tests/
+│   ├── AgentForge.Models.Tests/
+│   ├── AgentForge.Tools.Tests/
+│   ├── AgentForge.Retrieval.Tests/
+│   ├── AgentForge.RAG.Tests/
+│   └── AgentForge.Orchestration.Tests/
+└── samples/
+    └── AgentForge.Orchestration.Sample/
 ```
+
+## Runnable sample
+
+From this directory, run the deterministic sequential/conditional workflow sample:
+
+    dotnet run --project samples/AgentForge.Orchestration.Sample
+
+The sample composes three application-supplied agents, evaluates a condition, and selects a revision or direct-publish branch without requiring a model API key.
 
 ## Build and test
 
@@ -75,6 +88,7 @@ The repository-level workflow at `.github/workflows/agentforge-net-ci.yml` runs 
 - Reflection separates candidate generation from evaluation, preserves the best known candidate, and enforces an explicit attempt limit.
 - Retrieval applies tenant, document, and metadata constraints before returning source content.
 - RAG preserves source provenance, bounds reference context, and treats retrieved excerpts as untrusted data rather than instructions.
+- Orchestration composes agents through explicit prior-output mappings, application-owned conditions, bounded sequential execution, and partial-result preservation.
 - ReAct runs are bounded by model-turn, tool-invocation, step, and timeout limits.
 - Tool input validation and application authorization happen before tool execution.
 - Keep each project independently understandable and testable.

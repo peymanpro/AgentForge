@@ -4,7 +4,7 @@
 
 AgentForge is an open-source, multi-language ecosystem for building, composing, and orchestrating AI agents. It aims to make agent engineering understandable, modular, extensible, and practical across programming languages.
 
-> **Project status:** Early foundation. The .NET implementation now contains experimental abstractions, model contracts, policy-controlled tool execution, initial ReAct, Planning, and Reflection agents, plus authorization-aware Retrieval and a basic RAG pipeline. APIs are not stable and no packages have been released yet.
+> **Project status:** Early foundation. The .NET implementation now contains experimental abstractions, model contracts, policy-controlled tool execution, initial ReAct, Planning, and Reflection agents, authorization-aware Retrieval and RAG, and bounded sequential/conditional workflow orchestration. APIs are not stable and no packages have been released yet.
 
 ## Why AgentForge?
 
@@ -25,7 +25,7 @@ The repository is organized as a monorepo. Each language implementation is an in
 
 | Implementation | Location | Package ecosystem | Status |
 |---|---|---|---|
-| .NET / C# | [agentforge.net](agentforge.net/) | NuGet | In progress — ReAct, Planning, Reflection, Retrieval, and RAG prototypes |
+| .NET / C# | [agentforge.net](agentforge.net/) | NuGet | In progress — ReAct, Planning, Reflection, Retrieval, RAG, and Orchestration prototypes |
 | TypeScript / NestJS | [agentforge.nestjs](agentforge.nestjs/) | npm | Planned |
 | Python | [agentforge.python](agentforge.python/) | PyPI | Planned |
 | Other languages | Community-proposed | Language-specific | Welcome |

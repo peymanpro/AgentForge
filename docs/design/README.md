@@ -14,7 +14,7 @@ Design notes are not automatically accepted specifications or API guarantees. Ch
 | [Planning Agent Execution](planning-agent-execution.md) | Structured plan generation, validation, and bounded step execution | Proposal; validate with prototypes |
 | [Reflection Agent Execution](reflection-agent-execution.md) | Evaluation, feedback, iterative refinement, and acceptance | Proposal; validate with prototypes |
 | [Cross-Language Conformance](cross-language-conformance.md) | Shared behavioral scenarios and independent language-native test harnesses | Proposal; validate with prototypes |
-| [Workflow and Orchestration](workflow-orchestration.md) | Bounded sequential and conditional composition, data flow, failure, and cancellation | Proposal; validate with prototypes |
+| [Workflow and Orchestration](workflow-orchestration.md) | Bounded sequential and conditional composition, data flow, failure, and cancellation | Implemented in .NET MVP; API experimental |
 | [Retrieval and RAG Composition](retrieval-rag.md) | Provider-neutral retrieval, provenance, authorization-aware filtering, and bounded context assembly | Proposal; validate with prototypes |
 | [Agent Execution Contract](agent-execution-contract.md) | Shared run lifecycle, budgets, cancellation, results, and execution events | Proposal; validate with prototypes |
 

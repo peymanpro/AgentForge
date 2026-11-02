@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Orchestration</AssemblyName>
+    <RootNamespace>AgentForge.Orchestration</RootNamespace>
+    <PackageId>AgentForge.Orchestration</PackageId>
+    <Description>Bounded, explicit workflow composition for AgentForge agents and capabilities.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;workflow;orchestration;agent-engineering</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+  </ItemGroup>
+</Project>
