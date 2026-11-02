@@ -1,4 +1,5 @@
 using AgentForge.Abstractions.Execution;
+using AgentForge.Agents.Learning.Domain.Models;
 
 namespace AgentForge.Agents.Learning.Builders;
 
@@ -31,7 +32,6 @@ public sealed class ContextualLearningAgentBuilder<TAction> where TAction : notn
     }
 
     /// <summary>Builds the AgentForge execution handle.</summary>
-    public AgentHandle<Domain.Models.ContextualLearningAgentInput<TAction>,
-        Domain.Models.ContextualLearningAgentOutput<TAction>> Build() =>
+    public AgentHandle<ContextualLearningAgentInput<TAction>, ContextualLearningAgentOutput<TAction>> Build() =>
         new(new ContextualLearningAgent<TAction>(_explorationCoefficient, _clock));
 }
