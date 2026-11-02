@@ -72,7 +72,8 @@ jobs:
             src/AgentForge.Agents.Planning/AgentForge.Agents.Planning.csproj \
             src/AgentForge.Agents.Reflection/AgentForge.Agents.Reflection.csproj \
             src/AgentForge.Agents.UtilityBased/AgentForge.Agents.UtilityBased.csproj \
-            src/AgentForge.Agents.GoalBased/AgentForge.Agents.GoalBased.csproj
+            src/AgentForge.Agents.GoalBased/AgentForge.Agents.GoalBased.csproj \
+            src/AgentForge.Agents.Learning/AgentForge.Agents.Learning.csproj
           do
             dotnet pack "$project" --configuration Release --no-build --no-restore --output artifacts/packages
           done
@@ -94,6 +95,7 @@ jobs:
               "AgentForge.Agents.Reflection",
               "AgentForge.Agents.UtilityBased",
               "AgentForge.Agents.GoalBased",
+              "AgentForge.Agents.Learning",
           ]
 
           for package_id in expected:
