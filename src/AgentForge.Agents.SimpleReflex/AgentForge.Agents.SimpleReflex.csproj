@@ -7,10 +7,14 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
     <PackageTags>ai;agents;simple-reflex;fluent-api;agent-engineering</PackageTags>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
     <ProjectReference Include="..\AgentForge.Agents.SimpleReflex.Application\AgentForge.Agents.SimpleReflex.Application.csproj" />
     <ProjectReference Include="..\AgentForge.Agents.SimpleReflex.Domain\AgentForge.Agents.SimpleReflex.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
