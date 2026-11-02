@@ -21,8 +21,8 @@ LangGraph takes a different emphasis: it is a low-level runtime for stateful, lo
 | Dimension | Microsoft Agent Framework | Semantic Kernel | LangGraph | AgentForge today |
 |---|---|---|---|---|
 | Primary emphasis | Production agents and agent workflows | AI application SDK with plugins, connectors, agents, and orchestration | Low-level stateful graph runtime | Proposed multi-language agent engineering ecosystem |
-| Language footprint in official materials | .NET and Python; Go SDK in public preview and separately maintained | C#, Python, Java | Python and JavaScript/TypeScript | .NET, TypeScript/NestJS, Python planned; other languages invited |
-| Model/provider integration | Multiple providers and integration packages | Provider connectors and swappable AI services | Often used with LangChain model integrations; graph runtime can also be composed with other components | BYO model is a stated design principle; contracts are not yet designed |
+| Language footprint in official materials | .NET and Python in the main repository; a separate Go SDK is in public preview | C#, Python, Java | Python and JavaScript/TypeScript | .NET, TypeScript/NestJS, Python planned; other languages invited |
+| Model/provider integration | Multiple provider integrations and model clients | Provider connectors and swappable AI services | Can be composed with LangChain model integrations or application-defined model/tool code | BYO model is a stated design principle; contracts are not yet designed |
 | Tools and integrations | Tools, MCP clients, middleware, integrations | Plugins, functions, connectors, OpenAPI-related extensibility | Nodes and application-defined tools/components | Not implemented |
 | Stateful execution | Sessions, memory, persistence and durable workflow extensions | Agent threads and process/agent abstractions | Core focus: graph state, persistence, checkpointing and resumption | Not designed |
 | Human oversight | Human-in-the-loop workflow capabilities | Human interaction can be composed in agent/orchestration designs | Interrupts and resume are first-class workflow concepts | Not designed |
@@ -38,7 +38,7 @@ This table is a high-level reading of public documentation, not a feature-by-fea
 
 Official documentation groups its offering into agents, a harness agent, workflows, and integrations. It describes provider integrations, tool and MCP support, memory, RAG, middleware, observability, graph-based orchestration, checkpointing, resumption, and human-in-the-loop workflows.
 
-The repository describes .NET and Python support and points to a separate Go SDK. Microsoft's overview currently labels the Go implementation as public preview and notes that some capabilities are not yet implemented there. This is an important example of why AgentForge must report language-level support and limitations precisely rather than claim parity based on a directory existing.
+The main repository documents .NET and Python implementations and points to a separate Go SDK. Microsoft's overview currently labels the Go implementation as public preview and explicitly notes that some capabilities are not yet implemented there. The Go repository also describes itself as evolving separately while the ecosystem develops. This is an important example of why AgentForge must report language-level support and limitations precisely rather than claim parity based on a directory existing.
 
 **What this means for AgentForge:** a general-purpose agent framework with provider flexibility, multi-agent orchestration, and production-oriented features is already a well-served category. Reimplementing those features without a concrete advantage is not a sufficient project thesis.
 
@@ -54,7 +54,7 @@ Microsoft's current Agent Framework documentation describes Agent Framework as t
 
 LangGraph describes itself as a low-level orchestration framework for stateful, long-running agents. Its persistence layer supports checkpoints for thread state and stores for longer-lived application data. Its interrupt mechanism lets an application pause execution, persist state, obtain external input, and resume.
 
-Official documentation also links the JavaScript implementation and docs.
+The JavaScript documentation describes the same broad persistence concepts: checkpoints, threads, human-in-the-loop, memory, time travel, and fault tolerance. LangGraph's interrupt documentation explains how graph execution can pause for external input and resume from persisted state.
 
 **What this means for AgentForge:** graph orchestration, persistence, resumability, and human-in-the-loop execution are mature areas with strong existing implementations. AgentForge should not casually promise equivalent durability without designing and testing the runtime semantics.
 
@@ -173,10 +173,13 @@ All sources below are official documentation or project repositories. Snapshot r
 - [Official documentation home](https://learn.microsoft.com/en-us/agent-framework/)
 - [GitHub repository and README](https://github.com/microsoft/agent-framework)
 - [FAQ, including documented language support](https://learn.microsoft.com/en-us/agent-framework/support/faq)
+- [Separate Go SDK repository and preview status](https://github.com/microsoft/agent-framework-go)
 
 ### Semantic Kernel
 
 - [Introduction to Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/overview/)
+- [Supported languages and feature matrix](https://learn.microsoft.com/en-us/semantic-kernel/get-started/supported-languages)
+- [Agent Framework migration guidance](https://learn.microsoft.com/en-us/semantic-kernel/support/migration/agent-framework-rc-migration-guide)
 - [Agent architecture](https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-architecture)
 - [Plugins and function calling](https://learn.microsoft.com/en-us/semantic-kernel/concepts/plugins/)
 - [AI service integrations](https://learn.microsoft.com/en-us/semantic-kernel/concepts/ai-services/integrations)
@@ -185,9 +188,9 @@ All sources below are official documentation or project repositories. Snapshot r
 ### LangGraph
 
 - [LangGraph GitHub repository and README](https://github.com/langchain-ai/langgraph)
-- [Persistence concepts](https://github.com/langchain-ai/docs/blob/main/src/oss/langgraph/persistence.mdx)
-- [Checkpoint reference](https://langchain-ai.github.io/langgraph/reference/checkpoints/)
-- [Human-in-the-loop interrupts](https://langchain-ai.github.io/langgraph/concepts/human_in_the_loop/)
+- [Python persistence concepts](https://docs.langchain.com/oss/python/langgraph/persistence)
+- [JavaScript persistence concepts](https://github.com/langchain-ai/langgraphjs/blob/main/docs/docs/concepts/persistence.md)
+- [JavaScript human-in-the-loop interrupts](https://langchain-ai.github.io/langgraphjs/concepts/human_in_the_loop/)
 - [LangGraph.js persistence documentation](https://langchain-ai.github.io/langgraphjs/how-tos/persistence-postgres/)
 
 ## 11. Research limitations
