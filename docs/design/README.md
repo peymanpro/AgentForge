@@ -16,6 +16,7 @@ Design notes are not automatically accepted specifications or API guarantees. Ch
 | [Cross-Language Conformance](cross-language-conformance.md) | Shared behavioral scenarios and independent language-native test harnesses | Proposal; validate with prototypes |
 | [Workflow and Orchestration](workflow-orchestration.md) | Bounded sequential and conditional composition, data flow, failure, and cancellation | Proposal; validate with prototypes |
 | [Retrieval and RAG Composition](retrieval-rag.md) | Provider-neutral retrieval, provenance, authorization-aware filtering, and bounded context assembly | Proposal; validate with prototypes |
+| [Agent Execution Contract](agent-execution-contract.md) | Shared run lifecycle, budgets, cancellation, results, and execution events | Proposal; validate with prototypes |
 
 ## Design note lifecycle
 
