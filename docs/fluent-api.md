@@ -87,7 +87,7 @@ var agent = LearningAgentBuilder.Create<string>()
 
 ```csharp
 var agent = ReActAgentBuilder.Create()
-    .WithDecisionStrategy(decisionStrategy)
+    .WithModel(model)
     .WithTools(approvedTools)
     .WithAuthorization(authorizationPolicy)
     .WithSystemPrompt("Use approved tools when useful.")
@@ -96,7 +96,7 @@ var agent = ReActAgentBuilder.Create()
     .Build();
 ```
 
-ReAct, Plan-and-Execute, and Reflection now expose module-specific builders.
+ReAct, Plan-and-Execute, and Reflection now expose module-specific builders. ReAct supports both a concise native tool-calling model shortcut and a custom decision-strategy extension point.
 
 ### Plan-and-Execute
 
