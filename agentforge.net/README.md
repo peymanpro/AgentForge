@@ -23,6 +23,8 @@ The APIs are **not stable**. No NuGet packages have been published.
 | `AgentForge.Agents.ReAct` | Bounded ReAct loop with replaceable decision strategy and policy-controlled tools | Experimental |
 | `AgentForge.Agents.Planning` | Structured plan validation and sequential execution through registered step handlers | Experimental |
 | `AgentForge.Agents.Reflection` | Bounded candidate generation, independent evaluation, and iterative refinement | Experimental |
+| `AgentForge.Retrieval` | Tenant-scoped retrieval contracts, authorization wrapper, provenance, and lexical baseline | Experimental |
+| `AgentForge.RAG` | Bounded evidence context assembly and provider-neutral generation pipeline | Experimental |
 
 No vendor-specific provider adapter is included yet. Applications will be able to implement `IChatModel` and, where supported, `IToolCallingChatModel` using their preferred provider SDK or HTTP integration.
 
@@ -38,6 +40,8 @@ agentforge.net/
 │   ├── AgentForge.Agents.ReAct/
 │   ├── AgentForge.Agents.Planning/
 │   ├── AgentForge.Agents.Reflection/
+│   ├── AgentForge.Retrieval/
+│   ├── AgentForge.RAG/
 │   ├── AgentForge.Models/
 │   └── AgentForge.Tools/
 └── tests/
@@ -45,6 +49,8 @@ agentforge.net/
     ├── AgentForge.Agents.ReAct.Tests/
     ├── AgentForge.Agents.Planning.Tests/
     ├── AgentForge.Agents.Reflection.Tests/
+    ├── AgentForge.Retrieval.Tests/
+    ├── AgentForge.RAG.Tests/
     ├── AgentForge.Models.Tests/
     └── AgentForge.Tools.Tests/
 ```
@@ -67,6 +73,8 @@ The repository-level workflow at `.github/workflows/agentforge-net-ci.yml` runs 
 - A model-generated tool call is a proposal, not permission to execute.
 - Planning uses structured plans, validates step types and output references before execution, and stops on the first failed step.
 - Reflection separates candidate generation from evaluation, preserves the best known candidate, and enforces an explicit attempt limit.
+- Retrieval applies tenant, document, and metadata constraints before returning source content.
+- RAG preserves source provenance, bounds reference context, and treats retrieved excerpts as untrusted data rather than instructions.
 - ReAct runs are bounded by model-turn, tool-invocation, step, and timeout limits.
 - Tool input validation and application authorization happen before tool execution.
 - Keep each project independently understandable and testable.
