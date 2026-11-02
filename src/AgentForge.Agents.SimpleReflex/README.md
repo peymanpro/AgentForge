@@ -31,9 +31,10 @@ var result = await agent.RunAsync(
     new ThermostatPercept(29, 22),
     cancellationToken);
 
-if (result.Output?.Decision.HasAction == true)
+var output = result.Output;
+if (output?.Decision.HasAction == true)
 {
-    Console.WriteLine(result.Output.Decision.Action);
+    Console.WriteLine(output.Decision.Action);
 }
 
 public sealed record ThermostatPercept(double TemperatureCelsius, double TargetCelsius);

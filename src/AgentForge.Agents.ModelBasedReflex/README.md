@@ -40,10 +40,15 @@ var result = await agent.RunAsync(
         new ThermostatState(27, 28, 22)),
     cancellationToken);
 
-if (result.Output is { } output)
+var output = result.Output;
+if (output is not null)
 {
     Console.WriteLine(output.CurrentState);
-    Console.WriteLine(output.Decision.Action);
+
+    if (output.Decision.HasAction)
+    {
+        Console.WriteLine(output.Decision.Action);
+    }
 }
 
 public sealed record ThermostatPercept(double TemperatureCelsius, double TargetCelsius);
