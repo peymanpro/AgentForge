@@ -40,7 +40,7 @@ public sealed class PlanAndExecuteAgentTests
         Assert.Equal(AgentRunStatus.Completed, result.Status);
         Assert.Equal(3, result.Output?.CompletedStepCount);
         Assert.Equal(new[] { "first", "second", "third" }, result.Output?.Steps.Select(step => step.StepId));
-        Assert.Equal(1, observedReferences.Count);
+        Assert.Single(observedReferences);
         Assert.Equal(1, first.ExecutionCount);
         Assert.Equal(1, second.ExecutionCount);
         Assert.Equal(1, third.ExecutionCount);
