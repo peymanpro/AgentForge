@@ -447,7 +447,7 @@ public sealed class PlanAndExecuteAgent : IAgent<string, PlanAndExecuteOutput>
         AgentRunContext context,
         DateTimeOffset startedAt,
         ExecutionPlan plan,
-        IReadOnlyList<PlanStepResult> stepResults,
+        List<PlanStepResult> stepResults,
         AgentFailure failure)
     {
         var failedStep = stepResults.LastOrDefault(static step => step.Status == PlanStepStatus.Failed);
