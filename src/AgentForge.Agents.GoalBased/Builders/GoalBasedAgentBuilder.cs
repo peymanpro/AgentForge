@@ -7,6 +7,7 @@ namespace AgentForge.Agents.GoalBased.Builders;
 /// <summary>Creates a configured Goal-Based agent.</summary>
 public static class GoalBasedAgentBuilder
 {
+    /// <summary>Starts a Goal-Based agent definition.</summary>
     public static GoalBasedAgentBuilder<TState, TGoal, TAction> Create<TState, TGoal, TAction>()
         where TState : notnull
         where TGoal : notnull
@@ -26,6 +27,7 @@ public sealed class GoalBasedAgentBuilder<TState, TGoal, TAction>
     private IEqualityComparer<TState>? _stateComparer;
     private TimeProvider? _timeProvider;
 
+    /// <summary>Configures the ordered state transitions available from each state.</summary>
     public GoalBasedAgentBuilder<TState, TGoal, TAction> WithSuccessors(
         Func<TState, IEnumerable<GoalBasedTransition<TState, TAction>>> successorProvider)
     {
@@ -34,6 +36,7 @@ public sealed class GoalBasedAgentBuilder<TState, TGoal, TAction>
         return this;
     }
 
+    /// <summary>Configures the predicate that determines whether a state satisfies a goal.</summary>
     public GoalBasedAgentBuilder<TState, TGoal, TAction> WithGoalPredicate(
         Func<TState, TGoal, bool> goalPredicate)
     {
@@ -42,6 +45,7 @@ public sealed class GoalBasedAgentBuilder<TState, TGoal, TAction>
         return this;
     }
 
+    /// <summary>Configures the maximum search depth and explored-state count.</summary>
     public GoalBasedAgentBuilder<TState, TGoal, TAction> WithLimits(
         int maxDepth, int maxExploredStates)
     {
@@ -51,6 +55,7 @@ public sealed class GoalBasedAgentBuilder<TState, TGoal, TAction>
         return this;
     }
 
+    /// <summary>Configures state equality for duplicate detection.</summary>
     public GoalBasedAgentBuilder<TState, TGoal, TAction> WithStateComparer(
         IEqualityComparer<TState> stateComparer)
     {
@@ -66,6 +71,7 @@ public sealed class GoalBasedAgentBuilder<TState, TGoal, TAction>
         return this;
     }
 
+    /// <summary>Builds the immutable agent handle.</summary>
     public AgentHandle<GoalBasedInput<TState, TGoal>, GoalBasedOutput<TState, TAction>> Build()
     {
         if (_successors is null)
