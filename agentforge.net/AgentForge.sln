@@ -34,6 +34,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.RAG", "src\Agent
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.RAG.Tests", "tests\AgentForge.RAG.Tests\AgentForge.RAG.Tests.csproj", "{468F66C8-6C7F-4A0C-91D6-6A6E3D41B3E7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Orchestration", "src\AgentForge.Orchestration\AgentForge.Orchestration.csproj", "{2EB3EC40-32A8-43E9-9F7C-3E92B7C0D6A2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Orchestration.Tests", "tests\AgentForge.Orchestration.Tests\AgentForge.Orchestration.Tests.csproj", "{8F5C8C23-58A6-4A57-A9D3-0B11B150C70E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,5 +108,13 @@ Global
 		{468F66C8-6C7F-4A0C-91D6-6A6E3D41B3E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{468F66C8-6C7F-4A0C-91D6-6A6E3D41B3E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{468F66C8-6C7F-4A0C-91D6-6A6E3D41B3E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EB3EC40-32A8-43E9-9F7C-3E92B7C0D6A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EB3EC40-32A8-43E9-9F7C-3E92B7C0D6A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EB3EC40-32A8-43E9-9F7C-3E92B7C0D6A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EB3EC40-32A8-43E9-9F7C-3E92B7C0D6A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F5C8C23-58A6-4A57-A9D3-0B11B150C70E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F5C8C23-58A6-4A57-A9D3-0B11B150C70E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F5C8C23-58A6-4A57-A9D3-0B11B150C70E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F5C8C23-58A6-4A57-A9D3-0B11B150C70E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
