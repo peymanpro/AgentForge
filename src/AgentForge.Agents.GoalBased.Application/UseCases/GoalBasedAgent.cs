@@ -19,6 +19,12 @@ public sealed class GoalBasedAgent<TState, TGoal, TAction> :
     private readonly IEqualityComparer<TState> _stateComparer;
     private readonly TimeProvider _timeProvider;
 
+    /// <summary>Creates a Goal-Based search agent from application-supplied transitions and a goal predicate.</summary>
+    /// <param name="successors">Returns the ordered outgoing transitions for a state.</param>
+    /// <param name="isGoal">Determines whether a state satisfies the requested goal.</param>
+    /// <param name="agentOptions">Optional depth and explored-state limits.</param>
+    /// <param name="stateComparer">Optional equality comparer used to identify visited states.</param>
+    /// <param name="timeProvider">Optional clock used for run timestamps.</param>
     public GoalBasedAgent(
         Func<TState, IEnumerable<GoalBasedTransition<TState, TAction>>> successors,
         Func<TState, TGoal, bool> isGoal,
@@ -35,6 +41,12 @@ public sealed class GoalBasedAgent<TState, TGoal, TAction> :
         _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
+    /// <summary>Searches for a shortest goal-reaching action sequence within the configured limits.</summary>
+    /// <param name="input">The initial state and target goal.</param>
+    /// <param name="context">The identity and correlation context for this run.</param>
+    /// <param name="options">The common execution limits.</param>
+    /// <param name="cancellationToken">A token used to request cooperative cancellation.</param>
+    /// <returns>A normalized run result containing the search outcome and optional plan.</returns>
     public Task<AgentRunResult<GoalBasedOutput<TState, TAction>>> RunAsync(
         GoalBasedInput<TState, TGoal> input,
         AgentRunContext context,
