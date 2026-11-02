@@ -30,6 +30,15 @@ on:
       - "README.md"
       - ".github/workflows/agentforge-ci.yml"
   workflow_dispatch:
+    inputs:
+      benchmark_mode:
+        description: "Run the fast smoke benchmark or the full 30-seed experiment"
+        required: true
+        type: choice
+        options:
+          - smoke
+          - full
+        default: smoke
 
 permissions:
   contents: read
@@ -62,7 +71,7 @@ jobs:
       - name: Test
         run: dotnet test AgentForge.sln --configuration Release --no-build --no-restore
 
-      - name: Build and smoke-test stationary bandit benchmarks
+      - name: Build and smoke-test bandit benchmarks
         run: dotnet run --project benchmarks/AgentForge.Benchmarks/AgentForge.Benchmarks.csproj --configuration Release -- --output artifacts/benchmark-smoke
 
       - name: Verify benchmark output
@@ -151,3 +160,58 @@ jobs:
 
               print(f"Verified NuGet README: {package_id}")
           PY
+
+  full-benchmarks:
+    name: Full reproducible bandit benchmarks
+    if: github.event_name == 'workflow_dispatch' && inputs.benchmark_mode == 'full'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.403
+
+      - name: Restore benchmark project
+        run: dotnet restore benchmarks/AgentForge.Benchmarks/AgentForge.Benchmarks.csproj
+
+      - name: Run full benchmark suite
+        run: dotnet run --project benchmarks/AgentForge.Benchmarks/AgentForge.Benchmarks.csproj --configuration Release --no-restore -- --full --output artifacts/full-benchmarks
+
+      - name: Verify full benchmark output
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import csv
+          from pathlib import Path
+
+          root = Path("artifacts/full-benchmarks")
+          stationary = list(csv.DictReader((root / "stationary-bandit-runs.csv").open()))
+          stationary_summary = list(csv.DictReader((root / "stationary-bandit-summary.csv").open()))
+          contextual = list(csv.DictReader((root / "contextual-bandit-runs.csv").open()))
+          contextual_summary = list(csv.DictReader((root / "contextual-bandit-summary.csv").open()))
+
+          assert len(stationary) == 540, f"Expected 540 stationary runs, got {len(stationary)}"
+          assert len(stationary_summary) == 18, f"Expected 18 stationary summary rows, got {len(stationary_summary)}"
+          assert len(contextual) == 60, f"Expected 60 contextual runs, got {len(contextual)}"
+          assert len(contextual_summary) == 2, f"Expected 2 contextual summary rows, got {len(contextual_summary)}"
+          assert {row["algorithm"] for row in stationary} == {"EpsilonGreedy", "ThompsonSampling"}
+          assert {row["algorithm"] for row in contextual} == {"LinUCB", "LinearThompsonSampling"}
+          for row in stationary + contextual:
+              assert float(row["cumulative_pseudo_regret"]) >= -1e-8
+              assert 0 <= float(row["optimal_action_rate"]) <= 1
+          print("Verified full benchmark outputs: 540 stationary runs and 60 contextual runs.")
+          PY
+
+      - name: Upload full benchmark CSV artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentforge-full-bandit-benchmarks
+          path: artifacts/full-benchmarks/*.csv
+          if-no-files-found: error
+          retention-days: 30
