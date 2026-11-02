@@ -26,6 +26,11 @@ public sealed record AgentRunOptions
     public TimeSpan? Timeout { get; init; }
 
     /// <summary>
+    /// Gets the optional observer used to receive non-sensitive run events.
+    /// </summary>
+    public IAgentEventSink? EventSink { get; init; }
+
+    /// <summary>
     /// Validates that all configured limits are positive.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">A configured limit is zero or negative.</exception>
