@@ -35,7 +35,7 @@ This phase prioritizes the developer experience: every implemented agent should 
 ## Phase 2 — Migrate existing LLM agent modules
 
 - [ ] Refactor ReAct into Domain, Application, optional Infrastructure adapters, and a public fluent composition root.
-- [ ] Add a module-specific ReAct builder with a concise Build()/RunAsync() happy path.
+- [x] Add a module-specific ReAct builder with a concise Build()/RunAsync() happy path.
 - [ ] Add a fluent ReAct builder for model, tool registry, authorization, limits, memory, and observability.
 - [ ] Refactor Plan-and-Execute into clean module layers and a fluent builder; validate package independence.
 - [ ] Refactor Reflection into clean module layers and a fluent builder; validate package independence.
