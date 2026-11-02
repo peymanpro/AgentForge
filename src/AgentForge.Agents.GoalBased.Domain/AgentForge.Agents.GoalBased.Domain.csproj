@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Agents.GoalBased.Domain</AssemblyName>
+    <RootNamespace>AgentForge.Agents.GoalBased.Domain</RootNamespace>
+    <PackageId>AgentForge.Agents.GoalBased.Domain</PackageId>
+    <Description>Domain model for the Goal-Based agent module.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;goal-based;domain;search</PackageTags>
+  </PropertyGroup>
+</Project>

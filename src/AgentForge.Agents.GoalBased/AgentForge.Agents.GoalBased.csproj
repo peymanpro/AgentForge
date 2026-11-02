@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Agents.GoalBased</AssemblyName>
+    <RootNamespace>AgentForge.Agents.GoalBased</RootNamespace>
+    <PackageId>AgentForge.Agents.GoalBased</PackageId>
+    <Description>A standalone Goal-Based agent module with bounded breadth-first search.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;goal-based;search;planning;fluent-api</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+    <ProjectReference Include="..\AgentForge.Agents.GoalBased.Application\AgentForge.Agents.GoalBased.Application.csproj" />
+    <ProjectReference Include="..\AgentForge.Agents.GoalBased.Domain\AgentForge.Agents.GoalBased.Domain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>
