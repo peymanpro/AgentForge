@@ -2,11 +2,16 @@ using AgentForge.Agents.Learning.Domain.Models;
 using AgentForge.Agents.Learning.Domain.Policies;
 namespace AgentForge.Agents.Learning.Policies;
 /// <summary>Balances exploration and exploitation with epsilon-greedy selection.</summary>
+/// <typeparam name="TAction">The action identity type.</typeparam>
 public sealed class EpsilonGreedyLearningPolicy<TAction> : ILearningPolicy<TAction> where TAction : notnull
 {
     private readonly double _epsilon;
     private readonly Func<double> _nextDouble;
     private readonly Func<int, int> _nextIndex;
+    /// <summary>Creates an epsilon-greedy policy.</summary>
+    /// <param name="epsilon">Exploration probability in the inclusive range zero to one.</param>
+    /// <param name="nextDouble">Optional random source for exploration probability.</param>
+    /// <param name="nextIndex">Optional random source for candidate index selection.</param>
     public EpsilonGreedyLearningPolicy(double epsilon = 0.1, Func<double>? nextDouble = null, Func<int, int>? nextIndex = null)
     {
         if (!double.IsFinite(epsilon) || epsilon < 0 || epsilon > 1) throw new ArgumentOutOfRangeException(nameof(epsilon));
@@ -14,6 +19,7 @@ public sealed class EpsilonGreedyLearningPolicy<TAction> : ILearningPolicy<TActi
         _nextDouble = nextDouble ?? Random.Shared.NextDouble;
         _nextIndex = nextIndex ?? Random.Shared.Next;
     }
+    /// <inheritdoc />
     public (TAction Action, bool WasExploration) Select(IReadOnlyList<ActionEstimate<TAction>> candidates, long totalObservations)
     {
         ArgumentNullException.ThrowIfNull(candidates);
