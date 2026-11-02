@@ -149,7 +149,7 @@ public sealed class GoalBasedAgent<TState, TGoal, TAction> :
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            return Task.FromResult(Cancelled(startedAt));
+            return Cancelled(startedAt);
         }
         catch (Exception)
         {
