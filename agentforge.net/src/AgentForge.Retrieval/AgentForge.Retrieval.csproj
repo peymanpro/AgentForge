@@ -8,4 +8,7 @@
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
     <PackageTags>ai;rag;retrieval;search;agent-engineering</PackageTags>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+  </ItemGroup>
 </Project>
