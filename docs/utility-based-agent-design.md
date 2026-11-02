@@ -127,14 +127,14 @@ This is an API design target, not an existing API. The implementation must not d
 1. The candidate provider and utility evaluator are required.
 2. The candidate sequence must not be null and must not contain null actions.
 3. Candidate actions are materialized once before evaluation so one-shot or lazy enumerables cannot change during selection.
-4. An empty candidate set produces a successful no-action decision, not a failed run.
+4. An empty candidate set produces a successful no-action decision, not a failed run. An ambiguous maximum under `RejectAmbiguous` also produces a completed no-action decision while preserving all evaluations.
 5. Every candidate is evaluated once, in candidate order.
 6. Utility scores may be negative or zero. They must be finite; NaN and positive/negative infinity are invalid evaluation results.
 7. The greatest utility wins.
 8. Equal maximum scores are resolved by the configured tie policy:
    - `FirstCandidate`: keep the earliest candidate;
    - `LastCandidate`: keep the latest candidate among tied maxima;
-   - `RejectAmbiguous`: return a rejected decision with an explicit ambiguity reason.
+   - `RejectAmbiguous`: return a completed no-action decision with an explicit ambiguity reason; the run itself is not an execution failure.
 9. Duplicate candidate values are not silently removed: candidate identity and ordering belong to the supplied candidate provider. If duplicate actions are undesirable for a use case, the provider must avoid them.
 10. The agent returns a proposal only; the host decides whether and how to execute it.
 
