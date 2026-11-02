@@ -49,6 +49,11 @@ public sealed class RetrievalResult
     {
         ArgumentNullException.ThrowIfNull(items);
         var materialized = items.ToArray();
+        if (materialized.Any(static item => item is null))
+        {
+            throw new ArgumentException("Retrieved items cannot contain null values.", nameof(items));
+        }
+
         if (materialized.Length == 0)
         {
             return NoResults();

@@ -56,6 +56,8 @@ public sealed class AuthorizedRetriever : IAuthorizedRetriever
                 "The retrieval authorization policy returned no decision.");
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (!decision.IsAllowed)
         {
             return RetrievalResult.Denied(decision.Reason ?? "The application policy denied this retrieval operation.");
