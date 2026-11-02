@@ -78,7 +78,8 @@ These are reusable strategies that may power a complete agent. They are not auto
 | Family | Methods and concepts | Status |
 |---|---|---|
 | Multi-armed bandits | Epsilon-greedy | Implemented (experimental) — [Learning module](../src/AgentForge.Agents.Learning/README.md) |
-| Multi-armed bandits | UCB, Thompson sampling, contextual bandits | Planned |
+| Contextual bandits | Disjoint LinUCB | Implemented (experimental) — [Learning module](../src/AgentForge.Agents.Learning/README.md#contextual-linucb) |
+| Multi-armed bandits | UCB, Thompson sampling | Planned |
 | Dynamic programming | Markov Decision Processes, Bellman equations, policy iteration, value iteration | Planned |
 | Monte Carlo learning | Return estimation, on-policy and off-policy prediction/control | Planned |
 | Temporal-difference learning | TD(0), n-step TD, SARSA, Expected SARSA, Q-learning | Planned |
