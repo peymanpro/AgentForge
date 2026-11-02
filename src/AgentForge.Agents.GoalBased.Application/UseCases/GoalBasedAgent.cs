@@ -69,7 +69,7 @@ public sealed class GoalBasedAgent<TState, TGoal, TAction> :
         }
 
         if (cancellationToken.IsCancellationRequested)
-            return Task.FromResult(Cancelled(startedAt));
+            return Cancelled(startedAt);
 
         try
         {
