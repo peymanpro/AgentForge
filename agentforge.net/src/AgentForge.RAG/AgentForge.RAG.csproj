@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.RAG</AssemblyName>
+    <RootNamespace>AgentForge.RAG</RootNamespace>
+    <PackageId>AgentForge.RAG</PackageId>
+    <Description>Bounded retrieval-augmented generation composition for AgentForge.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;rag;retrieval;generation;agent-engineering</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+    <ProjectReference Include="..\AgentForge.Models\AgentForge.Models.csproj" />
+    <ProjectReference Include="..\AgentForge.Retrieval\AgentForge.Retrieval.csproj" />
+  </ItemGroup>
+</Project>
