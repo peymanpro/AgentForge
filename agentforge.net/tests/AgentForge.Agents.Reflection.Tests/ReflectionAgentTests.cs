@@ -71,16 +71,18 @@ public sealed class ReflectionAgentTests
     [Fact]
     public async Task RunAsync_UsesLatestCandidateWhenEvaluatorDoesNotProvideScores()
     {
-        var generator = new ScriptedGenerator("draft one", "draft two");
+        var generator = new ScriptedGenerator("draft one", "draft two", "draft three");
         var evaluator = new ScriptedEvaluator(
             new ReflectionEvaluation(false, "Add examples."),
-            new ReflectionEvaluation(false, "Tighten the explanation."));
+            new ReflectionEvaluation(false, "Tighten the explanation."),
+            new ReflectionEvaluation(false, "Clarify the final section."));
         var agent = CreateAgent(generator, evaluator);
 
         var result = await agent.RunAsync("Improve the answer.", AgentRunContext.Create(), new AgentRunOptions());
 
         Assert.Equal(AgentRunStatus.BudgetExhausted, result.Status);
-        Assert.Equal("draft two", result.Output?.BestCandidate);
+        Assert.Equal("draft three", result.Output?.BestCandidate);
+        Assert.Equal(3, result.Output?.AttemptCount);
         Assert.Null(result.Output?.BestScore);
     }
 
