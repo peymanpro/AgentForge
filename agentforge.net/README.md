@@ -2,16 +2,26 @@
 
 **Status: In progress — experimental foundation.**
 
-This directory contains the idiomatic .NET / C# implementation of AgentForge. Its first project is the experimental `AgentForge.Abstractions` library, which establishes the initial generic agent execution contract and normalized run outcomes.
+This directory contains the idiomatic .NET / C# implementation of AgentForge. The initial implementation is being built as small, composable projects with provider-neutral contracts and explicit execution boundaries.
 
-The API is **not stable**. This foundation is being validated through tests and GitHub Actions before additional runtime, tool, and agent modules are introduced. No NuGet package has been published.
+The APIs are **not stable**. No NuGet packages have been published.
 
 ## Requirements
 
 - .NET SDK 10.0.403 or a later patch in the .NET 10 SDK feature band.
 - A supported .NET 10 runtime for running built applications.
 
-.NET 10 is selected as the active LTS baseline for the initial implementation. The project will review its target framework and support policy as the .NET release lifecycle evolves.
+.NET 10 is the initial LTS baseline. Its target framework and support policy will be reviewed as the .NET release lifecycle evolves.
+
+## Current projects
+
+| Project | Responsibility | Status |
+|---|---|---|
+| `AgentForge.Abstractions` | Generic agent execution contract, run context, limits, and normalized outcomes | Experimental |
+| `AgentForge.Tools` | Tool declarations, validation, immutable registry, application authorization, and execution | Experimental |
+| `AgentForge.Models` | Provider-neutral chat messages, model requests/responses, and optional native tool-calling capability | Experimental |
+
+No vendor-specific provider adapter is included yet. Applications will be able to implement `IChatModel` and, where supported, `IToolCallingChatModel` using their preferred provider SDK or HTTP integration.
 
 ## Repository structure
 
@@ -21,9 +31,13 @@ agentforge.net/
 ├── Directory.Build.props
 ├── global.json
 ├── src/
-│   └── AgentForge.Abstractions/
+│   ├── AgentForge.Abstractions/
+│   ├── AgentForge.Models/
+│   └── AgentForge.Tools/
 └── tests/
-    └── AgentForge.Abstractions.Tests/
+    ├── AgentForge.Abstractions.Tests/
+    ├── AgentForge.Models.Tests/
+    └── AgentForge.Tools.Tests/
 ```
 
 ## Build and test
@@ -40,9 +54,11 @@ The repository-level workflow at `.github/workflows/agentforge-net-ci.yml` runs 
 
 ## Design constraints
 
-- Keep public contracts small and provider-neutral.
-- Preserve idiomatic .NET design without treating it as the reference architecture for other languages.
+- Keep model contracts provider-neutral and represent optional provider capabilities explicitly.
+- A model-generated tool call is a proposal, not permission to execute.
+- Tool input validation and application authorization happen before tool execution.
+- Keep each project independently understandable and testable.
 - Do not publish a package until its API, tests, documentation, and versioning policy are ready.
-- Keep implementation-specific agents in separate modules when independent use and dependency boundaries justify that separation.
+- Do not treat the .NET implementation as the reference architecture for other languages.
 
 See the [shared specification](../AGENTFORGE_SPEC.md), [MVP scope](../docs/mvp-scope.md), and [design proposals](../docs/design/README.md).
