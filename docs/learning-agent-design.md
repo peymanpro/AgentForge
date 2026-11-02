@@ -22,8 +22,10 @@ The sample mean is updated incrementally, keeping state compact: one observation
 
 ## Boundaries
 
-- The initial learner is stationary and context-free.
-- Reward semantics and persistence belong to the host.
-- LearningState is immutable, making state transitions explicit and testable.
-- UCB, Thompson Sampling, contextual bandits, and non-stationary estimators can be added behind ILearningPolicy or as separate strategies.
-- General MDP/RL algorithms are outside the initial scope.
+- The epsilon-greedy learner is stationary and context-free.
+- The contextual learner is a separate disjoint LinUCB implementation with one linear reward model per action.
+- Reward semantics, feature engineering/scaling, authorization, action execution, and persistence belong to the host.
+- Both learning-state types are immutable, making state transitions explicit and testable.
+- LinUCB uses Cholesky factorization and linear-system solves rather than explicitly computing matrix inverses.
+- The contextual implementation assumes a linear expected reward model and fixed-dimensional finite feature vectors.
+- Shared-parameter contextual models, non-stationary forgetting, delayed feedback, and general MDP/RL algorithms are outside the current scope.
