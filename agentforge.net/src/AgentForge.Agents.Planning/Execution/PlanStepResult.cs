@@ -8,6 +8,15 @@ namespace AgentForge.Agents.Planning.Execution;
 /// </summary>
 public sealed class PlanStepResult
 {
+    /// <summary>
+    /// Creates a terminal outcome for one plan step.
+    /// </summary>
+    /// <param name="stepId">The stable plan step identifier.</param>
+    /// <param name="status">The terminal status of the step.</param>
+    /// <param name="startedAt">The timestamp at which step execution began.</param>
+    /// <param name="completedAt">The timestamp at which the step reached its terminal state.</param>
+    /// <param name="output">The JSON output produced by a completed step, when available.</param>
+    /// <param name="failure">The normalized reason when the step did not complete.</param>
     public PlanStepResult(
         string stepId,
         PlanStepStatus status,
