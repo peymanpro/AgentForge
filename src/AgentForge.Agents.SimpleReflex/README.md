@@ -6,13 +6,13 @@ A deterministic agent that selects an action from the current percept using orde
 
 Add a project reference:
 
-\`\`\`bash
+```bash
 dotnet add path/to/YourApp.csproj reference src/AgentForge.Agents.SimpleReflex/AgentForge.Agents.SimpleReflex.csproj
-\`\`\`
+```
 
 Define the percept and action types, then build and run the agent:
 
-\`\`\`csharp
+```csharp
 using AgentForge.Agents.SimpleReflex.Builders;
 
 var agent = SimpleReflexAgentBuilder
@@ -44,7 +44,7 @@ public enum ThermostatAction
     Cool,
     Heat
 }
-\`\`\`
+```
 
 ## Behavior
 

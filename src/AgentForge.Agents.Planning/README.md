@@ -4,9 +4,9 @@ A structured Plan-and-Execute agent that validates a generated plan before runni
 
 ## Quick Start
 
-Register an application-specific \`IPlanningStrategy\` and only the \`IPlanStepHandler\` implementations that the agent is allowed to execute.
+Register an application-specific `IPlanningStrategy` and only the `IPlanStepHandler` implementations that the agent is allowed to execute.
 
-\`\`\`csharp
+```csharp
 using AgentForge.Abstractions.Execution;
 using AgentForge.Agents.Planning;
 using AgentForge.Agents.Planning.Execution;
@@ -29,7 +29,7 @@ var result = await agent.RunAsync(
     cancellationToken);
 
 Console.WriteLine($"Completed steps: {result.Output?.CompletedStepCount}");
-\`\`\`
+```
 
 The planner and step handlers are application-owned dependencies. Register only handlers permitted for this workload.
 

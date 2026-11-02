@@ -4,9 +4,9 @@ A tool-using agent that alternates model decisions, authorized tool execution, a
 
 ## Quick Start
 
-Register an \`IToolCallingChatModel\` provider adapter, the tools available to this application, and an \`IToolAuthorizationPolicy\` with your application's dependency injection container.
+Register an `IToolCallingChatModel` provider adapter, the tools available to this application, and an `IToolAuthorizationPolicy` with your application's dependency injection container.
 
-\`\`\`csharp
+```csharp
 using AgentForge.Abstractions.Execution;
 using AgentForge.Agents.ReAct;
 using AgentForge.Models.Contracts;
@@ -29,7 +29,7 @@ var result = await agent.RunAsync(
     cancellationToken);
 
 Console.WriteLine(result.Output?.FinalResponse);
-\`\`\`
+```
 
 The host must register the provider adapter, explicitly approved tools, and authorization policy. The model's tool-call proposal is never treated as authorization.
 

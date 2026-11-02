@@ -4,9 +4,9 @@ A bounded candidate-refinement agent that separates generation from independent 
 
 ## Quick Start
 
-Register an application-specific \`IReflectionGenerationStrategy\` and an \`IReflectionEvaluator\`. The evaluator owns the acceptance criteria and returns actionable feedback for rejected candidates.
+Register an application-specific `IReflectionGenerationStrategy` and an `IReflectionEvaluator`. The evaluator owns the acceptance criteria and returns actionable feedback for rejected candidates.
 
-\`\`\`csharp
+```csharp
 using AgentForge.Abstractions.Execution;
 using AgentForge.Agents.Reflection;
 using AgentForge.Agents.Reflection.Evaluation;
@@ -27,7 +27,7 @@ var result = await agent.RunAsync(
 
 Console.WriteLine(result.Output?.BestCandidate);
 Console.WriteLine($"Accepted: {result.Output?.IsAccepted}");
-\`\`\`
+```
 
 ## Behavior
 
