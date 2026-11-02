@@ -290,20 +290,17 @@ Register an application-specific `IPlanningStrategy` and only the `IPlanStepHand
 ```csharp
 using AgentForge.Abstractions.Execution;
 using AgentForge.Agents.Planning;
+using AgentForge.Agents.Planning.Builders;
 using AgentForge.Agents.Planning.Execution;
 using AgentForge.Agents.Planning.Planning;
 using Microsoft.Extensions.DependencyInjection;
 
-var handlers = new PlanStepHandlerRegistry(
-    services.GetServices<IPlanStepHandler>());
-
-var agent = new AgentHandle<string, PlanAndExecuteOutput>(
-    new PlanAndExecuteAgent(
-        services.GetRequiredService<IPlanningStrategy>(),
-        handlers,
-        new PlanAndExecuteAgentOptions(
-            maxPlanSteps: 8,
-            timeout: TimeSpan.FromSeconds(60))));
+var agent = PlanAndExecuteAgentBuilder.Create()
+    .WithPlanner(services.GetRequiredService<IPlanningStrategy>())
+    .WithStepHandlers(services.GetServices<IPlanStepHandler>())
+    .WithMaxPlanSteps(8)
+    .WithTimeout(TimeSpan.FromSeconds(60))
+    .Build();
 
 var result = await agent.RunAsync(
     "Find the customer account and calculate the renewal date.",
