@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Abstractions</AssemblyName>
+    <RootNamespace>AgentForge.Abstractions</RootNamespace>
+    <PackageId>AgentForge.Abstractions</PackageId>
+    <Description>Provider-neutral contracts for the AgentForge multi-language agent engineering ecosystem.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;agent-engineering;abstractions</PackageTags>
+  </PropertyGroup>
+</Project>

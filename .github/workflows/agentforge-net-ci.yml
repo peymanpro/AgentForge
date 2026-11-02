@@ -1,0 +1,54 @@
+name: AgentForge .NET CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "agentforge.net/**"
+      - "AGENTFORGE_SPEC.md"
+      - "conformance/**"
+      - "docs/design/**"
+      - ".github/workflows/agentforge-net-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "agentforge.net/**"
+      - "AGENTFORGE_SPEC.md"
+      - "conformance/**"
+      - "docs/design/**"
+      - ".github/workflows/agentforge-net-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agentforge-net-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and test (.NET 10)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.403
+
+      - name: Restore
+        working-directory: agentforge.net
+        run: dotnet restore AgentForge.sln
+
+      - name: Build
+        working-directory: agentforge.net
+        run: dotnet build AgentForge.sln --configuration Release --no-restore
+
+      - name: Test
+        working-directory: agentforge.net
+        run: dotnet test AgentForge.sln --configuration Release --no-build --no-restore
