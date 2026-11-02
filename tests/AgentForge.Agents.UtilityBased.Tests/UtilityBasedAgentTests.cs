@@ -163,6 +163,90 @@ public sealed class UtilityBasedAgentTests
         Assert.IsAssignableFrom<IAgent<string, AgentForge.Agents.UtilityBased.Application.UseCases.UtilityBasedOutput<string>>>(agent);
     }
 
+
+    [Fact]
+    public async Task NullCandidateCollectionFailsRun()
+    {
+        var agent = CreateAgent(_ => null!, (_, _) => 1);
+
+        var result = await agent.RunAsync("task");
+
+        Assert.Equal(AgentRunStatus.Failed, result.Status);
+        Assert.Equal("utility_based.null_candidates", result.Failure?.Code);
+    }
+
+    [Fact]
+    public async Task NullCandidateEntryFailsRun()
+    {
+        var agent = CreateAgent(_ => new string[] { null! }, (_, _) => 1);
+
+        var result = await agent.RunAsync("task");
+
+        Assert.Equal(AgentRunStatus.Failed, result.Status);
+        Assert.Equal("utility_based.null_candidate", result.Failure?.Code);
+    }
+
+    [Fact]
+    public async Task CandidateProviderExceptionIsNormalized()
+    {
+        var agent = CreateAgent(_ => throw new InvalidOperationException("private detail"), (_, _) => 1);
+
+        var result = await agent.RunAsync("task");
+
+        Assert.Equal(AgentRunStatus.Failed, result.Status);
+        Assert.Equal("utility_based.evaluation_failed", result.Failure?.Code);
+        Assert.DoesNotContain("private detail", result.Failure?.Message);
+    }
+
+    [Fact]
+    public async Task InvalidRunOptionsAreRejected()
+    {
+        var agent = CreateAgent(_ => ["a"], (_, _) => 1);
+
+        var result = await agent.RunAsync("task", new AgentRunOptions { MaxSteps = 0 });
+
+        Assert.Equal(AgentRunStatus.Rejected, result.Status);
+        Assert.Equal(AgentFailureCategory.InvalidInput, result.Failure?.Category);
+    }
+
+    [Fact]
+    public async Task CancellationBetweenCandidateEvaluationsStopsRun()
+    {
+        using var source = new CancellationTokenSource();
+        var agent = CreateAgent(
+            _ => ["first", "second"],
+            (_, action) =>
+            {
+                if (action == "first")
+                {
+                    source.Cancel();
+                }
+
+                return 1;
+            });
+
+        var result = await agent.RunAsync("task", source.Token);
+
+        Assert.Equal(AgentRunStatus.Cancelled, result.Status);
+    }
+
+    [Fact]
+    public async Task ConcurrentRunsKeepTheirOutputsIndependent()
+    {
+        var agent = CreateAgent(
+            _ => ["one", "two"],
+            (_, action) => action == "one" ? 1 : 2);
+
+        var results = await Task.WhenAll(
+            agent.RunAsync("first"),
+            agent.RunAsync("second"));
+
+        Assert.All(results, result => Assert.Equal(AgentRunStatus.Completed, result.Status));
+        Assert.Equal("two", results[0].Output?.Decision.Action);
+        Assert.Equal("two", results[1].Output?.Decision.Action);
+        Assert.NotSame(results[0].Output, results[1].Output);
+    }
+
     private static AgentHandle<string, AgentForge.Agents.UtilityBased.Application.UseCases.UtilityBasedOutput<string>> CreateAgent(
         Func<string, IEnumerable<string>> candidates,
         Func<string, string, double> utility,
