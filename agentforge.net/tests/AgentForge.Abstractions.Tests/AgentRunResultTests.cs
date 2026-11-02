@@ -58,6 +58,26 @@ public sealed class AgentRunResultTests
     }
 
     [Fact]
+    public void Stopped_PreservesOptionalPartialOutput()
+    {
+        var failure = new AgentFailure(
+            AgentFailureCategory.Cancelled,
+            "run.cancelled",
+            "The run was cancelled.");
+
+        var result = AgentRunResult<string>.Stopped(
+            AgentRunStatus.Cancelled,
+            failure,
+            StartedAt,
+            StartedAt.AddSeconds(1),
+            "partial trace");
+
+        Assert.Equal(AgentRunStatus.Cancelled, result.Status);
+        Assert.Equal("partial trace", result.Output);
+        Assert.Equal(failure, result.Failure);
+    }
+
+    [Fact]
     public void Completed_RejectsAnEndTimeBeforeStart()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>

@@ -35,6 +35,15 @@ public enum AgentFailureCategory
     /// <summary>An external side effect may have started but its completion is unknown.</summary>
     UnknownExternalOutcome,
 
+    /// <summary>A configured execution budget was exhausted.</summary>
+    BudgetExhausted,
+
+    /// <summary>The run deadline expired.</summary>
+    TimedOut,
+
+    /// <summary>The caller or parent execution requested cancellation.</summary>
+    Cancelled,
+
     /// <summary>An unexpected internal failure occurred.</summary>
     InternalFailure
 }

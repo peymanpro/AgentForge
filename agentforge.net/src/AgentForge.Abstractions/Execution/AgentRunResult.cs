@@ -103,13 +103,15 @@ public sealed class AgentRunResult<TOutput>
     /// <param name="failure">The normalized reason for stopping.</param>
     /// <param name="startedAt">The run start timestamp.</param>
     /// <param name="completedAt">The run completion timestamp.</param>
-    /// <returns>A result with no output and the specified terminal status.</returns>
+    /// <param name="output">An optional partial output preserved when the run stops.</param>
+    /// <returns>A result with the specified terminal status and optional partial output.</returns>
     /// <exception cref="ArgumentException">The status is Completed or PartiallyCompleted.</exception>
     public static AgentRunResult<TOutput> Stopped(
         AgentRunStatus status,
         AgentFailure failure,
         DateTimeOffset startedAt,
-        DateTimeOffset completedAt)
+        DateTimeOffset completedAt,
+        TOutput? output = default)
     {
         ArgumentNullException.ThrowIfNull(failure);
 
@@ -118,6 +120,6 @@ public sealed class AgentRunResult<TOutput>
             throw new ArgumentException("Use the dedicated factory for this status.", nameof(status));
         }
 
-        return new AgentRunResult<TOutput>(status, default, failure, startedAt, completedAt);
+        return new AgentRunResult<TOutput>(status, output, failure, startedAt, completedAt);
     }
 }
