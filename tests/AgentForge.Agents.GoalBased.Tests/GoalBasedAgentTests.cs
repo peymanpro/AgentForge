@@ -1,5 +1,6 @@
 using AgentForge.Abstractions.Execution;
 using AgentForge.Agents.GoalBased.Builders;
+using AgentForge.Agents.GoalBased.Application.UseCases;
 using AgentForge.Agents.GoalBased.Domain.Models;
 using Xunit;
 
