@@ -65,7 +65,7 @@ public sealed class AgentWorkflowBuilder<TWorkflowInput>
     {
         ArgumentNullException.ThrowIfNull(agent);
         ArgumentNullException.ThrowIfNull(inputFactory);
-        var references = ValidateReferences(inputReferences, stepId);
+        var references = ValidateNewStep(stepId, inputReferences);
 
         _steps.Add(new AgentWorkflowStep<TWorkflowInput, TAgentInput, TAgentOutput>(
             stepId,
