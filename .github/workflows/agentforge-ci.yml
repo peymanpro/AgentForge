@@ -21,6 +21,7 @@ on:
       - "src/**"
       - "tests/**"
       - "samples/**"
+      - "benchmarks/**"
       - "docs/**"
       - "AgentForge.sln"
       - "Directory.Build.props"
