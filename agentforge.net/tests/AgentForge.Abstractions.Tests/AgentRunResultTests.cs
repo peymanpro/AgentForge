@@ -1,5 +1,7 @@
 using AgentForge.Abstractions.Execution;
 
+using Xunit;
+
 namespace AgentForge.Abstractions.Tests;
 
 public sealed class AgentRunResultTests
