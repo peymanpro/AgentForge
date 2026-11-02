@@ -76,8 +76,9 @@ jobs:
           done
 
       - name: Verify NuGet package readmes
-        shell: python
+        shell: bash
         run: |
+          python3 - <<'PY'
           import glob
           import xml.etree.ElementTree as ET
           import zipfile
@@ -111,3 +112,4 @@ jobs:
                   assert "```csharp" in markdown, f"{package_id} is missing a C# code example"
 
               print(f"Verified NuGet README: {package_id}")
+          PY
