@@ -1,64 +1,105 @@
 # Concepts and Terminology
 
-Agent engineering uses overlapping terminology. AgentForge uses the distinctions below to keep architecture, documentation, and package boundaries precise.
+Agent engineering has a broad vocabulary. AgentForge separates the concepts below so that code, modules, and documentation communicate what a component actually does.
 
 ## Agent
 
-An agent owns a defined decision-making or execution loop toward a task or goal. It may use a model, tools, memory, or other capabilities, but none of those alone makes a component an agent.
+An agent perceives or receives relevant state, selects actions according to a policy or decision process, and acts toward a goal. It has a defined control loop or decision responsibility.
+
+An agent may be:
+- Entirely deterministic and rule-based.
+- Search- or planning-based.
+- Utility- or goal-driven.
+- Learning-based, including reinforcement learning.
+- LLM-based.
+- One participant in a multi-agent system.
+
+An LLM call alone is not necessarily an agent.
+
+## Agent model or architecture
+
+An architecture describes the structure of an agent: how it represents state, chooses actions, plans, reacts, or learns.
+
+Examples:
+- Simple-reflex and model-based reflex architectures.
+- Goal-based and utility-based agents.
+- Learning-agent architecture.
+- Reactive, deliberative, and hybrid architectures.
+- Subsumption architecture.
+- Belief-Desire-Intention (BDI).
+- Rule-based and blackboard architectures.
+
+## Algorithm
+
+An algorithm is a concrete procedure. It may be used by an agent but is not necessarily an agent on its own.
+
+Examples:
+- BFS, DFS, uniform-cost search, A*, and beam search.
+- Minimax, alpha-beta pruning, expectimax, and Monte Carlo Tree Search.
+- Hill climbing, simulated annealing, genetic algorithms, particle swarm optimization, and ant colony optimization.
+- Q-learning, SARSA, policy gradients, PPO, and actor-critic methods.
+
+AgentForge may implement these as reusable strategies and then compose them into complete agents.
 
 ## Agent pattern
 
-A pattern describes a reusable approach to agent control or reasoning.
+A pattern describes a reusable control or reasoning strategy.
 
 Examples include:
-- **ReAct:** interleaves reasoning steps and actions/observations.
-- **Plan-and-execute:** separates plan creation from execution of planned steps.
-- **Reflection:** evaluates prior output or progress and uses feedback to revise subsequent work.
+- ReAct: reason, act, observe, and continue or finish.
+- Plan-and-execute: construct a plan, validate it, and execute bounded steps.
+- Reflection: evaluate a candidate and refine it using feedback.
+- Reflexion: use verbal feedback or experience as part of subsequent attempts.
+- Router: select a specialized path, tool, or agent.
+- Planner-replanner: revise a plan when execution changes the known state.
 
-A pattern may be implemented by an agent. The pattern itself is not necessarily a standalone agent implementation.
+A named paper technique is not automatically a complete software architecture. AgentForge documents its actual scope and mechanics.
 
 ## Capability
 
-A capability is a reusable function available to an agent or workflow.
+A capability is reusable functionality available to an agent or workflow.
 
 Examples:
-- Retrieval.
-- Memory.
 - Tool execution.
-- Structured output handling.
-- Human approval or intervention.
+- Conversation context and memory.
+- Retrieval and RAG.
+- Structured output.
+- Streaming.
+- Embeddings.
 - Evaluation.
+- Human approval.
+- Observability and tracing.
 
-Capabilities can be composed without creating an autonomous agent.
+A retrieval pipeline or memory store is not automatically an agent.
 
 ## Tool
 
-A tool is an operation an agent can request through a defined contract. Tool execution may have side effects and must be subject to application-level trust and authorization controls.
+A tool is a declared operation that an agent can request through a defined contract. Tools have schemas, validation, authorization, side effects, timeouts, and execution outcomes.
 
-## Protocol and integration
-
-A protocol defines communication or interoperability rules. An integration connects AgentForge to an external implementation of a protocol or service.
-
-For example, MCP is a protocol for connecting AI applications to external tools and context. It is not itself an agent. An MCP client or server integration may be useful to an agent.
+A model-requested tool call is untrusted input. The runtime/application decides whether the call is valid and permitted.
 
 ## Workflow
 
-A workflow is an explicit sequence or graph of steps. Some workflows use agents; others are deterministic pipelines. A workflow should not be labeled autonomous merely because one of its steps calls a model.
+A workflow is an explicit composition of steps, often a sequence or graph. It may call agents, tools, or ordinary functions. It need not be autonomous.
 
-## Orchestration
+Examples: sequential execution, conditional branching, parallel fan-out/fan-in, map-reduce, event-driven routing, and durable state graphs.
 
-Orchestration coordinates agents, tools, and workflow steps. It may handle routing, delegation, state transitions, retries, timeouts, and error propagation.
+## Multi-agent architecture
 
-## Architecture
+A multi-agent architecture coordinates multiple distinct agents. It defines communication, roles, delegation, shared or private state, conflict resolution, and termination.
 
-An architecture describes how components are organized or coordinated. Examples include single-agent, supervisor-based, hierarchical, and multi-agent designs.
+Examples: supervisor, hierarchical teams, peer collaboration, debate, critic-generator, contract-net, auction-based allocation, blackboard, and swarm systems.
 
-## Domain application
+## Protocol and integration
 
-A domain application applies agent capabilities to a specific problem area, such as research assistance, coding, customer support, or data analysis. A domain label does not necessarily imply a distinct agent algorithm.
+A protocol defines how systems communicate. A provider API, MCP, or agent-to-agent protocol is an integration boundary, not an agent algorithm.
 
-## Why these distinctions matter
+## Runtime and infrastructure
 
-A clear taxonomy helps developers understand what they are installing and composing. It also avoids duplicate implementations, misleading names, and package boundaries based only on fashionable terminology.
+Runtime infrastructure handles common execution concerns such as identity, context, cancellation, budgets, lifecycle, state, events, and errors. It should support agent implementations without owning their decision logic.
 
-When proposing a new component, describe the problem and classify it before deciding whether it should be an agent, pattern, capability, integration, workflow, or architecture.
+## Why the distinctions matter
+
+A correct taxonomy leads to better APIs and learning. For example, A* belongs as a search strategy; a goal-based navigation agent may use A*. RAG is a capability/pipeline; a research agent may use RAG. MCP is a protocol; an agent may use tools exposed through MCP. A workflow may orchestrate agents without itself becoming an agent.
+
+See [Agent Catalog](agent-catalog.md) for the detailed inventory.

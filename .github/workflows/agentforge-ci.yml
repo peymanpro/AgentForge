@@ -4,26 +4,36 @@ on:
   push:
     branches: [main]
     paths:
-      - "agentforge.net/**"
+      - "src/**"
+      - "tests/**"
+      - "samples/**"
+      - "docs/**"
+      - "AgentForge.sln"
+      - "Directory.Build.props"
+      - "global.json"
       - "AGENTFORGE_SPEC.md"
-      - "conformance/**"
-      - "docs/design/**"
-      - ".github/workflows/agentforge-net-ci.yml"
+      - "README.md"
+      - ".github/workflows/agentforge-ci.yml"
   pull_request:
     branches: [main]
     paths:
-      - "agentforge.net/**"
+      - "src/**"
+      - "tests/**"
+      - "samples/**"
+      - "docs/**"
+      - "AgentForge.sln"
+      - "Directory.Build.props"
+      - "global.json"
       - "AGENTFORGE_SPEC.md"
-      - "conformance/**"
-      - "docs/design/**"
-      - ".github/workflows/agentforge-net-ci.yml"
+      - "README.md"
+      - ".github/workflows/agentforge-ci.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: agentforge-net-ci-${{ github.ref }}
+  group: agentforge-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -42,13 +52,10 @@ jobs:
           dotnet-version: 10.0.403
 
       - name: Restore
-        working-directory: agentforge.net
         run: dotnet restore AgentForge.sln
 
       - name: Build
-        working-directory: agentforge.net
         run: dotnet build AgentForge.sln --configuration Release --no-restore
 
       - name: Test
-        working-directory: agentforge.net
         run: dotnet test AgentForge.sln --configuration Release --no-build --no-restore

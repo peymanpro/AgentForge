@@ -1,76 +1,93 @@
 # Contributing to AgentForge
 
-Thank you for considering a contribution. AgentForge is intended to be a community-driven, multi-language engineering ecosystem. Contributions to specifications, implementations, tests, documentation, examples, and project operations are welcome.
+AgentForge is a .NET / C# project for building and studying agent-engineering systems. Contributions to algorithms, agents, capabilities, runtime infrastructure, tests, samples, documentation, and design are welcome.
 
-Before contributing, please read the [Code of Conduct](CODE_OF_CONDUCT.md), [project concepts](docs/concepts.md), and [shared specification](AGENTFORGE_SPEC.md).
+This repository is intentionally .NET-only. Contributions should use the existing solution and C# conventions; do not add TypeScript, NestJS, Python, or a second language implementation here.
 
 ## Current project stage
 
-AgentForge is in its foundation and design stage. The specifications and implementation plans are evolving; public APIs and package names are not stable, and no language implementation should be treated as production-ready until it is explicitly released as such.
+AgentForge is an actively evolving engineering foundation. Public APIs are experimental, the project is not yet published to NuGet, and package publication is not part of the current development phase.
 
-For substantial work, open or discuss an issue before investing in a large implementation. This helps maintain consistency and prevents duplicated effort.
+For a substantial new agent family or architectural capability, begin with a GitHub issue or design proposal. Agree on classification, problem statement, intended behavior, boundaries, tests, and learning value before adding a project.
 
-## Ways to contribute
+## What can be contributed?
 
-- Clarify or improve the shared terminology and specifications.
-- Propose an agent, capability, protocol integration, or architecture.
-- Implement a feature in an existing language implementation.
-- Propose a new language implementation.
-- Add tests, examples, benchmarks, or documentation.
-- Review changes for correctness, security, maintainability, and idiomatic design.
+- Classical agent architectures and decision algorithms.
+- LLM-based agent patterns and specialized agents.
+- Multi-agent coordination architectures.
+- Model-provider contracts and optional capabilities.
+- Tool definitions, validation, authorization, and execution.
+- State, memory, retrieval, and RAG.
+- Workflow orchestration, human approval, and durable execution.
+- Evaluation, observability, security, and reliability.
+- Deterministic tests, runnable samples, explanations, and learning exercises.
 
-## Design principles for contributions
+See [the agent catalog](docs/agent-catalog.md), [capability map](docs/capability-map.md), and [learning path](docs/learning-path.md).
 
-1. **Solve a clear problem.** Explain the use case and why the proposed component belongs in AgentForge.
-2. **Use precise terminology.** Do not describe a protocol, capability, pattern, workflow, or multi-agent architecture as an agent unless it has agent behavior of its own.
-3. **Keep implementations language-native.** Follow the idioms and ecosystem conventions of the target language.
-4. **Keep the model provider replaceable.** Avoid introducing an unnecessary hard dependency on a specific model vendor.
-5. **Make behavior testable.** Include tests for normal execution, edge cases, failures, cancellation, and stopping conditions where applicable.
-6. **Document trade-offs.** Explain dependencies, limitations, safety implications, and behavioral decisions.
-7. **Avoid speculative abstractions.** Introduce shared abstractions when they solve a demonstrated cross-module problem, not merely to anticipate every possible future feature.
-8. **Keep package boundaries meaningful.** A source module does not automatically need a separate distributable package.
+## Design principles
 
-## Proposing a new language
+1. **Classify before implementing.** State whether the proposal is an agent, algorithm, pattern, capability, protocol, workflow, or multi-agent architecture.
+2. **Solve a concrete problem.** Explain the user scenario and why the module belongs in AgentForge.
+3. **Make the mechanism inspectable.** Core decision logic should be visible and documented.
+4. **Keep modules composable.** Depend on public abstractions; avoid unnecessary coupling to other agents.
+5. **Keep providers replaceable.** Do not leak vendor SDK types into provider-neutral contracts.
+6. **Make execution bounded.** Define stopping conditions, cancellation, timeouts, and resource limits.
+7. **Secure side effects.** Validate and authorize tools independently of model decisions.
+8. **Test behavior, not names.** Cover success, edge cases, provider/tool failure, cancellation, and budget exhaustion.
+9. **Teach through implementation.** Explain the algorithm, trade-offs, failure modes, and include a deterministic example.
+10. **Avoid speculative projects.** A new source project needs a meaningful dependency or conceptual boundary.
 
-A new language implementation is welcome. Before creating a substantial implementation:
+## Requirements for a new agent module
 
-1. Open a proposal describing the language, target ecosystem, intended maintainers, package strategy, and expected users.
-2. Explain how the implementation will satisfy the relevant parts of the shared specification.
-3. Identify language-specific design decisions rather than copying another implementation mechanically.
-4. Outline testing, examples, CI, release, and maintenance plans.
-5. Coordinate with the maintainers before presenting the implementation as officially supported.
+A proposal for a new agent should include:
 
-A directory or proof of concept does not, by itself, mean that a language is officially supported.
+- Problem statement and intended task domain.
+- Classification and relation to existing approaches.
+- Algorithm or control loop, preferably with a lifecycle diagram.
+- Required model/capability contracts, if any.
+- State and memory requirements.
+- Tool authority and side-effect profile.
+- Termination, cancellation, and resource-budget semantics.
+- Failure and partial-result behavior.
+- A deterministic test strategy.
+- A runnable sample and learning notes.
+- Comparison with existing AgentForge modules to prevent duplication.
 
-## Language maintainers
+A catalog entry may be added before implementation, but it must be labeled Planned or Research. Do not create empty source projects to imply support.
 
-Each active language implementation should have one or more Language Maintainers. They are responsible for reviewing changes in that implementation, maintaining its quality and release process, documenting deviations or unsupported capabilities, and coordinating specification changes that affect compatibility.
+## Repository structure
 
-Maintainer status is based on sustained, demonstrated contribution and an explicit maintainer decision. It is not automatically granted by creating a directory or opening a pull request.
+- `src/`: implemented libraries and runtime modules.
+- `tests/`: focused automated test projects.
+- `samples/`: runnable examples.
+- `docs/`: specifications, concepts, learning material, architecture, and design notes.
+- `.github/workflows/`: CI and repository automation.
+
+Keep source projects in `AgentForge.sln` when they are intended to be buildable modules.
 
 ## Pull request checklist
 
-Before opening a pull request, make sure that:
-
 - [ ] The change addresses a documented issue or explains its motivation.
-- [ ] The scope is focused and does not include unrelated refactoring.
-- [ ] Tests are added or updated.
-- [ ] Relevant tests and formatting/lint checks pass locally.
+- [ ] Agent/algorithm/capability/protocol/workflow classification is accurate.
+- [ ] The scope is focused and avoids unrelated refactoring.
+- [ ] Tests cover normal and relevant failure paths.
+- [ ] Cancellation and execution limits are handled where applicable.
 - [ ] Public behavior and limitations are documented.
-- [ ] Specification changes are included when observable behavior or shared contracts change.
-- [ ] Security, privacy, and dependency implications have been considered.
-- [ ] The pull request description explains the problem, approach, and trade-offs.
+- [ ] A runnable deterministic sample is included where useful.
+- [ ] Security, privacy, and dependency implications are considered.
+- [ ] The solution builds and tests pass.
+- [ ] No secrets, credentials, private data, or generated build artifacts are included.
 
-Do not include secrets, credentials, private user data, or generated build artifacts.
+## Build and test locally
 
-## Compatibility and specifications
+```bash
+dotnet restore AgentForge.sln
+dotnet build AgentForge.sln --configuration Release --no-restore
+dotnet test AgentForge.sln --configuration Release --no-build --no-restore
+```
 
-Changes that affect behavior shared across languages should update [AGENTFORGE_SPEC.md](AGENTFORGE_SPEC.md) or the relevant specification document. Implementations should document their conformance status and any intentional limitations.
+## API stability and releases
 
-The specification describes semantic behavior and conformance expectations. It does not require identical public APIs or internal architectures in every language.
+Do not assume an experimental API is stable. Do not publish a package or change package publishing automation as part of an ordinary feature contribution. NuGet releases require a separate explicit maintainer decision after API, dependency, security, documentation, and compatibility review.
 
-## Communication
-
-Use GitHub Issues for proposals, questions, and public engineering discussions. Use private reporting channels for security vulnerabilities as described in [SECURITY.md](SECURITY.md).
-
-Please be respectful, specific, and constructive in reviews and discussions. Thank you for helping build AgentForge.
+Thank you for helping make agent engineering understandable and testable.

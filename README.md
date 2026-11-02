@@ -1,117 +1,154 @@
 # AgentForge
 
-**One ecosystem. Shared specifications. Independent implementations. Community driven.**
+**A modular .NET agent-engineering library and learning laboratory.**
 
-AgentForge is an open-source, multi-language ecosystem for building, composing, and orchestrating AI agents. It aims to make agent engineering understandable, modular, extensible, and practical across programming languages.
+AgentForge is a .NET 10 / C# codebase for building, inspecting, composing, testing, and operating intelligent agents. It brings classical AI agents and algorithms together with modern LLM-based agents, reusable agent capabilities, orchestration patterns, and production engineering practices.
 
-> **Project status:** Early foundation. The .NET implementation now contains experimental abstractions, model contracts, policy-controlled tool execution, initial ReAct, Planning, and Reflection agents, authorization-aware Retrieval and RAG, and bounded sequential/conditional workflow orchestration. APIs are not stable and no packages have been released yet.
+This repository is intentionally **.NET-only**. It is not a multi-language monorepo. The solution, source projects, tests, samples, documentation, and CI all belong to one coherent C# codebase.
+
+AgentForge has two connected goals:
+
+1. **Build a useful engineering toolkit:** real, modular, provider-independent building blocks that application developers can compose.
+2. **Teach agent engineering through implementation:** every important concept should be explained through its problem, algorithm, execution lifecycle, trade-offs, tests, and runnable examples.
+
+The ambition is broad, but implementation claims remain evidence-based. A catalog entry is not the same as an implemented feature.
+
+> **Project status:** Active engineering foundation. Nine .NET source modules currently cover abstractions, model contracts, tools, ReAct, Planning, Reflection, retrieval, RAG, and bounded workflow orchestration. Their APIs are experimental. No NuGet package has been published, and NuGet publication is not a current objective.
 
 ## Why AgentForge?
 
-Agent frameworks often combine agent patterns, tools, memory, retrieval, model integrations, and orchestration in ways that can make their internal behavior difficult to inspect or replace.
+An agent system is much more than a prompt connected to an LLM. Real agent engineering involves decision-making, control loops, state, memory, planning, search, tools, permissions, retrieval, coordination, evaluation, observability, reliability, and deployment.
 
-AgentForge is being designed around a few engineering principles:
+AgentForge makes those mechanics explicit:
 
-- **Understandable implementations:** agent behavior should be implemented in inspectable, testable modules—not hidden behind names or thin wrappers.
-- **Model independence:** developers bring their own model provider and integration.
-- **Composable architecture:** agents, tools, capabilities, and orchestration should have clear boundaries.
-- **Language-native design:** each implementation should feel natural in its own ecosystem.
-- **Shared behavioral specifications:** implementations should agree on documented behavior without being forced into identical internal architectures or APIs.
-- **Community ownership:** language experts are invited to build and maintain implementations for their ecosystems.
+- **Inspectable algorithms:** the decision loop belongs in understandable source code, not hidden behind a label.
+- **Modular boundaries:** agents, capabilities, protocols, orchestration, and infrastructure are distinct.
+- **Bring your own model:** agent logic does not depend on a particular model vendor.
+- **Classical and modern AI:** symbolic, search-based, goal-driven, utility-based, BDI, learning, reinforcement-learning, LLM, and multi-agent approaches have a place in one coherent architecture.
+- **Safe execution:** model output is untrusted; tool requests are validated and authorized before execution.
+- **Learning by engineering:** each implemented concept is accompanied by tests, explanations, examples, and trade-off notes.
+- **Extensible by design:** new agent families and capabilities can be added without turning the core into a collection of special cases.
 
-## The ecosystem
+## Repository layout
 
-The repository is organized as a monorepo. Each language implementation is an independent project with its own source code, dependencies, tests, examples, documentation, and release process.
-
-| Implementation | Location | Package ecosystem | Status |
-|---|---|---|---|
-| .NET / C# | [agentforge.net](agentforge.net/) | NuGet | In progress — ReAct, Planning, Reflection, Retrieval, RAG, and Orchestration prototypes |
-| TypeScript / NestJS | [agentforge.nestjs](agentforge.nestjs/) | npm | Planned |
-| Python | [agentforge.python](agentforge.python/) | PyPI | Planned |
-| Other languages | Community-proposed | Language-specific | Welcome |
-
-The initial implementation work is expected to begin with .NET. NestJS and Python are part of the planned ecosystem, not ports that inherit .NET-specific design decisions. Additional languages can be proposed by the community.
-
-## What belongs in AgentForge?
-
-Agent engineering includes several related but distinct concepts. AgentForge will document and keep these boundaries explicit:
-
-- **Agents:** components with a defined execution loop or decision-making responsibility.
-- **Patterns:** approaches to controlling an agent, such as ReAct or plan-and-execute.
-- **Capabilities:** reusable functions such as retrieval, memory, tool execution, or structured output.
-- **Protocols and integrations:** ways to connect systems, tools, or model providers.
-- **Architectures:** ways to compose multiple agents, such as supervisor-based or hierarchical systems.
-- **Workflows:** explicit sequences or graphs of operations, which may or may not contain autonomous agents.
-
-Not every capability, protocol, pattern, or workflow is itself an agent. See [the concepts guide](docs/concepts.md).
-
-## Architecture at a glance
+The .NET solution lives at the repository root:
 
 ```text
-                         AgentForge
-                              |
-              Shared specifications and principles
-                              |
-          +-------------------+-------------------+
-          |                   |                   |
-      .NET / C#          TypeScript             Python
-          |                / NestJS                |
-   Independent code    Independent code      Independent code
-   tests and packages  tests and packages    tests and packages
-          |                   |                   |
-        NuGet                npm                 PyPI
+AgentForge/
+├── AgentForge.sln
+├── Directory.Build.props
+├── global.json
+├── src/
+│   ├── AgentForge.Abstractions/
+│   ├── AgentForge.Models/
+│   ├── AgentForge.Tools/
+│   ├── AgentForge.Agents.ReAct/
+│   ├── AgentForge.Agents.Planning/
+│   ├── AgentForge.Agents.Reflection/
+│   ├── AgentForge.Retrieval/
+│   ├── AgentForge.RAG/
+│   └── AgentForge.Orchestration/
+├── tests/
+│   └── one focused test project per implemented module
+├── samples/
+│   └── runnable examples
+├── docs/
+│   ├── agent-catalog.md
+│   ├── capability-map.md
+│   ├── learning-path.md
+│   ├── architecture.md
+│   ├── concepts.md
+│   ├── design/
+│   └── decisions/
+└── .github/workflows/
 ```
 
-The shared specifications describe observable behavior, concepts, and conformance expectations. They do not prescribe one internal design for every language.
+Only implemented modules are created as source projects. Planned modules are tracked in the catalog and roadmap until their contracts and behavior are ready.
 
-Each implementation may define idiomatic APIs, dependency-injection patterns, asynchronous execution models, and packaging boundaries appropriate to its ecosystem.
+## Current implementation
 
-## Bring your own model
+| Module | Responsibility | Status |
+|---|---|---|
+| `AgentForge.Abstractions` | Agent execution contracts, context, results, failures, events | Experimental implementation |
+| `AgentForge.Models` | Provider-neutral chat model contracts and optional tool-calling capability | Experimental implementation |
+| `AgentForge.Tools` | Tool definitions, registry, validation, authorization, execution | Experimental implementation |
+| `AgentForge.Agents.ReAct` | Bounded reasoning/action/observation loop | Experimental implementation |
+| `AgentForge.Agents.Planning` | Structured plan validation and bounded plan execution | Experimental implementation |
+| `AgentForge.Agents.Reflection` | Evaluation-guided iterative refinement | Experimental implementation |
+| `AgentForge.Retrieval` | Scoped retrieval and authorization-aware access | Experimental implementation; lexical baseline |
+| `AgentForge.RAG` | Bounded context assembly with source provenance | Experimental implementation |
+| `AgentForge.Orchestration` | Sequential and conditional workflow composition | Experimental implementation |
 
-AgentForge is intended to be model-provider agnostic. Applications should be able to supply their own model integration.
+See [the agent catalog](docs/agent-catalog.md) for implemented, planned, and research-level agent families. See [the capability map](docs/capability-map.md) for the wider engineering surface.
 
-The specifications will distinguish a small set of baseline model operations from optional capabilities such as streaming, tool calling, structured output, and embeddings. An implementation should not require every provider to support every optional capability.
+## Agent families in scope
 
-## Contribute in your language
+AgentForge is intended to cover more than LLM tool-calling agents.
 
-We invite developers, AI engineers, researchers, and maintainers to help build AgentForge in the programming languages they know best.
+- **Classical agent models:** simple reflex, model-based reflex, goal-based, utility-based, learning agents, rule-based systems, reactive/subsumption, deliberative, hybrid, and BDI.
+- **Classical decision algorithms:** state-space search, heuristic search, adversarial search, constraint solving, planning, optimization, game-theoretic strategies, bandits, and reinforcement learning.
+- **LLM agent patterns:** ReAct, plan-and-execute, replanning, reflection, Reflexion, self-refine, tree/graph search reasoning, tool-use, and code-oriented agents.
+- **Multi-agent architectures:** supervisor, hierarchical delegation, planner-worker, peer collaboration, debate, critic-generator, blackboard, contract-net, auction/market, consensus, and swarm-style systems.
+- **Specialized agents:** research, coding, browser/computer use, data analysis, SQL/database, document processing, conversational, voice, and multimodal agents.
 
-You can contribute by:
+These names do not all represent the same kind of component. The catalog explicitly classifies agents, algorithms, patterns, capabilities, protocols, and architectures instead of calling everything an agent.
 
-- Improving the shared specifications and documentation.
-- Implementing or reviewing an agent or capability.
-- Starting a language implementation that does not exist yet.
-- Maintaining tests, examples, integrations, or release automation.
-- Reviewing cross-language behavioral compatibility.
+## Learn through the codebase
 
-A language implementation should have a **Language Maintainer** (or a small maintainer team) responsible for its technical quality, releases, and compatibility with the shared specifications. Maintainers are selected through the project's contribution and review process; a directory's existence does not imply that a language is officially supported.
+The [learning path](docs/learning-path.md) is designed to take a developer from agent fundamentals toward advanced agent engineering. It links concepts to the relevant modules, implementation stages, exercises, and evidence of understanding.
 
-Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [language implementation guide](docs/language-implementations.md).
+A module is considered complete only when it has:
+- A precise problem statement and correct classification.
+- A documented algorithm and execution lifecycle.
+- Explicit public contracts and dependencies.
+- Bounded execution, cancellation, and failure semantics where relevant.
+- Deterministic tests for success, edge cases, failure, and limits.
+- A runnable sample and design/trade-off documentation.
 
-## Project principles
+AgentForge can provide a substantial practical learning path, but mastery also requires independent study of mathematics, machine learning, model behavior, distributed systems, security, and real deployments.
 
-1. **Real implementations over labels.** A module must solve a documented problem and expose behavior that can be tested.
-2. **Clear boundaries.** Agents, capabilities, patterns, protocols, and orchestration must not be conflated.
-3. **Independent implementations.** No language is the reference architecture for all the others.
-4. **Specification before parity claims.** Cross-language compatibility must be demonstrated through documented requirements and tests.
-5. **Small, justified packages.** A module does not automatically need its own distributable package; package boundaries should reflect reuse, dependency isolation, and independent versioning.
-6. **Quality before breadth.** New modules and languages are added when they can be implemented, documented, tested, and maintained responsibly.
+## Build and test
+
+Requirements: .NET SDK 10.0.403 (see `global.json`).
+
+From the repository root:
+
+```bash
+dotnet restore AgentForge.sln
+dotnet build AgentForge.sln --configuration Release --no-restore
+dotnet test AgentForge.sln --configuration Release --no-build --no-restore
+dotnet run --project samples/AgentForge.Orchestration.Sample
+```
+
+The sample is deterministic and does not require a model API key.
+
+## Design principles
+
+1. A component must solve a documented problem; names alone do not count as implementations.
+2. Agents, algorithms, patterns, capabilities, protocols, architectures, and workflows must be classified correctly.
+3. Agent implementations depend on explicit contracts, not on unrelated implementation details.
+4. Model-generated actions are proposals, never authorization decisions.
+5. Limits, cancellation, side effects, and failure behavior must be visible.
+6. Tests use deterministic fakes wherever practical.
+7. Modules are split when the boundary provides real reuse, independent tests, dependency isolation, or conceptual clarity—not simply to increase project count.
+8. Planned features remain planned until working behavior and evidence exist.
+9. No NuGet package is published until the project is intentionally ready for a reviewed release. Publication is outside the current phase.
 
 ## Documentation
 
 - [Vision](docs/vision.md)
-- [Competitive landscape and positioning](docs/competitive-analysis.md)
-- [Proposed MVP scope](docs/mvp-scope.md)
-- [Design proposals](docs/design/README.md)
-- [Architecture](docs/architecture.md)
 - [Concepts and terminology](docs/concepts.md)
-- [Language implementation guide](docs/language-implementations.md)
-- [Shared specification](AGENTFORGE_SPEC.md)
+- [Agent catalog](docs/agent-catalog.md)
+- [Capability map](docs/capability-map.md)
+- [Learning path](docs/learning-path.md)
+- [Architecture](docs/architecture.md)
+- [Implementation scope and status](docs/mvp-scope.md)
+- [Design notes](docs/design/README.md)
+- [AgentForge specification](AGENTFORGE_SPEC.md)
 - [Roadmap](ROADMAP.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
-- [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ## License
 
-AgentForge is released under the [MIT License](LICENSE).
+MIT. See [LICENSE](LICENSE).

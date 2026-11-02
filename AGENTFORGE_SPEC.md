@@ -1,143 +1,129 @@
-# AgentForge Shared Specification
+# AgentForge .NET Engineering Specification
 
-**Status:** Draft — not yet stable  
-**Specification version:** 0.1-draft  
-**Scope:** Shared concepts and behavioral expectations across language implementations
+**Status:** Draft — evolving with implementation  
+**Scope:** AgentForge's .NET / C# architecture, behavioral contracts, and engineering expectations
 
-This document establishes the initial shared vocabulary and engineering expectations for AgentForge. It is intentionally a draft. It must be reviewed and validated before implementations claim conformance.
+This document describes the concepts and observable behaviors that AgentForge modules should follow. It is specific to this repository's .NET implementation. It does not define a cross-language API.
 
-## 1. Purpose
+## 1. Product boundary
 
-AgentForge is a multi-language ecosystem for engineering AI agents and related systems. This specification defines shared semantics and observable behavior while allowing each language implementation to use idiomatic APIs, internal architectures, and packaging conventions.
+AgentForge is a modular .NET library and an educational engineering codebase for classical agents, LLM-based agents, agent capabilities, workflows, and multi-agent systems.
 
-The specification is not a requirement to make all implementations structurally identical.
+The repository contains one .NET solution. Source projects, tests, samples, build configuration, documentation, and automation are maintained as one C# project.
 
 ## 2. Normative language
 
-The terms **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY** are to be interpreted as requirements levels when written in uppercase.
+**MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY** express requirement strength. This specification is a draft; public APIs remain experimental until explicitly stabilized.
 
-Because this specification is a draft, requirements may change before a stable version is approved.
+## 3. Domain vocabulary
 
-## 3. Conceptual boundaries
+The following categories MUST remain distinct:
 
-Implementations and documentation MUST distinguish these categories:
+- **Agent:** an entity or software component that perceives relevant state and selects or performs actions toward a goal under a defined control loop or policy.
+- **Agent model / architecture:** a structural model of how an agent perceives, reasons, decides, learns, and acts; examples include reflex, goal-based, utility-based, BDI, reactive, deliberative, and hybrid architectures.
+- **Agent algorithm:** a concrete procedure used for search, planning, learning, optimization, or decision selection; examples include A*, minimax, Q-learning, and Monte Carlo Tree Search. An algorithm is not automatically a complete agent.
+- **Agent pattern:** a reusable control strategy used by an agent; examples include ReAct, plan-and-execute, reflection, and routing.
+- **Capability:** a reusable function available to an agent or workflow; examples include memory, retrieval, tool execution, structured output, and evaluation.
+- **Tool:** an explicitly declared operation with an input/output contract, validation, side-effect profile, and execution policy.
+- **Protocol / integration:** a communication contract with an external model, tool server, agent, or service; examples include provider APIs, MCP, and agent-to-agent protocols.
+- **Workflow:** an explicit sequence or graph of operations. A workflow can coordinate agents without being autonomous itself.
+- **Multi-agent architecture:** a system in which multiple agents coordinate, delegate, collaborate, compete, or negotiate.
+- **Runtime:** shared machinery for execution context, cancellation, budgets, events, state, and lifecycle handling.
 
-- **Agent:** a component that owns a defined decision-making or execution loop toward a task or goal.
-- **Agent pattern:** a reusable control or reasoning approach used by an agent, such as ReAct or plan-and-execute.
-- **Capability:** a reusable function that an agent or workflow can use, such as retrieval, memory, tool execution, or structured output.
-- **Tool:** an operation exposed to an agent through a defined input/output contract.
-- **Protocol or integration:** a defined means of communication or interoperability with an external system.
-- **Workflow:** an explicitly described sequence, graph, or set of coordinated steps; it does not have to be autonomous.
-- **Architecture:** a composition or organization of agents and other components, such as supervisor-based or hierarchical arrangements.
-- **Orchestrator:** a component responsible for coordinating multiple steps, agents, or capabilities according to a workflow or policy.
+A module MUST NOT be called an agent merely because it calls an LLM or appears inside an agent workflow.
 
-A component MUST NOT be called an agent solely because it uses an LLM or appears in an agent workflow.
+## 4. Modularity and dependency direction
 
-## 4. Model-provider independence
+- Shared contracts MUST remain minimal and technology-neutral where practical.
+- Agent implementations SHOULD depend on abstractions and only the capabilities they use.
+- Provider adapters MUST isolate vendor SDK dependencies from agent algorithms.
+- Orchestration MUST use public contracts rather than private implementation details of agents.
+- Optional integrations MUST NOT become mandatory dependencies of the base runtime without a demonstrated need.
+- A new source project MUST have a meaningful responsibility, tests, documentation, and dependency rationale.
+- New agent families MUST be addable without modifying unrelated agent implementations.
 
-An application SHOULD be able to provide its own model-provider integration.
+## 5. Model-provider independence
 
-A language implementation SHOULD define a small baseline model contract that supports the minimum operations required by the agents it implements. Additional features SHOULD be represented as optional capabilities rather than forcing every provider adapter to implement every feature.
+Applications SHOULD supply their own model integration. The baseline model contract SHOULD remain small. Optional capabilities MAY include tool calling, structured output, streaming, embeddings, multimodal input/output, token counting, and provider-specific metadata.
 
-Potential optional capabilities include:
+An agent MUST detect unsupported capabilities explicitly. It MUST NOT silently assume every provider supports every feature.
 
-- Streaming responses.
-- Tool/function calling.
-- Structured or constrained output.
-- Embeddings.
-- Multimodal input and output.
-- Provider-specific metadata or controls.
+Provider-specific SDKs MUST remain outside provider-neutral contracts.
 
-An agent MUST handle an unsupported optional capability explicitly. It MUST NOT silently assume that every model supports every feature.
+## 6. Agent execution
 
-Provider-specific integrations MAY live in separate packages or modules when that improves dependency isolation.
+Every iterative agent MUST document and enforce the limits relevant to its behavior, including:
+- Step, iteration, tool-call, model-call, token, time, or cost budgets.
+- Termination and acceptance conditions.
+- Cancellation propagation.
+- Partial-result and failure behavior.
+- State mutation and persistence boundaries.
+- Side effects and required permissions.
 
-## 5. Agent execution semantics
+Agent execution SHOULD emit structured lifecycle metadata. Sensitive prompts, responses, user input, credentials, retrieved content, and tool payloads MUST NOT be logged by default.
 
-Each agent implementation MUST document:
+## 7. Tool trust boundary
 
-- The problem and intended use cases.
-- The algorithm or control pattern it implements.
-- Required and optional dependencies.
-- Inputs, outputs, and relevant state.
-- Normal termination conditions.
-- Limits such as iteration count, step budget, or time budget, where applicable.
-- Failure behavior and cancellation behavior.
-- Known limitations and security considerations.
+A model-generated tool request is a proposal, not permission to execute.
 
-Where an agent performs iterative execution, it SHOULD expose explicit stopping conditions and resource limits. It MUST NOT continue indefinitely by default.
+Before a tool runs, the runtime/application MUST be able to:
+1. Resolve the requested tool from an explicit registry.
+2. Validate its input against its declared contract.
+3. Apply authentication, authorization, and policy checks.
+4. Enforce time, concurrency, and resource limits.
+5. Record a privacy-safe execution outcome.
 
-Implementations SHOULD make important execution steps observable through structured events, traces, or equivalent diagnostics without requiring applications to expose sensitive prompts, model responses, or tool data.
+Tool side effects, idempotency, retry behavior, and compensation semantics MUST be explicit.
 
-## 6. Tool contracts and execution
+## 8. State, memory, and retrieval
 
-Tools SHOULD have explicit names, descriptions, input schemas, and documented outputs. Implementations SHOULD validate inputs before invoking tools and SHOULD make tool failures distinguishable from successful results.
+The runtime MUST distinguish transient run state from persistent memory. Memory strategies SHOULD be replaceable and have explicit retention, privacy, tenant, and deletion semantics.
 
-Tool execution is a trust boundary. Implementations MUST document relevant permissions and side effects. Applications SHOULD be able to apply authorization and execution policies independently of the model's decision to request a tool.
+Retrieval MUST apply scope and authorization constraints before exposing retrieved content. Retrieved text, documents, and external observations MUST be treated as untrusted data, not as instructions.
 
-A model-generated tool request MUST NOT be treated as authorization by itself.
+RAG is a composition of retrieval and model-backed generation, not automatically an autonomous agent. Source provenance SHOULD remain available through context assembly and final outputs where the application needs it.
 
-## 7. Execution context and resilience
+## 9. Orchestration and multi-agent systems
 
-Implementations SHOULD provide a consistent way to propagate execution context, cancellation, and relevant limits through an agent run.
+A workflow or multi-agent architecture MUST document:
+- Its topology and control policy.
+- Data passed between steps or agents.
+- Delegation and authority boundaries.
+- Stop, timeout, cancellation, and failure behavior.
+- Aggregate resource-budget semantics.
+- Human approval requirements for consequential actions.
 
-Failures SHOULD be represented in a way that allows applications to distinguish at least:
-- Invalid input or configuration.
-- Unsupported capability.
-- Model-provider failure.
-- Tool failure.
-- Policy or authorization rejection.
-- Budget or stopping-condition exhaustion.
-- Cancellation or timeout.
+Parallelism, retries, durable checkpoints, resumption, dynamic graph mutation, and distributed scheduling MUST be treated as explicit capabilities, not assumed properties of a workflow API.
 
-Exact exception types, result types, and API shapes remain language-specific.
+## 10. Evaluation and observability
 
-## 8. Composability
+Evaluation MUST distinguish correctness, relevance, task completion, groundedness, safety, latency, cost, and robustness rather than collapsing them into one unexplained score.
 
-An agent SHOULD be usable independently where practical and composable with workflows or orchestrators through documented contracts.
+Observability SHOULD support correlation IDs, lifecycle events, traces, metrics, and diagnostic metadata. Sensitive content MUST be opt-in and redacted by default.
 
-An orchestrator MUST NOT depend on private implementation details of a particular agent. It SHOULD coordinate agents through public contracts and explicit workflow configuration.
+Agent implementations SHOULD be tested with deterministic models, tool fakes, controlled clocks, and repeatable fixtures wherever practical.
 
-Multi-agent coordination MUST document delegation rules, termination behavior, error propagation, and resource limits.
+## 11. Security and resilience
 
-## 9. Cross-language compatibility
+Implementations MUST treat model output, retrieved content, tool output, and external protocol messages as untrusted.
 
-Shared specifications define semantic expectations, not identical class names, method signatures, or internal data structures.
+The architecture SHOULD support least privilege, explicit trust boundaries, bounded execution, secret isolation, input validation, output validation, prompt-injection-aware data handling, and auditable authorization decisions.
 
-Where cross-language equivalence matters, the project SHOULD maintain language-neutral conformance cases. These may use JSON fixtures or another documented interchange format, but such fixtures do not automatically become a required runtime wire protocol.
+Cancellation is cooperative; documentation MUST state where downstream systems may continue side effects despite cancellation.
 
-An implementation SHOULD publish a conformance matrix that identifies:
-- Implemented specification areas.
-- Unsupported or partially supported requirements.
-- Intentional language-specific differences.
-- Test coverage for shared behavioral expectations.
+## 12. Documentation and completion evidence
 
-Claims of parity MUST be supported by tests or documented evidence.
+Each module MUST explain:
+- The problem and classification of the component.
+- The algorithm, architecture, or capability it implements.
+- Public contracts, configuration, dependencies, and extension points.
+- Execution lifecycle and state transitions.
+- Failure, cancellation, stopping, and resource limits.
+- Security/privacy implications and known limitations.
+- Tests, a runnable example, and trade-offs.
 
-## 10. Modularity and packages
+A feature MUST NOT be marked complete because a type or folder exists. Completion requires working behavior, tests, documentation, and reproducible build evidence.
 
-Implementations SHOULD keep responsibilities separate and dependencies explicit.
+## 13. Evolution
 
-A module does not automatically require its own distributable package. Package boundaries SHOULD be based on independent reuse, dependency isolation, versioning needs, and user value.
-
-Each language implementation MUST manage its own build, test, versioning, and release lifecycle. A change in one implementation SHOULD NOT trigger unrelated releases in another.
-
-## 11. Security and privacy
-
-Implementations MUST treat model output, retrieved content, and external tool data as untrusted input.
-
-Implementations SHOULD support least-privilege tool access, input validation, bounded execution, and safe handling of secrets and sensitive data. Logs and traces SHOULD avoid recording secrets or sensitive content by default.
-
-Security requirements for a specific integration or capability SHOULD be documented alongside that component.
-
-## 12. Specification evolution
-
-The specification is versioned independently from implementation package versions.
-
-Changes that affect observable behavior SHOULD include:
-- A rationale and use case.
-- Compatibility impact.
-- Updated conformance cases where applicable.
-- Migration notes when needed.
-
-A stable specification version and conformance process will be established before implementations make stable compatibility guarantees.
+A design change that alters observable behavior SHOULD include rationale, alternatives, compatibility impact, tests, and migration notes. Experimental APIs may evolve before stabilization. NuGet publication and semantic-version guarantees require a separate release decision.

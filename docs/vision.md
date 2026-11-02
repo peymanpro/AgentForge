@@ -1,53 +1,54 @@
-# AgentForge Vision
+# Vision
 
-## Mission
+AgentForge aims to become a comprehensive, modular .NET agent-engineering toolkit and a practical learning environment.
 
-Make agent engineering more understandable, composable, and accessible across programming languages by combining shared behavioral specifications with independent, idiomatic implementations.
+The central idea is simple: an agent should be understood as an engineered decision system, not as a prompt wrapped around an LLM. Its behavior emerges from a model of the environment, state, policy, memory, planning, tools, evaluation, execution limits, and feedback.
 
-## The problem we want to address
+## Two goals, one codebase
 
-Agent systems bring together model calls, tools, control loops, state, retrieval, memory, and orchestration. These concepts are often discussed as if they were interchangeable, and important behavior can be difficult for developers to inspect, test, or replace.
+### 1. A useful engineering library
 
-AgentForge aims to address this through explicit boundaries, documented algorithms, modular implementations, and practical examples.
+AgentForge should provide replaceable, composable implementations of classical and modern agent systems. Developers should be able to select the agent architecture and capabilities that match their problem without adopting an opaque, all-in-one framework.
 
-## What we are building
+### 2. A deep learning environment
 
-AgentForge is an ecosystem rather than a single-language framework.
+The source code should also teach the discipline. Each implemented module should connect:
+- The problem it solves.
+- The theory and terminology behind it.
+- The algorithm or architecture.
+- The execution lifecycle.
+- The trade-offs and failure modes.
+- The tests and deterministic examples.
+- The path toward more advanced variants.
 
-It consists of:
+Learning should progress from deterministic classical systems to model-driven agents, then to memory, orchestration, multi-agent coordination, and production operations.
 
-1. **Shared specifications** that define concepts, expected behavior, and compatibility requirements.
-2. **Independent language implementations** built idiomatically for their respective ecosystems.
-3. **A contributor community** that develops, reviews, and maintains those implementations.
+## What AgentForge covers
 
-The first planned language implementations are .NET, TypeScript/NestJS, and Python. Other languages are welcome through the community proposal process.
+- Classical agent models and symbolic decision-making.
+- Search, planning, game-playing, optimization, and reinforcement learning.
+- LLM-based agent patterns and tool use.
+- State, memory, retrieval, and RAG.
+- Workflows and orchestration.
+- Multi-agent architectures and coordination.
+- Evaluation, observability, security, reliability, and deployment.
+- Specialized coding, research, data, browser, voice, and multimodal agents.
 
-## Who it is for
+See [Agent Catalog](agent-catalog.md) for the classified inventory and [Learning Path](learning-path.md) for the study sequence.
 
-- Developers who need to build applications that use agents.
-- Engineers who want to understand and inspect agent execution.
-- Researchers who want to experiment with agent algorithms and architectures.
-- Language experts who want to bring the ecosystem to their community.
-- Teams that need replaceable model integrations and testable components.
+## Principles
 
-## What AgentForge is not
+1. **Mechanisms before labels.** A pattern must be implemented and explained, not merely named.
+2. **Classical and modern AI belong together.** LLMs are an important tool, not the definition of an agent.
+3. **Precise taxonomy.** Algorithms, architectures, capabilities, and protocols are not automatically agents.
+4. **Modularity with discipline.** Boundaries should make systems easier to understand, test, reuse, and extend.
+5. **Provider independence.** The model provider should be replaceable without rewriting the agent algorithm.
+6. **Safety is part of the design.** Tool authority, data trust, side effects, and limits are first-class concerns.
+7. **Learning through evidence.** Tests, traces, examples, diagrams, and design records are part of each implementation.
+8. **Breadth without fake completeness.** The catalog may be broad; implementation status must remain honest.
 
-AgentForge is not intended to be:
-- A wrapper around one model provider.
-- A catalog where every pattern or protocol is labeled an agent.
-- A requirement that all languages share one internal architecture.
-- A promise of feature parity before implementations and tests exist.
-- A substitute for application-specific security, authorization, or operational controls.
+## What success looks like
 
-## Measures of progress
+A developer should be able to study an idea, trace it to its implementation, run it, inspect its tests, understand its limitations, and compose it into a larger system. Over time, AgentForge should become a coherent place to learn and practice agent engineering across the full lifecycle—from decision theory to production operations.
 
-Progress should be demonstrated through working software and evidence:
-
-- Agents have inspectable implementations and documented execution behavior.
-- Core behavior is covered by meaningful tests.
-- Model integrations can be replaced without rewriting agent logic.
-- Components compose through public contracts.
-- Language implementations report their conformance honestly.
-- Contributors can add capabilities and languages without destabilizing unrelated implementations.
-
-The goal is sustainable engineering quality, not the largest possible feature list.
+AgentForge can support a substantial path toward becoming an agent engineer. It cannot replace foundational study, independent experimentation, mathematical understanding, or production experience.
