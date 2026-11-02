@@ -7,8 +7,8 @@ This roadmap describes intended direction, not promised release dates. Work may 
 - [x] Create the public monorepo.
 - [x] Establish project vision, terminology, and contribution principles.
 - [x] Draft the shared specification.
-- [ ] Review the architecture against existing agent frameworks.
-- [ ] Define measurable acceptance criteria for the first implementation.
+- [x] Complete an initial documentation-based landscape review of existing agent frameworks; deeper source-level comparison remains future work.
+- [x] Draft measurable acceptance criteria for the first implementation in [MVP Scope](docs/mvp-scope.md).
 - [ ] Establish issue labels, proposal process, and maintainer governance.
 
 ## Phase 1 — Complete .NET MVP
