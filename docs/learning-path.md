@@ -66,7 +66,9 @@ Completion evidence: prove with tests that invalid and unauthorized calls never 
 
 ## Phase 4 — Classical agents and algorithms
 
-Read the classical sections of the [Agent Catalog](agent-catalog.md).
+Start with the implemented `src/AgentForge.Agents.Classical` module and its [design note](design/classical-agents.md), then read the classical sections of the [Agent Catalog](agent-catalog.md).
+
+The first two architectures are implemented experimentally: simple-reflex evaluates the current percept; model-based reflex updates an explicitly supplied internal state before evaluating rules. The thermostat sample shows the same scenario through both approaches.
 
 Recommended order:
 1. Simple-reflex agent.

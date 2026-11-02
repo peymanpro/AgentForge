@@ -26,8 +26,9 @@ AgentForge is a **single .NET / C# repository**. The goal is a broad, modular ag
 
 ## Phase 2 — Classical AI agents and decision systems
 
-- [ ] Create a design and learning sequence for classical agent architectures.
-- [ ] Implement simple-reflex, model-based, goal-based, and utility-based agent examples.
+- [x] Define a design and learning sequence for classical agent architectures.
+- [x] Implement simple-reflex and model-based reflex foundations (experimental).
+- [ ] Implement goal-based and utility-based agent examples.
 - [ ] Implement rule-based / production-system agents and inference strategies.
 - [ ] Implement a reusable state-space search foundation.
 - [ ] Add uninformed and heuristic search strategies, including BFS, DFS, uniform-cost, greedy best-first, A*, and iterative-deepening variants.

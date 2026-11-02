@@ -121,4 +121,4 @@ Use deterministic fakes for algorithm tests. Live LLM tests are supplementary an
 
 ## 6. Current versus planned boundaries
 
-The source tree currently implements abstractions, model contracts, tools, ReAct, Planning, Reflection, retrieval, RAG, and sequential/conditional orchestration. Other families remain catalogued and planned. Do not infer implementation from a planned name.
+The source tree currently implements abstractions, model contracts, tools, simple-reflex and model-based reflex classical agents, ReAct, Planning, Reflection, retrieval, RAG, and sequential/conditional orchestration. Other families remain catalogued and planned. Do not infer implementation from a planned name.
