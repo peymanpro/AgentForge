@@ -21,9 +21,14 @@ public sealed class PlanStepHandlerRegistry
             ArgumentNullException.ThrowIfNull(handler);
             var stepType = handler.StepType;
 
-            if (string.IsNullOrWhiteSpace(stepType))
+            if (string.IsNullOrWhiteSpace(stepType) ||
+                stepType.Length > 64 ||
+                !stepType.All(static character =>
+                    char.IsAsciiLetterOrDigit(character) || character is '_' or '-'))
             {
-                throw new ArgumentException("A handler must expose a non-empty step type.", nameof(handlers));
+                throw new ArgumentException(
+                    "A handler step type must be 1–64 ASCII letters, digits, underscores, or hyphens.",
+                    nameof(handlers));
             }
 
             if (!map.TryAdd(stepType, handler))

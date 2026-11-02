@@ -381,6 +381,10 @@ public sealed class PlanAndExecuteAgent : IAgent<string, PlanAndExecuteOutput>
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             AddCancelledActiveStep(activeStep, activeStepStartedAt, stepResults);
+            if (plan is not null)
+            {
+                AddBlockedSteps(plan, stepResults.Count, stepResults);
+            }
 
             await PublishTerminalEventAsync(
                 options,
@@ -442,6 +446,20 @@ public sealed class PlanAndExecuteAgent : IAgent<string, PlanAndExecuteOutput>
         IReadOnlyList<PlanStepResult> stepResults,
         AgentFailure failure)
     {
+        if (stepResults.Count > 0 && stepResults[^1].Status == PlanStepStatus.Failed)
+        {
+            await PublishEventAsync(
+                options,
+                context,
+                "plan.step.failed",
+                new Dictionary<string, string>
+                {
+                    ["step_id"] = stepResults[^1].StepId,
+                    ["failure_code"] = stepResults[^1].Failure?.Code ?? "plan.step_failed"
+                },
+                CancellationToken.None);
+        }
+
         AddBlockedSteps(plan, stepResults.Count, stepResults);
 
         await PublishTerminalEventAsync(
@@ -471,14 +489,14 @@ public sealed class PlanAndExecuteAgent : IAgent<string, PlanAndExecuteOutput>
             output);
     }
 
-    private static void AddSkippedSteps(
+    private void AddSkippedSteps(
         ExecutionPlan plan,
         int startIndex,
         List<PlanStepResult> results,
         string code,
         string message)
     {
-        var now = DateTimeOffset.UtcNow;
+        var now = _timeProvider.GetUtcNow();
         for (var index = startIndex; index < plan.Steps.Count; index++)
         {
             results.Add(new PlanStepResult(
@@ -490,7 +508,7 @@ public sealed class PlanAndExecuteAgent : IAgent<string, PlanAndExecuteOutput>
         }
     }
 
-    private static void AddBlockedSteps(
+    private void AddBlockedSteps(
         ExecutionPlan plan,
         int startIndex,
         List<PlanStepResult> results)
@@ -510,7 +528,7 @@ public sealed class PlanAndExecuteAgent : IAgent<string, PlanAndExecuteOutput>
         }
     }
 
-    private static void AddCancelledActiveStep(
+    private void AddCancelledActiveStep(
         PlanStep? activeStep,
         DateTimeOffset? activeStepStartedAt,
         List<PlanStepResult> results)
@@ -524,7 +542,7 @@ public sealed class PlanAndExecuteAgent : IAgent<string, PlanAndExecuteOutput>
             activeStep.Id,
             PlanStepStatus.Cancelled,
             activeStepStartedAt.Value,
-            DateTimeOffset.UtcNow,
+            _timeProvider.GetUtcNow(),
             failure: new AgentFailure(
                 AgentFailureCategory.Cancelled,
                 "plan.step_cancelled",

@@ -59,13 +59,15 @@ public sealed class PlanValidator
             var step = plan.Steps[index];
             var path = $"$.steps[{index}]";
 
-            if (!IsValidIdentifier(step.Id, MaxStepIdLength))
+            var validUniqueId = IsValidIdentifier(step.Id, MaxStepIdLength);
+            if (!validUniqueId)
             {
                 issues.Add(new("plan.invalid_step_id", $"{path}.id", "A step identifier must be 1–64 ASCII letters, digits, underscores, or hyphens."));
             }
-            else if (!seenIds.Add(step.Id))
+            else if (seenIds.Contains(step.Id))
             {
                 issues.Add(new("plan.duplicate_step_id", $"{path}.id", "Step identifiers must be unique within a plan."));
+                validUniqueId = false;
             }
 
             if (!IsValidIdentifier(step.StepType, MaxStepTypeLength))
@@ -110,6 +112,11 @@ public sealed class PlanValidator
                 {
                     issues.Add(new("plan.forward_or_unknown_reference", $"{path}.inputReferences", "A step may reference only outputs from earlier steps."));
                 }
+            }
+
+            if (validUniqueId)
+            {
+                seenIds.Add(step.Id);
             }
         }
 
