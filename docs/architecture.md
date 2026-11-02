@@ -152,4 +152,4 @@ A full solution build and test run is required before a module can be marked imp
 
 The Simple Reflex, Model-Based Reflex, Goal-Based, Utility-Based, and Learning modules currently expose module-specific fluent builders. Simple Reflex and Model-Based Reflex are the first examples of separate Domain/Application/public projects.
 
-ReAct and Plan-and-Execute now expose module-specific fluent builders. Reflection still needs a fluent public API and internal layer-boundary review. The next engineering priority is to make every implemented agent equally straightforward to construct, not to add a universal builder or a package that depends on every agent.
+ReAct, Plan-and-Execute, and Reflection now expose module-specific fluent builders. Internal layer-boundary review remains an ongoing task for these modules. The next engineering priority is to make every implemented agent equally straightforward to construct, not to add a universal builder or a package that depends on every agent.
