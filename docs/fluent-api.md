@@ -83,7 +83,20 @@ var agent = LearningAgentBuilder.Create<string>()
     .Build();
 ```
 
-These examples reflect implemented builders. ReAct, Plan-and-Execute, and Reflection builder APIs are still part of the migration roadmap; their current implementation status must not be confused with the target API.
+### ReAct
+
+```csharp
+var agent = ReActAgentBuilder.Create()
+    .WithDecisionStrategy(decisionStrategy)
+    .WithTools(approvedTools)
+    .WithAuthorization(authorizationPolicy)
+    .WithSystemPrompt("Use approved tools when useful.")
+    .WithMaxModelTurns(8)
+    .WithMaxToolInvocations(12)
+    .Build();
+```
+
+ReAct now exposes a module-specific builder. Plan-and-Execute and Reflection builder APIs remain part of the migration roadmap; their current implementation status must not be confused with the target API.
 
 ## 3. Consistent construction and execution
 
