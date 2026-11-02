@@ -81,6 +81,13 @@ public sealed class ReActAgent : IAgent<string, ReActAgentOutput>
             ? (long)configuredSteps
             : (long)maxModelTurns + maxToolInvocations;
         var timeout = options.Timeout ?? _agentOptions.Timeout;
+        if (timeout > TimeSpan.FromMilliseconds(4294967294d))
+        {
+            return Rejected(
+                "run.timeout_out_of_range",
+                "The configured timeout exceeds the supported timer range.",
+                startedAt);
+        }
 
         using var timeoutSource = new CancellationTokenSource(timeout);
         using var linkedSource = CancellationTokenSource.CreateLinkedTokenSource(

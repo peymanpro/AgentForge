@@ -149,7 +149,23 @@ public sealed class ReActAgentTests
         var observation = strategy.Requests[1].Messages[2].Content ?? string.Empty;
         Assert.Contains("ObservationTruncated", observation);
         Assert.DoesNotContain(largeValue, observation);
-        Assert.Contains(largeValue, result.Output!.ToolExecutions[0].Output?.GetProperty("payload").GetString() ?? string.Empty);
+        var toolOutput = result.Output!.ToolExecutions[0].Output;
+        Assert.True(toolOutput.HasValue);
+        Assert.Equal(largeValue, toolOutput.Value.GetProperty("payload").GetString());
+    }
+
+    [Fact]
+    public async Task RunAsync_PreservesPartialResponseWhenModelHitsOutputLimit()
+    {
+        var strategy = new ScriptedDecisionStrategy(
+            new ModelResponse(ChatMessage.Assistant("partial response"), ModelFinishReason.Length));
+        var agent = CreateAgent(strategy);
+
+        var result = await agent.RunAsync("Perform the task.", AgentRunContext.Create(), new AgentRunOptions());
+
+        Assert.Equal(AgentRunStatus.PartiallyCompleted, result.Status);
+        Assert.Equal("partial response", result.Output?.FinalResponse);
+        Assert.Equal("model.output_limit", result.Failure?.Code);
     }
 
     [Fact]

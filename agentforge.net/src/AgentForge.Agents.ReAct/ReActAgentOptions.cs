@@ -43,9 +43,12 @@ public sealed class ReActAgentOptions
         }
 
         var effectiveTimeout = timeout ?? TimeSpan.FromSeconds(45);
-        if (effectiveTimeout <= TimeSpan.Zero)
+        if (effectiveTimeout <= TimeSpan.Zero || effectiveTimeout.TotalMilliseconds > 4294967294d)
         {
-            throw new ArgumentOutOfRangeException(nameof(timeout), effectiveTimeout, "The timeout must be positive.");
+            throw new ArgumentOutOfRangeException(
+                nameof(timeout),
+                effectiveTimeout,
+                "The timeout must be positive and within the supported timer range.");
         }
 
         if (maxToolObservationCharacters <= 0)
