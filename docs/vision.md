@@ -1,54 +1,55 @@
-# Vision
+# AgentForge Product Vision
 
-AgentForge aims to become a comprehensive, modular .NET agent-engineering toolkit and a practical learning environment.
+AgentForge is a modular .NET library that makes it easier to construct, configure, run, and compose different kinds of agents.
 
-The central idea is simple: an agent should be understood as an engineered decision system, not as a prompt wrapped around an LLM. Its behavior emerges from a model of the environment, state, policy, memory, planning, tools, evaluation, execution limits, and feedback.
+The product is not a tutorial, a collection of prompt templates, or a single generic LLM wrapper. It is a library of independently usable agent modules, each built around a specific architecture or control strategy.
 
-## Two goals, one codebase
+## Product promise
 
-### 1. A useful engineering library
+A developer should be able to:
 
-AgentForge should provide replaceable, composable implementations of classical and modern agent systems. Developers should be able to select the agent architecture and capabilities that match their problem without adopting an opaque, all-in-one framework.
+1. Select the architecture that matches the problem.
+2. Add only that agent module and the capabilities it needs.
+3. Configure it through a discoverable fluent API.
+4. Run it through a consistent execution contract.
+5. Compose it with other agents and workflows without depending on their internal classes.
+6. Replace models, tools, memory, retrieval, and infrastructure through explicit ports.
 
-### 2. A deep learning environment
+For a deterministic agent, the user should not need an LLM. For an LLM agent, the user should not be forced to use one provider. For a specialized agent, the user should not need to manually rebuild a common architecture from low-level primitives.
 
-The source code should also teach the discipline. Each implemented module should connect:
-- The problem it solves.
-- The theory and terminology behind it.
-- The algorithm or architecture.
-- The execution lifecycle.
-- The trade-offs and failure modes.
-- The tests and deterministic examples.
-- The path toward more advanced variants.
+## Product boundaries
 
-Learning should progress from deterministic classical systems to model-driven agents, then to memory, orchestration, multi-agent coordination, and production operations.
+AgentForge has four related but distinct areas:
 
-## What AgentForge covers
+- **Agent modules:** complete agent architectures and patterns such as Simple Reflex, BDI, ReAct, Reflection, Supervisor, and Research Agent.
+- **Algorithms:** reusable search, planning, game-playing, optimization, and learning procedures.
+- **Capabilities:** model access, tools, memory, retrieval, RAG, evaluation, and observability.
+- **Composition:** workflows and multi-agent coordination that combine independently built components.
 
-- Classical agent models and symbolic decision-making.
-- Search, planning, game-playing, optimization, and reinforcement learning.
-- LLM-based agent patterns and tool use.
-- State, memory, retrieval, and RAG.
-- Workflows and orchestration.
-- Multi-agent architectures and coordination.
-- Evaluation, observability, security, reliability, and deployment.
-- Specialized coding, research, data, browser, voice, and multimodal agents.
+A catalog entry is not automatically a standalone agent. An algorithm or capability receives its own package when it has an independently useful contract.
 
-See [Agent Catalog](agent-catalog.md) for the classified inventory and [Learning Path](learning-path.md) for the study sequence.
+## Design commitments
 
-## Principles
+- One module per agent type or independently meaningful architecture.
+- Clean Architecture dependency direction within each module.
+- A public composition root with a module-specific fluent builder.
+- Shared, minimal execution contracts.
+- Optional model, tools, memory, and retrieval integrations.
+- Explicit state ownership and lifecycle.
+- Bounded execution, cancellation, and normalized failure outcomes.
+- Security and permissions at the boundary where effects occur.
+- No concrete dependency from one agent module to another.
+- Working tests and examples for every implemented module.
 
-1. **Mechanisms before labels.** A pattern must be implemented and explained, not merely named.
-2. **Classical and modern AI belong together.** LLMs are an important tool, not the definition of an agent.
-3. **Precise taxonomy.** Algorithms, architectures, capabilities, and protocols are not automatically agents.
-4. **Modularity with discipline.** Boundaries should make systems easier to understand, test, reuse, and extend.
-5. **Provider independence.** The model provider should be replaceable without rewriting the agent algorithm.
-6. **Safety is part of the design.** Tool authority, data trust, side effects, and limits are first-class concerns.
-7. **Learning through evidence.** Tests, traces, examples, diagrams, and design records are part of each implementation.
-8. **Breadth without fake completeness.** The catalog may be broad; implementation status must remain honest.
+## What AgentForge is not
 
-## What success looks like
+- Not an educational course or learning laboratory.
+- Not a requirement to use an LLM for every agent.
+- Not a mandatory provider SDK.
+- Not a monolithic agent class with a large set of strategy flags.
+- Not a workflow engine disguised as an autonomous agent.
+- Not a claim that every architecture in the catalog is already implemented.
 
-A developer should be able to study an idea, trace it to its implementation, run it, inspect its tests, understand its limitations, and compose it into a larger system. Over time, AgentForge should become a coherent place to learn and practice agent engineering across the full lifecycle—from decision theory to production operations.
+## Long-term scope
 
-AgentForge can support a substantial path toward becoming an agent engineer. It cannot replace foundational study, independent experimentation, mathematical understanding, or production experience.
+The intended scope includes classical agent architectures, symbolic and search-based decision systems, LLM patterns, specialist agents, multi-agent topologies, and the capabilities needed to run them reliably. The breadth is tracked in the [Agent Catalog](agent-catalog.md) and [Roadmap](../ROADMAP.md).

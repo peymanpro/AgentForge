@@ -1,124 +1,151 @@
-# AgentForge Architecture
+# AgentForge System Architecture
 
-**Scope:** One modular .NET / C# solution.
+AgentForge uses modular Clean Architecture. The system has shared execution/capability contracts and independently composed agent modules. The public module package is the only surface an application should need for ordinary use.
 
-AgentForge uses a layered, capability-oriented architecture. The goal is not to create a project for every noun. A source project is justified when it creates an independently understandable, testable, reusable, or dependency-isolated boundary.
-
-## 1. Repository structure
+## 1. Architectural overview
 
 ```text
-AgentForge/
-├── AgentForge.sln
-├── Directory.Build.props
-├── global.json
-├── src/
-│   ├── AgentForge.Abstractions/
-│   ├── AgentForge.Models/
-│   ├── AgentForge.Tools/
-│   ├── AgentForge.Agents.*
-│   ├── AgentForge.Retrieval/
-│   ├── AgentForge.RAG/
-│   ├── AgentForge.Memory.*              (planned)
-│   ├── AgentForge.Orchestration/
-│   ├── AgentForge.MultiAgent.*          (planned)
-│   ├── AgentForge.Evaluation.*          (planned)
-│   ├── AgentForge.Observability.*       (planned)
-│   ├── AgentForge.Security.*            (planned)
-│   └── AgentForge.Protocols.*           (planned)
-├── tests/
-├── samples/
-└── docs/
+Application / Host
+    |
+    +---- AgentForge.Agents.SimpleReflex
+    +---- AgentForge.Agents.ReAct
+    +---- AgentForge.Agents.BDI
+    +---- AgentForge.Agents.Research
+    |
+    +---- AgentForge.Orchestration
+    +---- AgentForge.MultiAgent.Supervisor
+    |
+    +---- optional capabilities
+          Models / Providers / Tools / Memory / Retrieval / RAG
+          Evaluation / Security / Observability / Protocols
 ```
 
-The entries marked planned are architectural directions, not existing projects. Create them only after the behavior and dependencies are specified.
+Agent modules are independently installable and do not call one another's concrete implementation classes. Composition happens through shared agent contracts and public handles.
 
-## 2. Logical layers
+## 2. One agent type per module
 
-### Contracts and runtime foundation
+Examples:
 
-- **Abstractions:** agent contracts, run context, results, failures, events, cancellation, and limits.
-- **Core runtime (planned where a separate boundary is justified):** execution services, common policies, state lifecycle, budget accounting, and runtime composition.
-- **Models:** normalized model requests/responses and optional provider capabilities.
-
-### Agent implementations
-
-Agent projects contain their own decision logic and depend on only the contracts and capabilities they need.
-
-Candidate families:
-- `AgentForge.Agents.Classical`
+- `AgentForge.Agents.SimpleReflex`
+- `AgentForge.Agents.ModelBasedReflex`
+- `AgentForge.Agents.GoalBased`
+- `AgentForge.Agents.UtilityBased`
+- `AgentForge.Agents.BDI`
 - `AgentForge.Agents.ReAct`
-- `AgentForge.Agents.Planning`
+- `AgentForge.Agents.PlanAndExecute`
 - `AgentForge.Agents.Reflection`
-- `AgentForge.Agents.Reasoning`
-- `AgentForge.Agents.ReinforcementLearning`
-- `AgentForge.Agents.MultiAgent` or smaller architecture-specific modules where dependency boundaries justify them.
+- `AgentForge.Agents.Supervisor` or architecture-specific multi-agent modules.
 
-### Capabilities
+The module name expresses the architecture or pattern implemented. Search algorithms and capabilities receive separate package families because they can be reused by many agents.
 
-- **Tools:** schemas, registration, validation, authorization, execution, and side-effect policies.
-- **Memory:** short-term context, summaries, semantic/episodic/entity/procedural memory, stores, retention, and consolidation.
-- **Retrieval:** lexical, dense, hybrid, filtered, reranked, and graph-based retrieval strategies.
-- **RAG:** explicit retrieval/context/generation pipelines with source provenance.
-- **Evaluation:** evaluators, datasets, judges, and regression suites.
-- **Observability:** lifecycle events, traces, metrics, correlation, and privacy controls.
-- **Security:** trust boundaries, policy enforcement, guardrails, approvals, and audit semantics.
+## 3. Clean Architecture inside each module
 
-### Orchestration and protocols
-
-- **Orchestration:** sequential, conditional, graph, parallel, loop, durable, and human-in-the-loop workflows.
-- **Multi-agent coordination:** delegation, messages, roles, shared state, negotiation, consensus, and termination.
-- **Protocols:** provider adapters, MCP, and agent-to-agent interoperability. Protocol modules do not own agent reasoning.
-
-## 3. Dependency direction
+A module normally follows this shape:
 
 ```text
-Application
-  ├── chooses Agent architecture(s)
-  ├── supplies model provider(s)
-  ├── configures tools and authorization policy
-  ├── selects memory/retrieval/evaluation/observability
-  └── composes agents with workflows or multi-agent architecture
-           |
-           v
-       Agent runtime
-           |
-           v
-     Minimal abstractions
+AgentForge.Agents.<Type>/
+  Domain/
+  Application/
+  Infrastructure/       # Optional; only when external adapters are needed
+  Public API / Builders # Composition root
 ```
 
-Rules:
-- Provider adapters implement model contracts; agents do not reference provider SDKs directly.
-- Agent modules depend on public abstractions and selected capabilities.
-- Orchestration depends on agent contracts, not concrete internal classes.
-- Memory and retrieval remain separate from model transport.
-- Protocol adapters translate communication; they do not bypass tool authorization.
-- Application code owns credentials, tenant identity, deployment choices, and business permissions.
+Where compile-time isolation is useful, Domain and Application live in separate projects. The public module project references those layers and exposes the fluent builder. Infrastructure is a separate project only when the module needs a provider, persistence, transport, or other external adapter.
 
-## 4. Adding a new agent family
+### Dependency direction
 
-Before creating a project:
-1. Classify the proposal: agent, architecture, algorithm, pattern, capability, protocol, or workflow.
-2. Explain the problem and target scenario.
-3. Identify the algorithm and lifecycle.
-4. List required contracts and optional capabilities.
-5. Define state, side effects, termination, cancellation, and budgets.
-6. Show why the existing projects cannot host it cleanly.
-7. Prototype the smallest deterministic behavior.
-8. Add tests, docs, and a sample before marking the catalog entry implemented.
+```text
+Domain <----- Application <----- Infrastructure
+   ^                ^                    |
+   |                |                    |
+   +------ Public API / Composition Root+
+```
 
-New agent families should be additive. Avoid a single generic class with a growing enum and large switch statement for every agent type.
+- **Domain** owns entities, value objects, policies, and domain decisions. It has no provider, runtime, Infrastructure, or cross-agent dependency.
+- **Application** owns the agent's use cases and control loop. It depends on its Domain and defines ports for external capabilities.
+- **Infrastructure** implements those ports. It points inward and does not own agent decision logic.
+- **Public API / composition root** exposes fluent builders, validated options, optional DI registration, and the configured run handle.
 
-## 5. Testing layers
+An Infrastructure project is not mandatory. Simple Reflex and Model-Based Reflex need no provider or storage adapter: their host supplies percepts/state and applies proposed actions. Adding an empty Infrastructure project would weaken rather than improve the architecture.
 
-- **Unit tests:** decision rules, transitions, validators, policies, and algorithms.
-- **Contract tests:** shared lifecycle and model/tool capability behavior.
-- **Integration tests:** real adapters, stores, and protocol boundaries with test infrastructure.
-- **Scenario tests:** complete tasks with deterministic models and tools.
-- **Evaluation tests:** quality, groundedness, safety, latency, and cost measured against controlled cases.
-- **Regression tests:** preserve known behavior when prompts, models, algorithms, or data change.
+## 4. Shared contracts and capabilities
 
-Use deterministic fakes for algorithm tests. Live LLM tests are supplementary and must not be the only evidence that an algorithm works.
+The shared layer must stay small:
 
-## 6. Current versus planned boundaries
+| Module | Responsibility |
+|---|---|
+| `AgentForge.Abstractions` | Generic agent contract, normalized run outcomes, run context, limits, events, concise AgentHandle |
+| `AgentForge.Runtime` | Optional common runtime services: budgets, lifecycle, middleware, context/state infrastructure |
+| `AgentForge.Models` | Provider-neutral model contracts and normalized chat types |
+| `AgentForge.Tools` | Tool schemas, registry, validation, authorization, execution |
+| `AgentForge.Memory.*` | Memory contracts and store adapters |
+| `AgentForge.Retrieval.*` | Retrieval contracts and lexical/vector/hybrid adapters |
+| `AgentForge.RAG` | Retrieval-context-generation composition and provenance |
+| `AgentForge.Search.*` | Search algorithms and reusable search strategies |
+| `AgentForge.Planning.*` | Planning models, algorithms, and planners |
+| `AgentForge.Optimization.*` | Optimization and metaheuristic strategies |
+| `AgentForge.ReinforcementLearning.*` | Environments, policies, algorithms, training and evaluation support |
+| `AgentForge.Orchestration` | Workflow composition |
+| `AgentForge.MultiAgent.*` | Multi-agent coordination architectures |
+| `AgentForge.Evaluation` | Quality, safety, and regression evaluation |
+| `AgentForge.Security` | Shared trust-boundary and policy mechanisms |
+| `AgentForge.Observability` | Events, traces, metrics, correlation, redaction |
+| `AgentForge.Providers.*` | Provider adapters |
+| `AgentForge.Protocols.*` | MCP, A2A, and other protocol integrations |
 
-The source tree currently implements abstractions, model contracts, tools, simple-reflex and model-based reflex classical agents, ReAct, Planning, Reflection, retrieval, RAG, and sequential/conditional orchestration. Other families remain catalogued and planned. Do not infer implementation from a planned name.
+These are target package boundaries. Planned names do not imply that packages already exist.
+
+## 5. Fluent API and composition
+
+Each agent module owns its fluent builder. Shared code can standardize option validation, naming, metadata, and the execution handle, but agent-specific methods remain local.
+
+```csharp
+var agent = ReActAgentBuilder
+    .Create()
+    .WithModel(model)
+    .WithTools(tools => tools.Add(orderLookup))
+    .WithAuthorization(policy)
+    .WithMaxModelTurns(8)
+    .Build();
+
+var result = await agent.RunAsync("Find order 123.", cancellationToken);
+```
+
+The example shows the intended API direction. The current ReAct module is still being migrated to this builder contract.
+
+A user can compose independent modules with a workflow or multi-agent architecture. The orchestrator depends on `IAgent<TInput,TOutput>` or the public handle, never on a concrete ReAct/BDI/Research implementation.
+
+## 6. Provider independence
+
+LLM-based agents depend on provider-neutral contracts. Provider adapters sit outside the agent's Domain and Application layers.
+
+The design should support adapters built on `Microsoft.Extensions.AI` and optional provider-specific integrations. No provider package is mandatory for deterministic agents.
+
+A provider adapter implements model capabilities; an agent module decides when those capabilities are required. A model-generated tool call remains only a proposal until validated and authorized by the tool boundary.
+
+## 7. State and concurrency
+
+- Run context is transient and scoped to one execution.
+- Persistent memory and agent-session state are separate capabilities.
+- Agent instances should be immutable after Build and safe for concurrent runs unless the module explicitly documents session-local state.
+- Stateful agents should receive a session/state handle or explicit state input, not hide mutable per-user state in a singleton.
+- The host controls persistence, tenant scope, and state lifetime.
+
+## 8. Testing strategy
+
+Each module should have:
+
+- **Domain tests:** invariants, rules, decisions, and state transitions.
+- **Application tests:** use-case behavior, cancellation, budgets, failures, and partial outcomes.
+- **Architecture tests:** reference direction and forbidden cross-module dependencies.
+- **Infrastructure tests:** adapters and external boundaries, only when present.
+- **Public API tests:** builder validation and composition.
+- **Scenario tests:** reproducible tasks with deterministic fakes.
+
+A full solution build and test run is required before a module can be marked implemented.
+
+## 9. Current migration state
+
+The Simple Reflex and Model-Based Reflex modules are the first examples of separate Domain/Application/public projects and fluent builders. The previous combined `AgentForge.Agents.Classical` module is being retired.
+
+ReAct, Planning, and Reflection already have separate top-level agent projects, but their internal layer boundaries and fluent public APIs still need migration. Their current experimental implementations are not yet examples of the final module template.

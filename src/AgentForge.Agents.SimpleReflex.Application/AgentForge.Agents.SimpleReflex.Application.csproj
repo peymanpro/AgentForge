@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Agents.SimpleReflex.Application</AssemblyName>
+    <RootNamespace>AgentForge.Agents.SimpleReflex.Application</RootNamespace>
+    <PackageId>AgentForge.Agents.SimpleReflex.Application</PackageId>
+    <Description>Application use cases for the Simple Reflex agent module.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;simple-reflex;application</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+    <ProjectReference Include="..\AgentForge.Agents.SimpleReflex.Domain\AgentForge.Agents.SimpleReflex.Domain.csproj" />
+  </ItemGroup>
+</Project>

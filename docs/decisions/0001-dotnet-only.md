@@ -6,7 +6,7 @@
 
 ## Context
 
-AgentForge initially began as a multi-language monorepo with separate .NET, NestJS/TypeScript, and Python directories. The project direction has changed: its primary purpose is to become one deep, coherent .NET agent-engineering library and learning codebase.
+AgentForge initially began as a multi-language monorepo with separate .NET, NestJS/TypeScript, and Python directories. The project direction has changed: its primary purpose is to become one coherent .NET agent-engineering library.
 
 Keeping unrelated language roots, release concepts, and cross-language specifications in the same repository adds maintenance and conceptual overhead without serving the current goal.
 
@@ -29,7 +29,7 @@ AgentForge is a single .NET / C# repository.
 
 - The repository has one coherent language, toolchain, solution, CI path, and contribution workflow.
 - Contributors can navigate the project without a nested implementation directory.
-- Learning material can follow one consistent C# implementation from concept to test.
+- All modules, contracts, tests, and integrations can follow one consistent C# toolchain.
 - Agent families can be added as modular projects without implying cross-language parity.
 
 ### Trade-offs

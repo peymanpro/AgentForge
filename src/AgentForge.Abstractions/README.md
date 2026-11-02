@@ -1,28 +1,38 @@
 # AgentForge.Abstractions
 
-Shared execution contracts used by AgentForge .NET modules.
+Shared, provider-neutral contracts used by independently selectable AgentForge modules.
 
-## Responsibilities
+## Execution contracts
 
-- IAgent<TInput,TOutput> defines one asynchronous agent run without prescribing its algorithm.
-- AgentRunContext provides run identity, correlation, and parent-child relationships.
-- AgentRunOptions carries caller-supplied limits and an optional event sink.
-- AgentRunResult<TOutput> normalizes completed, partially completed, and stopped outcomes.
-- AgentFailure and AgentFailureCategory provide provider-neutral failure information.
-- AgentRunEventPublisher emits safe lifecycle metadata and isolates observer failures from business execution.
+- `IAgent<TInput,TOutput>`: one bounded agent execution.
+- `AgentRunContext`: run identity and optional parent/child correlation.
+- `AgentRunOptions`: caller-selected budgets and optional event sink.
+- `AgentRunResult<TOutput>`: normalized completed, partial, failed, rejected, cancelled, timed-out, and budget-exhausted outcomes.
+- `AgentHandle<TInput,TOutput>`: concise public execution wrapper returned by fluent builders.
 
-## Lifecycle
+## Common use
 
-An agent receives its input, an AgentRunContext, AgentRunOptions, and a CancellationToken. It returns a normalized AgentRunResult. Implementations own their internal model, tool, memory, or retrieval behavior.
+Most users execute a configured agent with:
 
-The shared contract deliberately does not require every agent to share a base class or a universal mutable context.
+```csharp
+var result = await agent.RunAsync(input, cancellationToken);
+```
 
-## Failure and limits
+Advanced callers can provide options or a full context:
 
-Terminal outcomes distinguish Completed, PartiallyCompleted, Failed, Cancelled, TimedOut, BudgetExhausted, and Rejected. A stopped run must carry a normalized failure; useful partial output may be preserved.
+```csharp
+var result = await agent.RunAsync(
+    input,
+    AgentRunContext.Create(parentRunId),
+    new AgentRunOptions
+    {
+        MaxSteps = 10,
+        Timeout = TimeSpan.FromSeconds(20),
+        EventSink = eventSink
+    },
+    cancellationToken);
+```
 
-Cancellation is cooperative. A limit only protects external side effects when the implementation and its dependencies honor cancellation.
+## Design boundary
 
-## Tests
-
-The test project verifies context identity, result invariants, option validation, and event metadata behavior.
+This package intentionally contains no model-provider SDK, tool implementation, storage engine, vector database, or orchestration policy. Agent modules and optional capabilities depend on these contracts; the abstractions package does not depend on them.

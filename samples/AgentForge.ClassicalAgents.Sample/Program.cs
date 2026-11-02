@@ -1,66 +1,56 @@
-using AgentForge.Abstractions.Execution;
-using AgentForge.Agents.Classical;
+using AgentForge.Agents.ModelBasedReflex.Builders;
+using AgentForge.Agents.ModelBasedReflex.Domain.Decisions;
+using AgentForge.Agents.SimpleReflex.Builders;
 
-var perceptRules = new[]
-{
-    new ReflexRule<ThermostatPercept, ThermostatAction>(
-        "temperature-too-high",
-        percept => percept.TemperatureCelsius > percept.TargetCelsius + 1,
-        _ => ThermostatAction.Cool),
-    new ReflexRule<ThermostatPercept, ThermostatAction>(
-        "temperature-too-low",
-        percept => percept.TemperatureCelsius < percept.TargetCelsius - 1,
-        _ => ThermostatAction.Heat)
-};
-
-var simpleReflex = new SimpleReflexAgent<ThermostatPercept, ThermostatAction>(perceptRules);
 var percept = new ThermostatPercept(TemperatureCelsius: 26, TargetCelsius: 22);
-var simpleResult = await simpleReflex.RunAsync(
-    percept,
-    AgentRunContext.Create(),
-    new AgentRunOptions());
 
-Console.WriteLine($"Simple reflex: {Describe(simpleResult.Output?.Decision)}");
+var simpleReflexAgent = SimpleReflexAgentBuilder
+    .Create<ThermostatPercept, ThermostatAction>()
+    .When(
+        "temperature-too-high",
+        current => current.TemperatureCelsius > current.TargetCelsius + 1,
+        ThermostatAction.Cool)
+    .When(
+        "temperature-too-low",
+        current => current.TemperatureCelsius < current.TargetCelsius - 1,
+        ThermostatAction.Heat)
+    .Build();
 
-var modelRules = new[]
-{
-    new ReflexRule<ThermostatState, ThermostatAction>(
-        "temperature-rising",
-        state => state.CurrentTemperature > state.PreviousTemperature
-            && state.CurrentTemperature > state.TargetTemperature,
-        _ => ThermostatAction.Cool),
-    new ReflexRule<ThermostatState, ThermostatAction>(
-        "temperature-falling",
-        state => state.CurrentTemperature < state.PreviousTemperature
-            && state.CurrentTemperature < state.TargetTemperature,
-        _ => ThermostatAction.Heat)
-};
+var simpleResult = await simpleReflexAgent.RunAsync(percept);
+Console.WriteLine($"Simple Reflex: {Describe(simpleResult.Output?.Decision.HasAction, simpleResult.Output?.Decision.Action)}");
 
-var modelBased = new ModelBasedReflexAgent<ThermostatPercept, ThermostatState, ThermostatAction>(
-    stateUpdater: (previous, current) => new ThermostatState(
+var modelBasedReflexAgent = ModelBasedReflexAgentBuilder
+    .Create<ThermostatPercept, ThermostatState, ThermostatAction>()
+    .WithStateUpdater((previous, current) => new ThermostatState(
         PreviousTemperature: previous.CurrentTemperature,
         CurrentTemperature: current.TemperatureCelsius,
-        TargetTemperature: current.TargetCelsius),
-    rules: modelRules);
+        TargetTemperature: current.TargetCelsius))
+    .When(
+        "temperature-rising-above-target",
+        state => state.CurrentTemperature > state.PreviousTemperature
+            && state.CurrentTemperature > state.TargetTemperature,
+        ThermostatAction.Cool)
+    .When(
+        "temperature-falling-below-target",
+        state => state.CurrentTemperature < state.PreviousTemperature
+            && state.CurrentTemperature < state.TargetTemperature,
+        ThermostatAction.Heat)
+    .Build();
 
-var modelResult = await modelBased.RunAsync(
+var modelBasedResult = await modelBasedReflexAgent.RunAsync(
     new ModelBasedReflexInput<ThermostatPercept, ThermostatState>(
         percept,
-        new ThermostatState(PreviousTemperature: 24, CurrentTemperature: 24, TargetTemperature: 22)),
-    AgentRunContext.Create(),
-    new AgentRunOptions());
+        new ThermostatState(
+            PreviousTemperature: 24,
+            CurrentTemperature: 24,
+            TargetTemperature: 22)));
 
-Console.WriteLine($"Model-based reflex: {Describe(modelResult.Output?.Decision)}");
-Console.WriteLine($"Updated internal state: {modelResult.Output?.CurrentState}");
+Console.WriteLine($"Model-Based Reflex: {Describe(modelBasedResult.Output?.Decision.HasAction, modelBasedResult.Output?.Decision.Action)}");
+Console.WriteLine($"Updated state: {modelBasedResult.Output?.CurrentState}");
 
-static string Describe(ClassicalDecision<ThermostatAction>? decision)
+static string Describe<TAction>(bool? hasAction, TAction? action)
 {
-    if (decision is null || !decision.HasAction)
-    {
-        return "no action";
-    }
-
-    return decision.Action.ToString();
+    return hasAction == true ? action?.ToString() ?? "action" : "no action";
 }
 
 internal sealed record ThermostatPercept(int TemperatureCelsius, int TargetCelsius);

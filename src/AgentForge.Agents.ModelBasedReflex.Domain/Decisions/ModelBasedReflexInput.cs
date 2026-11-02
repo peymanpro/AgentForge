@@ -1,19 +1,15 @@
-namespace AgentForge.Agents.Classical;
+namespace AgentForge.Agents.ModelBasedReflex.Domain.Decisions;
 
 /// <summary>
-/// Supplies a percept and the agent's previous explicit internal state.
+/// Supplies the latest percept and previously retained internal state to one model-based reflex decision.
 /// </summary>
-/// <typeparam name="TPercept">The current percept type.</typeparam>
-/// <typeparam name="TState">The internal state type.</typeparam>
 public sealed record ModelBasedReflexInput<TPercept, TState>
     where TPercept : notnull
     where TState : notnull
 {
     /// <summary>
-    /// Creates a model-based reflex input.
+    /// Creates the input for one state update and decision step.
     /// </summary>
-    /// <param name="percept">The latest observation from the environment.</param>
-    /// <param name="previousState">The state produced by the preceding run, or the caller's initial state.</param>
     public ModelBasedReflexInput(TPercept percept, TState previousState)
     {
         ArgumentNullException.ThrowIfNull(percept);
@@ -23,12 +19,12 @@ public sealed record ModelBasedReflexInput<TPercept, TState>
     }
 
     /// <summary>
-    /// Gets the current percept.
+    /// Gets the latest observation from the environment.
     /// </summary>
     public TPercept Percept { get; }
 
     /// <summary>
-    /// Gets the state carried forward from the previous run.
+    /// Gets the state carried forward from the preceding run or supplied by the host.
     /// </summary>
     public TState PreviousState { get; }
 }

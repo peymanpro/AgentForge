@@ -1,119 +1,107 @@
 # AgentForge
 
-**A modular .NET agent-engineering library and learning laboratory.**
+**A modular .NET library for building, composing, and operating different kinds of intelligent agents.**
 
-AgentForge is a .NET 10 / C# codebase for building, inspecting, composing, testing, and operating intelligent agents. It brings classical AI agents and algorithms together with modern LLM-based agents, reusable agent capabilities, orchestration patterns, and production engineering practices.
+AgentForge is a .NET 10 / C# library. Its purpose is to make agent construction easier without hiding how an agent works or forcing every problem into one generic LLM loop.
 
-This repository is intentionally **.NET-only**. It is not a multi-language monorepo. The solution, source projects, tests, samples, documentation, and CI all belong to one coherent C# codebase.
+Every agent architecture is provided as an independently usable module. Each module owns its domain rules and application use cases, exposes a small fluent API, and depends only on the capabilities it needs. Applications can use one agent directly or compose different agents into larger workflows and multi-agent systems.
 
-AgentForge has two connected goals:
+AgentForge is **not tied to a model provider**. Classical and deterministic agents do not require an LLM. LLM-based agents accept provider-neutral model contracts and optional capabilities such as tools, memory, retrieval, structured output, and streaming.
 
-1. **Build a useful engineering toolkit:** real, modular, provider-independent building blocks that application developers can compose.
-2. **Teach agent engineering through implementation:** every important concept should be explained through its problem, algorithm, execution lifecycle, trade-offs, tests, and runnable examples.
+## Product principles
 
-The ambition is broad, but implementation claims remain evidence-based. A catalog entry is not the same as an implemented feature.
+- **One agent type, one module.** Simple Reflex, Model-Based Reflex, ReAct, BDI, Goal-Based, Utility-Based, Supervisor, Debate, and other architectures are independently selectable.
+- **Clean Architecture inside each module.** Domain and Application are separated; Infrastructure contains adapters only when the module needs them; the public module is the composition root.
+- **Fluent by default.** Common configuration reads like a declaration. The built agent has a concise `RunAsync` entry point.
+- **Small dependency surface.** A rule-based agent should not pull in model SDKs, tool execution, vector databases, or orchestration.
+- **Composition over inheritance.** Agents implement the shared execution contract and can be composed without depending on one another's concrete types.
+- **Explicit behavior.** State ownership, budgets, cancellation, tool permissions, failure outcomes, and side effects are visible.
+- **No false completeness.** The catalog distinguishes working implementations from planned and research modules.
 
-> **Project status:** Active engineering foundation. Ten .NET source modules currently cover abstractions, model contracts, tools, classical reflex agents, ReAct, Planning, Reflection, retrieval, RAG, and bounded workflow orchestration. Their APIs are experimental. No NuGet package has been published, and NuGet publication is not a current objective.
+## Example: Simple Reflex agent
 
-## Why AgentForge?
+```csharp
+var agent = SimpleReflexAgentBuilder
+    .Create<ThermostatPercept, ThermostatAction>()
+    .When(
+        "temperature-too-high",
+        percept => percept.TemperatureCelsius > percept.TargetCelsius + 1,
+        ThermostatAction.Cool)
+    .When(
+        "temperature-too-low",
+        percept => percept.TemperatureCelsius < percept.TargetCelsius - 1,
+        ThermostatAction.Heat)
+    .Build();
 
-An agent system is much more than a prompt connected to an LLM. Real agent engineering involves decision-making, control loops, state, memory, planning, search, tools, permissions, retrieval, coordination, evaluation, observability, reliability, and deployment.
-
-AgentForge makes those mechanics explicit:
-
-- **Inspectable algorithms:** the decision loop belongs in understandable source code, not hidden behind a label.
-- **Modular boundaries:** agents, capabilities, protocols, orchestration, and infrastructure are distinct.
-- **Bring your own model:** agent logic does not depend on a particular model vendor.
-- **Classical and modern AI:** symbolic, search-based, goal-driven, utility-based, BDI, learning, reinforcement-learning, LLM, and multi-agent approaches have a place in one coherent architecture.
-- **Safe execution:** model output is untrusted; tool requests are validated and authorized before execution.
-- **Learning by engineering:** each implemented concept is accompanied by tests, explanations, examples, and trade-off notes.
-- **Extensible by design:** new agent families and capabilities can be added without turning the core into a collection of special cases.
-
-## Repository layout
-
-The .NET solution lives at the repository root:
-
-```text
-AgentForge/
-├── AgentForge.sln
-├── Directory.Build.props
-├── global.json
-├── src/
-│   ├── AgentForge.Abstractions/
-│   ├── AgentForge.Models/
-│   ├── AgentForge.Tools/
-│   ├── AgentForge.Agents.Classical/
-│   ├── AgentForge.Agents.ReAct/
-│   ├── AgentForge.Agents.Planning/
-│   ├── AgentForge.Agents.Reflection/
-│   ├── AgentForge.Retrieval/
-│   ├── AgentForge.RAG/
-│   └── AgentForge.Orchestration/
-├── tests/
-│   └── one focused test project per implemented module
-├── samples/
-│   └── runnable examples
-├── docs/
-│   ├── agent-catalog.md
-│   ├── capability-map.md
-│   ├── learning-path.md
-│   ├── architecture.md
-│   ├── concepts.md
-│   ├── design/
-│   └── decisions/
-└── .github/workflows/
+var result = await agent.RunAsync(percept, cancellationToken);
 ```
 
-Only implemented modules are created as source projects. Planned modules are tracked in the catalog and roadmap until their contracts and behavior are ready.
+No model, provider, tool registry, database, or DI container is required.
 
-## Current implementation
+## Example: Model-Based Reflex agent
 
-| Module | Responsibility | Status |
-|---|---|---|
-| `AgentForge.Abstractions` | Agent execution contracts, context, results, failures, events | Experimental implementation |
-| `AgentForge.Models` | Provider-neutral chat model contracts and optional tool-calling capability | Experimental implementation |
-| `AgentForge.Tools` | Tool definitions, registry, validation, authorization, execution | Experimental implementation |
-| `AgentForge.Agents.Classical` | Deterministic simple-reflex and model-based reflex architectures | Experimental implementation |
-| `AgentForge.Agents.ReAct` | Bounded reasoning/action/observation loop | Experimental implementation |
-| `AgentForge.Agents.Planning` | Structured plan validation and bounded plan execution | Experimental implementation |
-| `AgentForge.Agents.Reflection` | Evaluation-guided iterative refinement | Experimental implementation |
-| `AgentForge.Retrieval` | Scoped retrieval and authorization-aware access | Experimental implementation; lexical baseline |
-| `AgentForge.RAG` | Bounded context assembly with source provenance | Experimental implementation |
-| `AgentForge.Orchestration` | Sequential and conditional workflow composition | Experimental implementation |
+```csharp
+var agent = ModelBasedReflexAgentBuilder
+    .Create<Percept, WorldState, Action>()
+    .WithStateUpdater((previous, percept) => UpdateWorldState(previous, percept))
+    .When("rule-one", state => MatchesRuleOne(state), Action.One)
+    .When("rule-two", state => MatchesRuleTwo(state), Action.Two)
+    .Build();
 
-See [the agent catalog](docs/agent-catalog.md) for implemented, planned, and research-level agent families. See [the capability map](docs/capability-map.md) for the wider engineering surface.
+var result = await agent.RunAsync(
+    new ModelBasedReflexInput<Percept, WorldState>(percept, previousState),
+    cancellationToken);
+```
 
-## Agent families in scope
+The host owns the state lifecycle. The agent returns the updated state rather than keeping mutable state hidden inside a shared instance.
 
-AgentForge is intended to cover more than LLM tool-calling agents.
+## Agent modules
 
-- **Classical agent models:** simple reflex, model-based reflex, goal-based, utility-based, learning agents, rule-based systems, reactive/subsumption, deliberative, hybrid, and BDI.
-- **Classical decision algorithms:** state-space search, heuristic search, adversarial search, constraint solving, planning, optimization, game-theoretic strategies, bandits, and reinforcement learning.
-- **LLM agent patterns:** ReAct, plan-and-execute, replanning, reflection, Reflexion, self-refine, tree/graph search reasoning, tool-use, and code-oriented agents.
-- **Multi-agent architectures:** supervisor, hierarchical delegation, planner-worker, peer collaboration, debate, critic-generator, blackboard, contract-net, auction/market, consensus, and swarm-style systems.
-- **Specialized agents:** research, coding, browser/computer use, data analysis, SQL/database, document processing, conversational, voice, and multimodal agents.
+The long-term catalog covers several distinct families:
 
-These names do not all represent the same kind of component. The catalog explicitly classifies agents, algorithms, patterns, capabilities, protocols, and architectures instead of calling everything an agent.
+| Family | Examples |
+|---|---|
+| Classical architectures | Simple Reflex, Model-Based Reflex, Goal-Based, Utility-Based, Learning, Rule-Based, BDI, Hybrid |
+| Control architectures | Finite-State, Behavior Tree, Subsumption, Deliberative, Reactive |
+| LLM agent patterns | ReAct, Plan-and-Execute, Replanner, Router, Reflection, Reflexion, Self-Refine, CodeAct |
+| Search and reasoning | BFS, DFS, A*, Minimax, Alpha-Beta, MCTS, Tree of Thoughts, Graph of Thoughts |
+| Learning and optimization | Bandits, Q-Learning, SARSA, PPO, Genetic Algorithms, PSO, ACO |
+| Multi-agent systems | Supervisor, Planner-Worker, Hierarchical, Peer Collaboration, Group Chat, Debate, Consensus, Contract-Net, Swarm |
+| Specialized agents | Research, Coding, Browser, Computer Use, Data Analysis, SQL, Document, Customer Support, Voice, Multimodal |
 
-## Learn through the codebase
+Algorithms, capabilities, and protocols are not automatically agents. They are separate modules that agent modules can compose.
 
-The [learning path](docs/learning-path.md) is designed to take a developer from agent fundamentals toward advanced agent engineering. It links concepts to the relevant modules, implementation stages, exercises, and evidence of understanding.
+See [Agent Catalog](docs/agent-catalog.md) for classification and implementation status, [Module Architecture](docs/agent-modules.md) for module boundaries, and [Fluent API](docs/fluent-api.md) for API conventions.
 
-A module is considered complete only when it has:
-- A precise problem statement and correct classification.
-- A documented algorithm and execution lifecycle.
-- Explicit public contracts and dependencies.
-- Bounded execution, cancellation, and failure semantics where relevant.
-- Deterministic tests for success, edge cases, failure, and limits.
-- A runnable sample and design/trade-off documentation.
+## Shared capabilities
 
-AgentForge can provide a substantial practical learning path, but mastery also requires independent study of mathematics, machine learning, model behavior, distributed systems, security, and real deployments.
+Agents can opt into shared modules when required:
+
+- Model contracts and provider adapters.
+- Tools, validation, authorization, and controlled execution.
+- Conversation state and memory.
+- Retrieval, reranking, and RAG.
+- Planning, search, optimization, and reinforcement learning.
+- Workflow and multi-agent orchestration.
+- Evaluation, safety, observability, and cost/resource accounting.
+- MCP, agent-to-agent protocols, browser/computer-use, and multimodal integration.
+
+These capabilities are optional dependencies. An agent module should not require capabilities it does not use.
+
+## Current implementation status
+
+The first two classical modules have been split into independent Clean Architecture modules with fluent builders:
+
+- `AgentForge.Agents.SimpleReflex` — experimental implementation.
+- `AgentForge.Agents.ModelBasedReflex` — experimental implementation.
+
+ReAct, Planning, Reflection, Tools, Models, Retrieval, RAG, and Orchestration exist as experimental foundations. Their internal layer boundaries and public fluent APIs are part of the ongoing module migration. Other architectures remain in the catalog as planned or research candidates.
+
+No NuGet package has been published. Public APIs remain experimental while the module boundaries and common execution contract are being established.
 
 ## Build and test
 
 Requirements: .NET SDK 10.0.403 (see `global.json`).
-
-From the repository root:
 
 ```bash
 dotnet restore AgentForge.sln
@@ -123,33 +111,18 @@ dotnet run --project samples/AgentForge.ClassicalAgents.Sample
 dotnet run --project samples/AgentForge.Orchestration.Sample
 ```
 
-The sample is deterministic and does not require a model API key.
+## Architecture and engineering contracts
 
-## Design principles
-
-1. A component must solve a documented problem; names alone do not count as implementations.
-2. Agents, algorithms, patterns, capabilities, protocols, architectures, and workflows must be classified correctly.
-3. Agent implementations depend on explicit contracts, not on unrelated implementation details.
-4. Model-generated actions are proposals, never authorization decisions.
-5. Limits, cancellation, side effects, and failure behavior must be visible.
-6. Tests use deterministic fakes wherever practical.
-7. Modules are split when the boundary provides real reuse, independent tests, dependency isolation, or conceptual clarity—not simply to increase project count.
-8. Planned features remain planned until working behavior and evidence exist.
-9. No NuGet package is published until the project is intentionally ready for a reviewed release. Publication is outside the current phase.
-
-## Documentation
-
-- [Vision](docs/vision.md)
-- [Concepts and terminology](docs/concepts.md)
-- [Agent catalog](docs/agent-catalog.md)
+- [Product vision](docs/vision.md)
+- [Module architecture](docs/agent-modules.md)
+- [Fluent API conventions](docs/fluent-api.md)
+- [System architecture](docs/architecture.md)
+- [Agent and algorithm catalog](docs/agent-catalog.md)
 - [Capability map](docs/capability-map.md)
-- [Learning path](docs/learning-path.md)
-- [Architecture](docs/architecture.md)
-- [Implementation scope and status](docs/mvp-scope.md)
-- [Design notes](docs/design/README.md)
-- [Classical agent architecture design](docs/design/classical-agents.md)
+- [Competitive landscape](docs/competitive-analysis.md)
 - [AgentForge specification](AGENTFORGE_SPEC.md)
 - [Roadmap](ROADMAP.md)
+- [Design notes](docs/design/README.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
 

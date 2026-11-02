@@ -10,9 +10,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Tools", "src\Age
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Tools.Tests", "tests\AgentForge.Tools.Tests\AgentForge.Tools.Tests.csproj", "{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.Classical", "src\AgentForge.Agents.Classical\AgentForge.Agents.Classical.csproj", "{B7B0A4C1-7F5B-4A2E-9F16-6C7A44E9D201}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.SimpleReflex.Domain", "src\AgentForge.Agents.SimpleReflex.Domain\AgentForge.Agents.SimpleReflex.Domain.csproj", "{D241A123-22C8-4B67-9710-1C6DE2E88401}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.Classical.Tests", "tests\AgentForge.Agents.Classical.Tests\AgentForge.Agents.Classical.Tests.csproj", "{0C6EF26D-7D37-4B12-9A20-50E45D347C83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.SimpleReflex.Application", "src\AgentForge.Agents.SimpleReflex.Application\AgentForge.Agents.SimpleReflex.Application.csproj", "{D241A123-22C8-4B67-9710-1C6DE2E88402}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.SimpleReflex", "src\AgentForge.Agents.SimpleReflex\AgentForge.Agents.SimpleReflex.csproj", "{D241A123-22C8-4B67-9710-1C6DE2E88403}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.SimpleReflex.Tests", "tests\AgentForge.Agents.SimpleReflex.Tests\AgentForge.Agents.SimpleReflex.Tests.csproj", "{D241A123-22C8-4B67-9710-1C6DE2E88404}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.ModelBasedReflex.Domain", "src\AgentForge.Agents.ModelBasedReflex.Domain\AgentForge.Agents.ModelBasedReflex.Domain.csproj", "{F391B213-2A4D-4D63-93A1-AE6E510D0011}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.ModelBasedReflex.Application", "src\AgentForge.Agents.ModelBasedReflex.Application\AgentForge.Agents.ModelBasedReflex.Application.csproj", "{F391B213-2A4D-4D63-93A1-AE6E510D0012}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.ModelBasedReflex", "src\AgentForge.Agents.ModelBasedReflex\AgentForge.Agents.ModelBasedReflex.csproj", "{F391B213-2A4D-4D63-93A1-AE6E510D0013}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.ModelBasedReflex.Tests", "tests\AgentForge.Agents.ModelBasedReflex.Tests\AgentForge.Agents.ModelBasedReflex.Tests.csproj", "{F391B213-2A4D-4D63-93A1-AE6E510D0014}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.ClassicalAgents.Sample", "samples\AgentForge.ClassicalAgents.Sample\AgentForge.ClassicalAgents.Sample.csproj", "{F944A8AA-615B-4B94-81D5-9D09CA8E33C2}"
 EndProject
@@ -68,14 +80,38 @@ Global
 		{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7B0A4C1-7F5B-4A2E-9F16-6C7A44E9D201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7B0A4C1-7F5B-4A2E-9F16-6C7A44E9D201}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7B0A4C1-7F5B-4A2E-9F16-6C7A44E9D201}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7B0A4C1-7F5B-4A2E-9F16-6C7A44E9D201}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0C6EF26D-7D37-4B12-9A20-50E45D347C83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C6EF26D-7D37-4B12-9A20-50E45D347C83}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C6EF26D-7D37-4B12-9A20-50E45D347C83}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C6EF26D-7D37-4B12-9A20-50E45D347C83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88401}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88402}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88402}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88402}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88402}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88403}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88403}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88403}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88403}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D241A123-22C8-4B67-9710-1C6DE2E88404}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0011}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0011}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0011}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0012}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0012}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0012}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0013}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0013}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0013}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0013}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0014}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0014}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0014}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F391B213-2A4D-4D63-93A1-AE6E510D0014}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F944A8AA-615B-4B94-81D5-9D09CA8E33C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F944A8AA-615B-4B94-81D5-9D09CA8E33C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F944A8AA-615B-4B94-81D5-9D09CA8E33C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
