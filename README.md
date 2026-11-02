@@ -13,7 +13,7 @@ AgentForge has two connected goals:
 
 The ambition is broad, but implementation claims remain evidence-based. A catalog entry is not the same as an implemented feature.
 
-> **Project status:** Active engineering foundation. Ten .NET source modules currently cover abstractions, model contracts, tools, ReAct, Planning, Reflection, retrieval, RAG, and bounded workflow orchestration. Their APIs are experimental. No NuGet package has been published, and NuGet publication is not a current objective.
+> **Project status:** Active engineering foundation. Ten .NET source modules currently cover abstractions, model contracts, tools, classical reflex agents, ReAct, Planning, Reflection, retrieval, RAG, and bounded workflow orchestration. Their APIs are experimental. No NuGet package has been published, and NuGet publication is not a current objective.
 
 ## Why AgentForge?
 
