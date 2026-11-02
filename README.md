@@ -51,19 +51,21 @@ Choose an agent to jump directly to its Quick Start. Full behavior, extension po
 
 ## Agent Modules
 
-Each module section below includes its own Quick Start and its module-specific behavior and execution boundaries.
+Each module below has its own installation command, Quick Start, and agent-specific behavior and execution limits.
 
 ### Simple Reflex
 
 A deterministic agent that selects an action from the current percept using ordered condition-action rules.
 
-#### Simple Reflex Quick Start
-Add a project reference:
+#### Installation
+
+After this package is published to NuGet.org, install it with:
 
 ```bash
-dotnet add path/to/YourApp.csproj reference src/AgentForge.Agents.SimpleReflex/AgentForge.Agents.SimpleReflex.csproj
+dotnet add package AgentForge.Agents.SimpleReflex
 ```
 
+#### Simple Reflex Quick Start
 Define the percept and action types, then build and run the agent:
 
 ```csharp
@@ -111,13 +113,15 @@ public enum ThermostatAction
 
 A deterministic agent that updates an explicit internal state from the previous state and current percept before selecting an action.
 
-#### Model-Based Reflex Quick Start
-Add a project reference:
+#### Installation
+
+After this package is published to NuGet.org, install it with:
 
 ```bash
-dotnet add path/to/YourApp.csproj reference src/AgentForge.Agents.ModelBasedReflex/AgentForge.Agents.ModelBasedReflex.csproj
+dotnet add package AgentForge.Agents.ModelBasedReflex
 ```
 
+#### Model-Based Reflex Quick Start
 Define the percept, state, and action types. Supply the state transition and ordered rules:
 
 ```csharp
@@ -185,6 +189,14 @@ public enum ThermostatAction
 
 A tool-using agent that alternates model decisions, authorized tool execution, and observations until it receives a final response or reaches a run limit.
 
+#### Installation
+
+After this package is published to NuGet.org, install it with:
+
+```bash
+dotnet add package AgentForge.Agents.ReAct
+```
+
 #### ReAct Quick Start
 Register an `IToolCallingChatModel` provider adapter, the tools available to this application, and an `IToolAuthorizationPolicy` with your application's dependency injection container.
 
@@ -225,6 +237,14 @@ The host must register the provider adapter, explicitly approved tools, and auth
 ### Plan-and-Execute
 
 A structured Plan-and-Execute agent that validates a generated plan before running its registered step handlers.
+
+#### Installation
+
+After this package is published to NuGet.org, install it with:
+
+```bash
+dotnet add package AgentForge.Agents.Planning
+```
 
 #### Plan-and-Execute Quick Start
 Register an application-specific `IPlanningStrategy` and only the `IPlanStepHandler` implementations that the agent is allowed to execute.
@@ -267,6 +287,14 @@ The planner and step handlers are application-owned dependencies. Register only 
 ### Reflection
 
 A bounded candidate-refinement agent that separates generation from independent evaluation.
+
+#### Installation
+
+After this package is published to NuGet.org, install it with:
+
+```bash
+dotnet add package AgentForge.Agents.Reflection
+```
 
 #### Reflection Quick Start
 Register an application-specific `IReflectionGenerationStrategy` and an `IReflectionEvaluator`. The evaluator owns the acceptance criteria and returns actionable feedback for rejected candidates.
