@@ -224,7 +224,7 @@ public sealed class RagPipeline : IAgent<RagQuery, RagPipelineOutput>
             var userContent = BuildUserMessage(input.Question, assembled.Text);
             var systemContent = string.IsNullOrWhiteSpace(_pipelineOptions.ApplicationSystemPrompt)
                 ? EvidencePolicy
-                : $"{EvidencePolicy}{Environment.NewLine}{Environment.NewLine}Application instructions:{Environment.NewLine}{_pipelineOptions.ApplicationSystemPrompt}";
+                : $"Application instructions:{Environment.NewLine}{_pipelineOptions.ApplicationSystemPrompt}{Environment.NewLine}{Environment.NewLine}{EvidencePolicy}";
 
             await PublishEventAsync(
                 options,
