@@ -245,7 +245,6 @@ public sealed class ReflectionAgent : IAgent<string, ReflectionAgentOutput>
                 attempts[^1] = attempts[^1] with { Evaluation = evaluation };
 
                 var previousBestScore = bestScore;
-                var improved = false;
 
                 if (evaluation.IsAccepted)
                 {
@@ -259,18 +258,12 @@ public sealed class ReflectionAgent : IAgent<string, ReflectionAgentOutput>
                     {
                         bestCandidate = candidate;
                         bestScore = score;
-                        improved = true;
-                    }
-                    else
-                    {
-                        improved = false;
                     }
                 }
                 else if (bestScore is null)
                 {
                     // Without comparable scores, retain the latest evaluated candidate.
                     bestCandidate = candidate;
-                    improved = true;
                 }
 
                 await PublishEventAsync(
