@@ -23,6 +23,35 @@ for (var round = 0; round < 1_000; round++)
 }
 ```
 
+## Contextual LinUCB
+
+The module also provides a separate contextual agent using disjoint LinUCB. It learns a linear reward model per action and scores candidates using the predicted reward plus an uncertainty bonus.
+
+```csharp
+using AgentForge.Agents.Learning.Builders;
+using AgentForge.Agents.Learning.Domain.Models;
+
+var agent = ContextualLearningAgentBuilder.Create<string>()
+    .WithExplorationCoefficient(1.0)
+    .Build();
+
+var state = new ContextualLearningState<string>(featureCount: 3, regularization: 1.0);
+var context = new[] { 0.8, 0.2, 1.0 };
+var decision = await agent.RunAsync(
+    new ContextualLearningAgentInput<string>(["search", "recommend"], context, state),
+    cancellationToken);
+
+var selected = decision.Output!.SelectedAction;
+
+// The host executes the selected action and evaluates its outcome.
+var reward = selected == "search" ? 0.9 : 0.4;
+state = state.Observe(selected, context, reward);
+```
+
+Each context must contain the same finite feature count configured in the state. The host owns feature engineering, feature scaling, action execution, reward evaluation, authorization, and persistence. The immutable state exposes defensive copies of its per-action design matrices and reward vectors so the host can serialize and restore them.
+
+LinUCB uses Cholesky factorization and linear-system solves; it does not explicitly calculate matrix inverses. This is a disjoint linear contextual bandit, not a general MDP or deep RL implementation.
+
 ## Learning model
 
 The initial implementation uses a stationary multi-armed bandit model:
