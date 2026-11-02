@@ -87,28 +87,6 @@ public sealed class AgentWorkflow<TWorkflowInput> : IAgent<TWorkflowInput, Workf
                 workflowToken.ThrowIfCancellationRequested();
 
                 var step = _definition.Steps[index];
-                var stepContextResult = TryCreateContext(input, context, step.InputReferences, outputs);
-                if (stepContextResult.Context is null)
-                {
-                    var failure = new AgentFailure(
-                        AgentFailureCategory.ValidationFailure,
-                        "workflow.input_unavailable",
-                        stepContextResult.ErrorMessage ?? "A required workflow input is unavailable.");
-
-                    stepResults.Add(CreateResult(step.Id, WorkflowStepStatus.Blocked, failure));
-                    AddBlockedSteps(index + 1, stepResults);
-
-                    return await StopAsync(
-                        options,
-                        context,
-                        startedAt,
-                        AgentRunStatus.PartiallyCompleted,
-                        AgentFailureCategory.ValidationFailure,
-                        failure.Code,
-                        failure.Message,
-                        stepResults,
-                        conditionResults);
-                }
 
                 if (step.RunWhen is { } route)
                 {
@@ -214,6 +192,29 @@ public sealed class AgentWorkflow<TWorkflowInput> : IAgent<TWorkflowInput, Workf
                     }
                 }
 
+                var stepContextResult = TryCreateContext(input, context, step.InputReferences, outputs);
+                if (stepContextResult.Context is null)
+                {
+                    var failure = new AgentFailure(
+                        AgentFailureCategory.ValidationFailure,
+                        "workflow.input_unavailable",
+                        stepContextResult.ErrorMessage ?? "A required workflow input is unavailable.");
+
+                    stepResults.Add(CreateResult(step.Id, WorkflowStepStatus.Blocked, failure));
+                    AddBlockedSteps(index + 1, stepResults);
+
+                    return await StopAsync(
+                        options,
+                        context,
+                        startedAt,
+                        AgentRunStatus.PartiallyCompleted,
+                        failure.Category,
+                        failure.Code,
+                        failure.Message,
+                        stepResults,
+                        conditionResults);
+                }
+
                 if (executedSteps >= maxSteps)
                 {
                     var failure = new AgentFailure(
@@ -221,7 +222,8 @@ public sealed class AgentWorkflow<TWorkflowInput> : IAgent<TWorkflowInput, Workf
                         "workflow.step_budget_exhausted",
                         "The workflow reached its configured executed-step limit.");
 
-                    AddBlockedSteps(index, stepResults);
+                    stepResults.Add(CreateResult(step.Id, WorkflowStepStatus.BudgetExhausted, failure));
+                    AddBlockedSteps(index + 1, stepResults);
                     return await StopAsync(
                         options,
                         context,
@@ -260,7 +262,7 @@ public sealed class AgentWorkflow<TWorkflowInput> : IAgent<TWorkflowInput, Workf
                 {
                     ["step_id"] = step.Id,
                     ["executed_step"] = executedSteps.ToString(CultureInfo.InvariantCulture)
-                }, stepToken);
+                }, workflowToken);
 
                 WorkflowStepExecutionOutcome outcome;
                 try
@@ -305,6 +307,18 @@ public sealed class AgentWorkflow<TWorkflowInput> : IAgent<TWorkflowInput, Workf
                             "workflow.step_failed",
                             "A workflow step operation failed."),
                         null);
+                }
+
+                if (stepTimeoutSource.IsCancellationRequested && !workflowToken.IsCancellationRequested)
+                {
+                    outcome = new WorkflowStepExecutionOutcome(
+                        WorkflowStepStatus.TimedOut,
+                        outcome.Output,
+                        new AgentFailure(
+                            AgentFailureCategory.TimedOut,
+                            "workflow.step_timed_out",
+                            "The workflow step exceeded its configured time limit."),
+                        outcome.ChildRunId);
                 }
 
                 var stepCompletedAt = _timeProvider.GetUtcNow();
@@ -515,7 +529,10 @@ public sealed class AgentWorkflow<TWorkflowInput> : IAgent<TWorkflowInput, Workf
         await PublishTerminalEventAsync(options, context, "workflow.stopped", stepResults.Count);
 
         var failure = new AgentFailure(category, code, message);
-        if (status == AgentRunStatus.PartiallyCompleted)
+        var hasPartialOutput = stepResults.Any(static item =>
+            item.Status is WorkflowStepStatus.Completed or WorkflowStepStatus.PartiallyCompleted);
+
+        if (status == AgentRunStatus.PartiallyCompleted && hasPartialOutput)
         {
             return AgentRunResult<WorkflowRunOutput>.PartiallyCompleted(
                 output,
@@ -524,8 +541,12 @@ public sealed class AgentWorkflow<TWorkflowInput> : IAgent<TWorkflowInput, Workf
                 _timeProvider.GetUtcNow());
         }
 
+        var terminalStatus = status == AgentRunStatus.PartiallyCompleted
+            ? AgentRunStatus.Failed
+            : status;
+
         return AgentRunResult<WorkflowRunOutput>.Stopped(
-            status,
+            terminalStatus,
             failure,
             startedAt,
             _timeProvider.GetUtcNow(),
