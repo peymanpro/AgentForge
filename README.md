@@ -25,6 +25,7 @@ Each independently useful agent architecture has its own module, focused API, an
   - [Contextual LinUCB](#contextual-linucb-quick-start)
 - [NuGet packages](#nuget-packages)
 - [Architecture](#architecture)
+- [Learning benchmark protocol](#learning-benchmark-protocol)
 - [Development](#development)
 - [License](#license)
 
@@ -558,6 +559,10 @@ Each agent module follows Clean Architecture where it adds value:
 - **Public API:** the module's construction and composition surface.
 
 Agent modules use the shared execution contract and do not depend on other agents' concrete implementations. See [Module Architecture](docs/agent-modules.md), [System Architecture](docs/architecture.md), and the [Goal-Based search design](docs/goal-based-agent-design.md).
+
+## Learning benchmark protocol
+
+AgentForge keeps stationary context-free bandits and contextual bandits as separate evaluation families. The benchmark protocol defines comparable environments, regret and reward metrics, reproducible seeds, parameter-tuning controls, and interpretation limits. See [Learning Bandit Benchmark Protocol](docs/learning-bandit-benchmark.md).
 
 ## Development
 
