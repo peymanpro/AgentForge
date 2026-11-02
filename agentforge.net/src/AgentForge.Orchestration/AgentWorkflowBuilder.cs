@@ -35,7 +35,7 @@ public sealed class AgentWorkflowBuilder<TWorkflowInput>
         WorkflowStepCondition? runWhen = null)
     {
         ArgumentNullException.ThrowIfNull(operation);
-        var references = ValidateReferences(inputReferences, stepId);
+        var references = ValidateNewStep(stepId, inputReferences);
 
         _steps.Add(new DelegateWorkflowStep<TWorkflowInput, TOutput>(
             stepId,
@@ -222,7 +222,7 @@ public sealed class AgentWorkflowBuilder<TWorkflowInput>
         return Array.AsReadOnly(references);
     }
 
-    private void ValidateReferences(IEnumerable<string>? inputReferences, string stepId)
+    private IReadOnlyList<string> ValidateNewStep(string stepId, IEnumerable<string>? inputReferences)
     {
         ValidateIdentifier(stepId, nameof(stepId));
 
@@ -231,7 +231,7 @@ public sealed class AgentWorkflowBuilder<TWorkflowInput>
             throw new ArgumentException($"Step '{stepId}' is already defined.", nameof(stepId));
         }
 
-        _ = ValidateReferences(inputReferences, stepId);
+        return ValidateReferences(inputReferences, stepId);
     }
 
     internal static void ValidateIdentifier(string value, string parameterName)
