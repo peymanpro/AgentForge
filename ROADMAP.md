@@ -45,13 +45,13 @@ Language implementations may progress at different rates. Feature parity must be
 
 Candidate areas, subject to design review and demonstrated need:
 
-- Planning and plan execution.
-- Reflection and iterative refinement.
-- Retrieval and retrieval-augmented generation.
-- Memory strategies.
-- Routing and delegation.
-- Supervisor and multi-agent orchestration.
-- Additional tool and protocol integrations, including MCP where appropriate.
+- Advanced memory strategies and persistent memory stores.
+- Advanced retrieval: hybrid search, reranking, query transformation, and provider-specific vector-store adapters.
+- Routing, delegation, and specialized agent selection.
+- Supervisor, hierarchical, collaborative, and other multi-agent architectures.
+- Durable workflows with checkpointing, resumption, and human approval.
+- Protocol integrations such as MCP and agent-to-agent interoperability.
+- Domain-focused systems such as research and coding workflows, with each component classified by its actual architecture and behavior.
 
 Each candidate must first be classified correctly as an agent, capability, pattern, architecture, protocol integration, or workflow.
 
