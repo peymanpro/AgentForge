@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Agents.GoalBased.Application</AssemblyName>
+    <RootNamespace>AgentForge.Agents.GoalBased.Application</RootNamespace>
+    <PackageId>AgentForge.Agents.GoalBased.Application</PackageId>
+    <Description>Application use cases for the Goal-Based agent module.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;goal-based;application;search</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+    <ProjectReference Include="..\AgentForge.Agents.GoalBased.Domain\AgentForge.Agents.GoalBased.Domain.csproj" />
+  </ItemGroup>
+</Project>
