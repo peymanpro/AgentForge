@@ -1,6 +1,7 @@
 using AgentForge.Abstractions.Execution;
 using AgentForge.Agents.UtilityBased.Builders;
 using AgentForge.Agents.UtilityBased.Domain.Policies;
+using Xunit;
 
 namespace AgentForge.Agents.UtilityBased.Tests;
 
@@ -103,7 +104,7 @@ public sealed class UtilityBasedAgentTests
         await agent.RunAsync("task");
 
         Assert.Equal(1, providerCalls);
-        Assert.Equal(["a", "b", "c"], evaluated);
+        Assert.Equal(new[] { "a", "b", "c" }, evaluated);
     }
 
     [Fact]
