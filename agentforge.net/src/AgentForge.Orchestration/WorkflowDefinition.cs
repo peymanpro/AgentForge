@@ -1,16 +1,12 @@
 namespace AgentForge.Orchestration;
 
-internal delegate Task<bool> WorkflowConditionEvaluator<TWorkflowInput>(
-    WorkflowStepExecutionContext<TWorkflowInput> context,
-    CancellationToken cancellationToken);
-
 internal sealed class WorkflowConditionDefinition<TWorkflowInput>
 {
     public WorkflowConditionDefinition(
         string id,
         IReadOnlyList<string> inputReferences,
         int declaredAfterStepCount,
-        WorkflowConditionEvaluator<TWorkflowInput> evaluator)
+        Func<WorkflowStepExecutionContext<TWorkflowInput>, CancellationToken, Task<bool>> evaluator)
     {
         Id = id;
         InputReferences = inputReferences;
@@ -24,7 +20,7 @@ internal sealed class WorkflowConditionDefinition<TWorkflowInput>
 
     public int DeclaredAfterStepCount { get; }
 
-    public WorkflowConditionEvaluator<TWorkflowInput> Evaluator { get; }
+    public Func<WorkflowStepExecutionContext<TWorkflowInput>, CancellationToken, Task<bool>> Evaluator { get; }
 }
 
 internal sealed class WorkflowDefinition<TWorkflowInput>
