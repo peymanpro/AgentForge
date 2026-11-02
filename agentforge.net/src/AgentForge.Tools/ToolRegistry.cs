@@ -35,7 +35,9 @@ public sealed class ToolRegistry
         }
 
         _tools = new ReadOnlyDictionary<string, ITool>(map);
-        _definitions = Array.AsReadOnly(map.Values.Select(static tool => tool.Definition).ToArray());
+        _definitions = Array.AsReadOnly(map.OrderBy(static pair => pair.Key, StringComparer.Ordinal)
+            .Select(static pair => pair.Value.Definition)
+            .ToArray());
     }
 
     /// <summary>
