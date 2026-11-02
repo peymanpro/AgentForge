@@ -1,3 +1,4 @@
+using Xunit;
 using AgentForge.Agents.Learning.Builders;
 using AgentForge.Agents.Learning.Domain.Models;
 namespace AgentForge.Agents.Learning.Tests;
