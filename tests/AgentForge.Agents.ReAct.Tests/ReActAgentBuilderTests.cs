@@ -1,6 +1,7 @@
 using AgentForge.Abstractions.Execution;
 using AgentForge.Agents.ReAct.Builders;
 using AgentForge.Models.Chat;
+using AgentForge.Models.Contracts;
 using AgentForge.Tools;
 using Xunit;
 
@@ -55,6 +56,20 @@ public sealed class ReActAgentBuilderTests
     }
 
     [Fact]
+    public async Task WithModel_UsesBuiltInNativeToolCallingDecisionStrategy()
+    {
+        var agent = ReActAgentBuilder.Create()
+            .WithModel(new FixedToolCallingChatModel())
+            .WithAuthorization(new AllowAllAuthorizationPolicy())
+            .Build();
+
+        var result = await agent.RunAsync("Complete this task.");
+
+        Assert.Equal(AgentRunStatus.Completed, result.Status);
+        Assert.Equal("done", result.Output?.FinalResponse);
+    }
+
+    [Fact]
     public void WithLimits_RejectsNonPositiveValues()
     {
         var builder = ReActAgentBuilder.Create();
@@ -63,6 +78,30 @@ public sealed class ReActAgentBuilderTests
         Assert.Throws<ArgumentOutOfRangeException>(() => builder.WithMaxToolInvocations(-1));
         Assert.Throws<ArgumentOutOfRangeException>(() => builder.WithTimeout(TimeSpan.Zero));
         Assert.Throws<ArgumentOutOfRangeException>(() => builder.WithMaxToolObservationCharacters(0));
+    }
+
+    private sealed class FixedToolCallingChatModel : IToolCallingChatModel
+    {
+        public Task<ModelResponse> GenerateAsync(
+            ModelRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(new ModelResponse(
+                ChatMessage.Assistant("done"),
+                ModelFinishReason.Stop));
+        }
+
+        public Task<ModelResponse> GenerateWithToolsAsync(
+            ModelRequest request,
+            IReadOnlyList<ToolDefinition> tools,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(new ModelResponse(
+                ChatMessage.Assistant("done"),
+                ModelFinishReason.Stop));
+        }
     }
 
     private sealed class FixedDecisionStrategy : IReactDecisionStrategy

@@ -23,9 +23,7 @@ using AgentForge.Tools;
 using Microsoft.Extensions.DependencyInjection;
 
 var agent = ReActAgentBuilder.Create()
-    .WithDecisionStrategy(
-        new NativeToolCallingDecisionStrategy(
-            services.GetRequiredService<IToolCallingChatModel>()))
+    .WithModel(services.GetRequiredService<IToolCallingChatModel>())
     .WithTools(services.GetServices<ITool>())
     .WithAuthorization(services.GetRequiredService<IToolAuthorizationPolicy>())
     .WithSystemPrompt("Use available tools when needed.")
