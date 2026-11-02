@@ -25,7 +25,7 @@ The model integration layer should:
 5. Keep tool execution outside the model adapter.
 6. Propagate cancellation.
 7. Avoid leaking vendor SDK types into core agent contracts.
-8. Remain practical to implement idiomatically in .NET, TypeScript, and Python.
+8. Remain practical to implement with idiomatic .NET abstractions and provider SDKs.
 
 ## 3. Non-goals
 
@@ -242,7 +242,7 @@ A model adapter should have:
 
 Agent tests should normally use deterministic fake model implementations. This makes the execution algorithm testable without live provider calls, credentials, network access, or nondeterministic model output.
 
-Where cross-language behavior is shared, conformance scenarios should test observable semantics rather than internal object layout.
+Where behavior is shared by AgentForge .NET modules, contract tests should verify observable semantics rather than internal object layout.
 
 ## 12. Alternatives considered
 
@@ -281,4 +281,4 @@ The design is acceptable only if agents can use the capabilities they require wi
 
 This note recommends **baseline chat generation plus explicit optional capabilities**, but does not approve a public API.
 
-The next design step is a small .NET prototype around ReAct and the tool-call boundary. The resulting contracts should then be checked against TypeScript and Python idioms before being promoted into the shared specification.
+The next design step is a small .NET prototype around ReAct and the tool-call boundary. The resulting contracts should be checked against the idioms and requirements of the .NET ecosystem before being promoted into the AgentForge specification.

@@ -316,11 +316,11 @@ The API should not require a particular model vendor, web browser, memory provid
 3. How should model-call and tool-call budgets interact when a model returns several tool proposals in one turn?
 4. What is the exact policy for continuing after one of several requested tools is denied or fails?
 5. Should a ReAct run support partial results when a budget is exhausted?
-6. Which events belong in the cross-language conformance contract?
+6. Which events belong in the shared .NET runtime contract?
 7. How should the runtime represent provider refusal separately from ordinary final completion?
 
 ## 17. Decision status
 
 This note recommends an **explicit, bounded ReAct control loop with normalized model decisions and policy-controlled tool execution**.
 
-It is a design proposal, not an approved API or claim of implementation. Prototype the loop with a deterministic fake model and tools, then validate the observable behavior against the shared specification and the idioms of .NET, TypeScript, and Python.
+It is a design proposal, not an approved API or claim of implementation. Prototype the loop with a deterministic fake model and tools, then validate the observable behavior against the AgentForge .NET specification and the idioms of modern .NET.

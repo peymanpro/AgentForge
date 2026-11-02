@@ -8,7 +8,7 @@
 
 AgentForge agents need a common way to execute a task and report what happened. ReAct, Planning, Reflection, and future agents may have very different internal algorithms, but callers still need to start a run, pass a context, cancel it, enforce limits, observe progress, and receive a result.
 
-Without a shared execution model, every agent would invent its own run identifiers, result shape, timeout behavior, failure categories, and diagnostics. That would make composition, testing, and cross-language conformance unnecessarily difficult.
+Without a shared execution model, every agent would invent its own run identifiers, result shape, timeout behavior, failure categories, and diagnostics. That would make composition, testing, and shared .NET runtime consistency unnecessarily difficult.
 
 This note proposes a small execution contract that standardizes the run lifecycle while leaving each agent's algorithm independent.
 
@@ -162,7 +162,7 @@ The final result should communicate:
 - Safe usage metadata when available.
 - Optional agent-specific partial state or progress summary.
 
-Candidate cross-language terminal statuses:
+Candidate normalized terminal statuses:
 
 | Status | Meaning |
 |---|---|
@@ -289,7 +289,7 @@ Each agent still owns its algorithm-specific tests.
 
 ### Every agent defines its own run/result/cancellation model
 
-**Rejected.** This makes orchestration, observability, composition, and cross-language conformance inconsistent.
+**Rejected.** This makes orchestration, observability, composition, and shared .NET runtime consistency inconsistent.
 
 ### Small generic execution contract plus agent-specific options and behavior
 
@@ -300,7 +300,7 @@ Each agent still owns its algorithm-specific tests.
 1. Should run status be a shared closed enum or an extensible tagged outcome?
 2. Should partial output be generic on the common result, or represented by a separate partial-result union?
 3. How should common and agent-specific budget types compose?
-4. What is the minimal safe execution context across .NET, TypeScript, and Python?
+4. What is the minimal safe execution context across AgentForge .NET modules?
 5. Should event delivery begin with a callback/observer or a stream?
 6. How should observer failures and backpressure be handled?
 7. Should the common contract require timestamps, or should time be optional and adapter-supplied?

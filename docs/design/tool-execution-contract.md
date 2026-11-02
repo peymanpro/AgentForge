@@ -2,7 +2,7 @@
 
 **Status:** Proposal; no public API is approved  
 **Initial target:** .NET / C#  
-**Cross-language scope:** Shared semantics for .NET, TypeScript/NestJS, Python, and future implementations
+**Scope:** Tool contracts and execution semantics for the AgentForge .NET solution
 
 ## 1. Problem
 

@@ -1,73 +1,112 @@
 # AgentForge Roadmap
 
-This roadmap describes intended direction, not promised release dates. Work may change as the architecture is validated and contributors join.
+This roadmap describes the intended engineering sequence. It is a living plan, not a promise that every candidate will be implemented in one release.
 
-## Phase 0 — Project foundation
+AgentForge is a **single .NET / C# repository**. The goal is a broad, modular agent-engineering toolkit and learning codebase. The catalog records the landscape; implementation proceeds in tested, dependency-aware slices.
 
-- [x] Create the public monorepo.
-- [x] Establish project vision, terminology, and contribution principles.
-- [x] Draft the shared specification.
-- [x] Complete an initial documentation-based landscape review of existing agent frameworks; deeper source-level comparison remains future work.
-- [x] Draft measurable acceptance criteria for the first implementation in [MVP Scope](docs/mvp-scope.md).
-- [ ] Establish issue labels, proposal process, and maintainer governance.
+## Phase 0 — .NET repository foundation
 
-## Phase 1 — Complete .NET MVP
+- [x] Make the repository a single .NET solution rather than a multi-language monorepo.
+- [x] Place the solution, source, tests, samples, and build files at the repository root.
+- [x] Define precise agent-engineering terminology and module boundaries.
+- [x] Maintain an extensible catalog of classical, LLM, and multi-agent approaches.
+- [x] Establish deterministic test and sample conventions.
+- [ ] Add a consistent module documentation template and learning exercises across all existing modules.
 
-The first complete implementation is expected to be .NET / C#. The proposed scope and acceptance criteria are documented in [MVP Scope](docs/mvp-scope.md).
+## Phase 1 — Strengthen the shared runtime
 
-- [ ] Define core agent, execution-context, result, and event contracts.
-- [ ] Design provider-neutral model contracts with optional capabilities.
-- [ ] Implement tool definitions, validation, registration, and policy-controlled execution.
-- [ ] Implement a genuinely inspectable ReAct agent.
-- [ ] Implement a bounded Planning / Plan-and-Execute agent.
-- [ ] Implement a Reflection / Iterative Refinement agent with an explicit evaluator contract.
-- [ ] Add basic conversation context, retrieval abstraction, and RAG composition.
-- [ ] Add bounded sequential and conditional workflow composition.
-- [ ] Define cancellation, timeouts, execution budgets, and failure semantics.
-- [ ] Add deterministic fakes, focused tests, runnable examples, and algorithm-level documentation.
-- [ ] Review package boundaries and implement independent NuGet release workflows.
+- [ ] Review and consolidate agent, execution-context, result, event, and failure contracts.
+- [ ] Define hierarchical and aggregate budgets for nested agents and workflows.
+- [ ] Add explicit run state and state-transition semantics.
+- [ ] Improve dependency-injection composition without forcing DI on every consumer.
+- [ ] Add first-class deterministic clocks, model fakes, and tool fakes.
+- [ ] Review streaming, structured output, multimodal, and embedding capability contracts.
+- [ ] Add runtime-level conformance tests across all AgentForge agent modules.
+- [ ] Define structured tracing and privacy-safe observability contracts.
 
-The MVP is complete only when the approved scope is implemented, tested, documented, and runnable. The goal is a coherent initial library set, not every conceivable agent pattern.
+## Phase 2 — Classical AI agents and decision systems
 
-## Phase 2 — Additional language implementations
+- [ ] Create a design and learning sequence for classical agent architectures.
+- [ ] Implement simple-reflex, model-based, goal-based, and utility-based agent examples.
+- [ ] Implement rule-based / production-system agents and inference strategies.
+- [ ] Implement a reusable state-space search foundation.
+- [ ] Add uninformed and heuristic search strategies, including BFS, DFS, uniform-cost, greedy best-first, A*, and iterative-deepening variants.
+- [ ] Add local-search and optimization strategies where they provide reusable agent behavior.
+- [ ] Add adversarial/game-playing decision agents using minimax, alpha-beta, expectimax, and MCTS.
+- [ ] Implement BDI and hybrid-agent prototypes after belief, desire, intention, and planning semantics are specified.
+- [ ] Add bandit and reinforcement-learning agents, beginning with tabular methods before deep RL.
+- [ ] Document which algorithms are reusable strategies and which classes are complete autonomous agents.
 
-- [ ] Establish the TypeScript / NestJS implementation.
-- [ ] Establish the Python implementation.
-- [ ] Design idiomatic APIs for each ecosystem.
-- [ ] Add language-specific tests and examples.
-- [ ] Add shared behavioral conformance cases where they are meaningful.
-- [ ] Set up independent CI and package publishing workflows.
-- [ ] Identify and onboard Language Maintainers.
+## Phase 3 — LLM agent patterns
 
-Language implementations may progress at different rates. Feature parity must be reported accurately rather than implied.
+- [x] ReAct agent (experimental).
+- [x] Plan-and-execute agent (experimental).
+- [x] Reflection-based refinement agent (experimental).
+- [ ] Add router / tool-selection agents and explicit handoff behavior.
+- [ ] Add planner-replanner and adaptive planning.
+- [ ] Add Reflexion and persistent experience feedback.
+- [ ] Add Self-Refine and evaluator-driven refinement variants.
+- [ ] Study and prototype Tree of Thoughts, Graph of Thoughts, and search-based reasoning such as LATS/RAP.
+- [ ] Add CodeAct and constrained code-execution patterns with strict sandbox boundaries.
+- [ ] Add specialized research, data-analysis, SQL, coding, and browser-use agents.
+- [ ] Record which named approaches are prompting techniques, algorithms, or full execution architectures.
 
-## Phase 3 — Expand agent capabilities
+## Phase 4 — Context, memory, and knowledge
 
-Candidate areas, subject to design review and demonstrated need:
+- [x] Baseline retrieval contract and in-memory lexical implementation (experimental).
+- [x] Bounded RAG context assembly with provenance (experimental).
+- [ ] Conversation state and explicit context-window management.
+- [ ] Short-term/buffer and summarized memory.
+- [ ] Long-term semantic, episodic, entity, and procedural memory.
+- [ ] Memory write policies, consolidation, decay, deletion, tenant isolation, and privacy controls.
+- [ ] Dense/vector, lexical, hybrid, and metadata-filtered retrieval.
+- [ ] Query rewriting, decomposition, multi-query retrieval, reranking, and relevance feedback.
+- [ ] Graph, temporal, and multimodal retrieval strategies.
+- [ ] Adaptive/agentic RAG, corrective retrieval, and self-evaluating retrieval pipelines.
 
-- Advanced memory strategies and persistent memory stores.
-- Advanced retrieval: hybrid search, reranking, query transformation, and provider-specific vector-store adapters.
-- Routing, delegation, and specialized agent selection.
-- Supervisor, hierarchical, collaborative, and other multi-agent architectures.
-- Durable workflows with checkpointing, resumption, and human approval.
-- Protocol integrations such as MCP and agent-to-agent interoperability.
-- Domain-focused systems such as research and coding workflows, with each component classified by its actual architecture and behavior.
+## Phase 5 — Workflow and orchestration
 
-Each candidate must first be classified correctly as an agent, capability, pattern, architecture, protocol integration, or workflow.
+- [x] Bounded sequential and conditional workflow composition (experimental).
+- [ ] Parallel fan-out/fan-in and map-reduce workflows.
+- [ ] Explicit loop, retry, compensation, and error-routing policies.
+- [ ] Human approval, pause, and resume.
+- [ ] Typed graph/state-machine workflows with cycle validation.
+- [ ] Durable checkpoints and resumable execution.
+- [ ] Persistence abstractions and crash-recovery semantics.
+- [ ] Distributed execution and scheduling only after local semantics are proven.
 
-## Phase 4 — Community ecosystem
+## Phase 6 — Multi-agent systems
 
-- [ ] Publish a language implementation starter guide.
-- [ ] Establish conformance and compatibility reporting.
-- [ ] Welcome additional language implementations.
-- [ ] Build a contributor and maintainer review process.
-- [ ] Add integration examples and evaluation benchmarks.
-- [ ] Define stable support and deprecation policies.
+- [ ] Supervisor and delegation architectures.
+- [ ] Hierarchical planner/worker teams.
+- [ ] Peer-to-peer collaboration and role-based groups.
+- [ ] Debate, critic-generator, and consensus strategies.
+- [ ] Blackboard coordination.
+- [ ] Contract-net, bidding, auction, and market-based allocation.
+- [ ] Swarm and decentralized coordination.
+- [ ] Multi-agent reinforcement learning experiments.
+- [ ] Shared-state, message-passing, turn-taking, conflict-resolution, and termination contracts.
+- [ ] Aggregate budgets, permission boundaries, and coordination observability.
 
-## Release principles
+## Phase 7 — Production engineering
 
-- No package is considered released merely because source code exists in the repository.
-- Each package must have a documented purpose, public API, tests, examples, versioning policy, and release workflow.
-- Each language implementation owns its build and release lifecycle.
-- Changes in one language should not trigger unrelated releases in another language.
-- Stable compatibility claims require tests and published evidence.
+- [ ] Model and agent evaluation suites: task success, correctness, groundedness, safety, latency, cost, and robustness.
+- [ ] Offline datasets, golden cases, regression tests, and experiment tracking.
+- [ ] Trace correlation across model calls, tools, retrieval, and nested agents.
+- [ ] Policy/guardrail hooks, least privilege, prompt-injection defenses, and approval gates.
+- [ ] Rate limiting, concurrency control, idempotency, retry policy, and circuit breaking.
+- [ ] Caching, token/cost accounting, context compaction, and performance benchmarks.
+- [ ] Multi-tenancy, secret handling, data retention, and audit events.
+- [ ] Operational guidance for hosting, deployment, scaling, and incident diagnosis.
+
+## Phase 8 — Protocols and specialized modalities
+
+- [ ] MCP client integration and tool-server interoperability.
+- [ ] Agent-to-agent protocol adapters where justified.
+- [ ] Browser and computer-use automation behind isolated, permissioned tool boundaries.
+- [ ] Voice, speech, real-time, image, audio, and other multimodal agent capabilities.
+- [ ] Specialized document, research, business-process, and data agents.
+
+## Release policy
+
+There is **no current NuGet publication objective**. The project should first become technically coherent, well-tested, documented, and useful as a complete engineering codebase. Package boundaries and release mechanics can be reviewed later. Source modules are not considered production-ready simply because they compile.

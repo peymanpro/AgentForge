@@ -25,7 +25,7 @@ The initial retrieval layer should:
 7. Bound the number and size of retrieved items.
 8. Preserve enough provenance for an application to cite or inspect sources where appropriate.
 9. Treat retrieved content as untrusted data, not system instructions.
-10. Remain idiomatic in .NET, TypeScript/NestJS, Python, and future implementations.
+10. Remain idiomatic in .NET and composable with the rest of the solution.
 
 ## 3. Conceptual responsibilities
 

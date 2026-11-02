@@ -1,30 +1,39 @@
 # Design Notes
 
-This directory contains focused design proposals for AgentForge. A design note explores an engineering decision before it becomes a stable public contract.
+Design notes document engineering choices before they become stable public APIs. They are specific to the AgentForge .NET solution.
 
-Design notes are not automatically accepted specifications or API guarantees. Check each document's status before relying on it in an implementation.
+A proposal is not an API guarantee. Its status must be updated when a design is implemented, revised, or rejected.
 
-## Current proposals
+## Runtime and model foundations
 
-| Document | Topic | Status |
+| Document | Responsibility | Current status |
 |---|---|---|
-| [Model Provider Contract](model-provider-contract.md) | Baseline model interaction and optional provider capabilities | Proposal; validate with prototypes |
-| [Tool Execution Contract](tool-execution-contract.md) | Tool declarations, validation, authorization, bounded execution, and results | Proposal; validate with prototypes |
-| [ReAct Agent Execution](react-agent-execution.md) | Model decision, action, observation, budgets, and termination | Proposal; validate with prototypes |
-| [Planning Agent Execution](planning-agent-execution.md) | Structured plan generation, validation, and bounded step execution | Proposal; validate with prototypes |
-| [Reflection Agent Execution](reflection-agent-execution.md) | Evaluation, feedback, iterative refinement, and acceptance | Proposal; validate with prototypes |
-| [Cross-Language Conformance](cross-language-conformance.md) | Shared behavioral scenarios and independent language-native test harnesses | Proposal; validate with prototypes |
-| [Workflow and Orchestration](workflow-orchestration.md) | Bounded sequential and conditional composition, data flow, failure, and cancellation | Implemented in .NET MVP; API experimental |
-| [Retrieval and RAG Composition](retrieval-rag.md) | Provider-neutral retrieval, provenance, authorization-aware filtering, and bounded context assembly | Proposal; validate with prototypes |
-| [Agent Execution Contract](agent-execution-contract.md) | Shared run lifecycle, budgets, cancellation, results, and execution events | Proposal; validate with prototypes |
+| [Agent Execution Contract](agent-execution-contract.md) | Agent run lifecycle, context, results, events, cancellation, budgets, and failure semantics | Design proposal; implemented foundation is experimental |
+| [Model Provider Contract](model-provider-contract.md) | Provider-neutral model contracts and optional capabilities | Design proposal; baseline contract implemented experimentally |
+| [Tool Execution Contract](tool-execution-contract.md) | Tool schemas, validation, authorization, bounded execution, and side effects | Design proposal; baseline implementation is experimental |
 
-## Design note lifecycle
+## Agent algorithms
 
-1. **Problem and constraints:** describe the engineering problem and goals.
-2. **Options:** compare viable designs and explain trade-offs.
-3. **Recommendation:** state a preferred direction without presenting it as final prematurely.
-4. **Prototype:** test the design with a narrow working example where appropriate.
-5. **Review:** consider impact across .NET, TypeScript/NestJS, Python, and future implementations.
-6. **Decision:** accept, revise, or reject the proposal. If a lasting architectural decision is made, record it in `docs/decisions/` and update the shared specification when needed.
+| Document | Responsibility | Current status |
+|---|---|---|
+| [ReAct Execution](react-agent-execution.md) | Decision/action/observation lifecycle and stopping behavior | Implemented experimentally |
+| [Planning Execution](planning-agent-execution.md) | Structured plan generation, validation, execution, and failure policy | Implemented experimentally |
+| [Reflection Execution](reflection-agent-execution.md) | Evaluation, feedback, bounded refinement, and acceptance | Implemented experimentally |
 
-A design note should be updated or superseded when implementation evidence invalidates its assumptions.
+## Knowledge and orchestration
+
+| Document | Responsibility | Current status |
+|---|---|---|
+| [Retrieval and RAG](retrieval-rag.md) | Retrieval boundaries, authorization, provenance, context assembly, and grounding | Baseline implemented experimentally |
+| [Workflow Orchestration](workflow-orchestration.md) | Bounded sequential/conditional composition and dataflow | Implemented experimentally |
+
+## How to use a design note
+
+1. Read the problem and constraints.
+2. Compare alternatives and trade-offs.
+3. Check the proposed contracts and threat boundaries.
+4. Inspect the implementation and tests, if marked implemented.
+5. Record any final architectural decision in `docs/decisions/`.
+6. Update the note when implementation evidence changes the design.
+
+Do not treat an experimental design note as a stable API contract.
