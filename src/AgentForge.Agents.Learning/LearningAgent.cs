@@ -4,15 +4,18 @@ using AgentForge.Agents.Learning.Domain.Models;
 using AgentForge.Agents.Learning.Domain.Policies;
 namespace AgentForge.Agents.Learning;
 /// <summary>A stateless decision component; the host supplies and persists immutable learned state.</summary>
+/// <typeparam name="TAction">The action identity type.</typeparam>
 public sealed class LearningAgent<TAction> : IAgent<LearningAgentInput<TAction>, LearningAgentOutput<TAction>> where TAction : notnull
 {
     private readonly SelectLearningAction<TAction> _selection;
     private readonly TimeProvider _clock;
+    /// <summary>Creates a learning agent with the selected policy and optional clock.</summary>
     public LearningAgent(ILearningPolicy<TAction> policy, TimeProvider? timeProvider = null)
     {
         _selection = new SelectLearningAction<TAction>(policy ?? throw new ArgumentNullException(nameof(policy)));
         _clock = timeProvider ?? TimeProvider.System;
     }
+    /// <inheritdoc />
     public Task<AgentRunResult<LearningAgentOutput<TAction>>> RunAsync(LearningAgentInput<TAction> input, AgentRunContext context, AgentRunOptions options, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(input);
