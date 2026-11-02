@@ -20,6 +20,7 @@ Each independently useful agent architecture has its own module, focused API, an
   - [Plan-and-Execute](#plan-and-execute-quick-start)
   - [Reflection](#reflection-quick-start)
   - [Utility-Based](#utility-based-quick-start)
+  - [Goal-Based](#goal-based-quick-start)
 - [NuGet packages](#nuget-packages)
 - [Architecture](#architecture)
 - [Development](#development)
@@ -50,6 +51,7 @@ Choose an agent to jump directly to its Quick Start. Full behavior, extension po
 | **Plan-and-Execute** | Validated plans and registered sequential step handlers. | [Build and run](#plan-and-execute-quick-start) |
 | **Reflection** | Candidate generation, independent evaluation, and refinement. | [Build and run](#reflection-quick-start) |
 | **Utility-Based** | Candidate evaluation and maximum-utility action selection. | [Build and run](#utility-based-quick-start) |
+| **Goal-Based** | Bounded state-space search for a shortest goal-reaching action sequence. | [Build and run](#goal-based-quick-start) |
 
 ## Agent Modules
 
@@ -404,6 +406,60 @@ public enum ThermostatAction
 - The agent proposes an action; the host performs the side effect.
 - The utility function is application-supplied. No model provider, tool registry, or database is required.
 
+### Goal-Based
+
+A goal-directed search agent that explores the state space and returns a shortest sequence of proposed actions satisfying an explicit goal predicate. The initial implementation uses bounded breadth-first search.
+
+#### Installation
+
+After this package is published to NuGet.org:
+
+```bash
+dotnet add package AgentForge.Agents.GoalBased
+```
+
+#### Goal-Based Quick Start
+
+The application supplies the available state transitions and a predicate that determines whether a state satisfies the goal:
+
+```csharp
+using AgentForge.Agents.GoalBased.Builders;
+using AgentForge.Agents.GoalBased.Domain.Models;
+
+var routes = new Dictionary<string, GoalBasedTransition<string, string>[]>
+{
+    ["Home"] = [new("Go to station", "Station"), new("Go to park", "Park")],
+    ["Station"] = [new("Take the train", "Museum")],
+    ["Park"] = [new("Walk to museum", "Museum")],
+    ["Museum"] = []
+};
+
+var agent = GoalBasedAgentBuilder
+    .Create<string, string, string>()
+    .WithSuccessors(state => routes[state])
+    .WithGoalPredicate((state, goal) => state == goal)
+    .WithLimits(maxDepth: 8, maxExploredStates: 100)
+    .Build();
+
+var result = await agent.RunAsync(
+    new GoalBasedInput<string, string>("Home", "Museum"),
+    cancellationToken);
+
+if (result.Output?.Plan is { } plan)
+{
+    Console.WriteLine(string.Join(" -> ", plan.Actions));
+}
+```
+
+#### Behavior
+
+- Breadth-first search returns a shortest plan when all transitions have equal cost.
+- State equality prevents revisiting already discovered states; a custom comparer can be supplied.
+- Search is bounded by maximum depth and explored-state count.
+- Results distinguish a reached goal, an exhausted reachable state space, and a search limit.
+- The agent proposes a plan; the host authorizes and executes actions.
+- No LLM, tool registry, or external infrastructure is required.
+
 ## NuGet packages
 
 Each agent is distributed as an independent package. The package IDs and package-specific READMEs are:
@@ -416,6 +472,7 @@ Each agent is distributed as an independent package. The package IDs and package
 | `AgentForge.Agents.Planning` | [Plan-and-Execute](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Planning/README.md) |
 | `AgentForge.Agents.Reflection` | [Reflection](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Reflection/README.md) |
 | `AgentForge.Agents.UtilityBased` | [Utility-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.UtilityBased/README.md) |
+| `AgentForge.Agents.GoalBased` | [Goal-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.GoalBased/README.md) |
 
 Each package project declares its module README through `PackageReadmeFile` and includes that Markdown file in the `.nupkg`. NuGet.org therefore displays the matching agent's description and Quick Start on that package's page.
 
