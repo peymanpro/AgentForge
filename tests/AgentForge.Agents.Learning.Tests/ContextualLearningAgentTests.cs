@@ -34,10 +34,10 @@ public sealed class ContextualLearningAgentTests
         Assert.Equal(1, updated.TotalObservations);
         Assert.Equal(0, initial.GetObservationCount("A"));
         Assert.Equal(1, updated.GetObservationCount("A"));
-        Assert.Equal(1, updated.GetObservationCount("B"));
-        Assert.Equal(1, updated.GetStatistics("A").DesignMatrix[0, 0]);
+        Assert.Equal(0, updated.GetObservationCount("B"));
+        Assert.Equal(2, updated.GetStatistics("A").DesignMatrix[0, 0]);
         Assert.Equal(2, updated.GetStatistics("A").DesignMatrix[0, 1]);
-        Assert.Equal(4, updated.GetStatistics("A").DesignMatrix[1, 1]);
+        Assert.Equal(5, updated.GetStatistics("A").DesignMatrix[1, 1]);
         Assert.Equal(0.5, updated.GetStatistics("A").RewardVector[0]);
         Assert.Equal(1.0, updated.GetStatistics("A").RewardVector[1]);
     }
