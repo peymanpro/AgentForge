@@ -450,7 +450,8 @@ public sealed class PlanAndExecuteAgent : IAgent<string, PlanAndExecuteOutput>
         IReadOnlyList<PlanStepResult> stepResults,
         AgentFailure failure)
     {
-        if (stepResults.Count > 0 && stepResults[^1].Status == PlanStepStatus.Failed)
+        var failedStep = stepResults.LastOrDefault(static step => step.Status == PlanStepStatus.Failed);
+        if (failedStep is not null)
         {
             await PublishEventAsync(
                 options,
@@ -458,8 +459,8 @@ public sealed class PlanAndExecuteAgent : IAgent<string, PlanAndExecuteOutput>
                 "plan.step.failed",
                 new Dictionary<string, string>
                 {
-                    ["step_id"] = stepResults[^1].StepId,
-                    ["failure_code"] = stepResults[^1].Failure?.Code ?? "plan.step_failed"
+                    ["step_id"] = failedStep.StepId,
+                    ["failure_code"] = failedStep.Failure?.Code ?? "plan.step_failed"
                 },
                 CancellationToken.None);
         }
