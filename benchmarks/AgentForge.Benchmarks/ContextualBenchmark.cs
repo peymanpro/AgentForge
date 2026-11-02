@@ -47,7 +47,7 @@ internal static class ContextualBenchmark
             metrics.Latencies[round] = Stopwatch.GetElapsedTime(started).TotalNanoseconds;
 
             var action = decision.SelectedAction;
-            Observe(metrics, environment, state, round, action);
+            Observe(metrics, environment, round, action);
             state = state.Observe(action, context, environment.Rewards[action][round]);
         }
 
@@ -86,15 +86,14 @@ internal static class ContextualBenchmark
             }
 
             metrics.Latencies[round] = Stopwatch.GetElapsedTime(started).TotalNanoseconds;
-            Observe(metrics, environment, state, round, selected);
+            Observe(metrics, environment, round, selected);
             state = state.Observe(selected, context, environment.Rewards[selected][round]);
         }
 
         return metrics.ToResult(seed, horizon, "LinearThompsonSampling");
     }
 
-    private static void Observe(RunMetrics metrics, EnvironmentData environment,
-        ContextualLearningState<int> state, int round, int action)
+    private static void Observe(RunMetrics metrics, EnvironmentData environment, int round, int action)
     {
         var expected = Dot(environment.Contexts[round], environment.Parameters[action]);
         var oracle = Enumerable.Range(0, ArmCount)
