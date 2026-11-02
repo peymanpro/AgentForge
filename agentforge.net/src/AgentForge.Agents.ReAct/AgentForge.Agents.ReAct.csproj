@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Agents.ReAct</AssemblyName>
+    <RootNamespace>AgentForge.Agents.ReAct</RootNamespace>
+    <PackageId>AgentForge.Agents.ReAct</PackageId>
+    <Description>A bounded, inspectable ReAct agent implementation for AgentForge.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;react;tool-calling;agent-engineering</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+    <ProjectReference Include="..\AgentForge.Models\AgentForge.Models.csproj" />
+    <ProjectReference Include="..\AgentForge.Tools\AgentForge.Tools.csproj" />
+  </ItemGroup>
+</Project>
