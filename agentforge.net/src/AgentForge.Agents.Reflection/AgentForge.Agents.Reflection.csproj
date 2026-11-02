@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Agents.Reflection</AssemblyName>
+    <RootNamespace>AgentForge.Agents.Reflection</RootNamespace>
+    <PackageId>AgentForge.Agents.Reflection</PackageId>
+    <Description>A bounded Reflection and iterative refinement agent for AgentForge.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;reflection;iterative-refinement;agent-engineering</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+  </ItemGroup>
+</Project>
