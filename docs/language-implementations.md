@@ -24,14 +24,28 @@ agentforge.<language>/
 ├── src-or-packages/
 ├── tests/
 ├── examples/
-├── docs/
-└── .github/
-    └── workflows/
+└── docs/
 ```
 
 Use the conventions of the language ecosystem. For example, a .NET implementation may use a solution and projects, a TypeScript implementation may use a workspace, and a Python implementation may use a standard Python packaging layout.
 
-## 3. Minimum readiness checklist
+## 3. GitHub Actions location and isolation
+
+GitHub only discovers workflow definitions in the repository-root `.github/workflows/` directory. Nested directories under `.github/workflows/` are not supported, so a workflow stored at `agentforge.net/.github/workflows/ci.yml` will not run as a GitHub Actions workflow.
+
+AgentForge should use separate root-level workflow files, for example:
+
+- `.github/workflows/agentforge-net-ci.yml`
+- `.github/workflows/agentforge-nestjs-ci.yml`
+- `.github/workflows/agentforge-python-ci.yml`
+
+Each language workflow should use repository-root-relative path filters for its own implementation directory. Shared specification or conformance-fixture changes should trigger the relevant language checks. Release workflows should remain separate from ordinary CI and publish only the intended language packages.
+
+This physical centralization does not make the implementations dependent on one another. It is a GitHub Actions repository constraint; logical ownership and release isolation remain language-specific.
+
+See [GitHub's workflow documentation](https://docs.github.com/en/actions/concepts/workflows-and-actions/workflows) and [workflow syntax for path filters](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax).
+
+## 4. Minimum readiness checklist
 
 Before an implementation is presented as active or supported, it should have:
 

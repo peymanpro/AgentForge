@@ -87,13 +87,14 @@ Each language directory owns its:
 - Source and package metadata.
 - Tests and examples.
 - Build and lint configuration.
-- CI workflows.
 - Versioning and release process.
 - Language-specific documentation.
 
-CI should detect which language implementation or shared documents changed and run the relevant checks. Publishing should be scoped to the affected implementation and should require an intentional release event or validated release condition.
+**GitHub Actions workflow files must live in the repository-root `.github/workflows/` directory.** GitHub discovers workflow files there; nested workflow directories are not supported. AgentForge will therefore keep separate, language-named workflow files at the root and scope them with path filters such as `agentforge.net/**`, `agentforge.nestjs/**`, or `agentforge.python/**`.
 
-The root repository owns shared specifications, project governance, and cross-language documentation.
+Each workflow remains logically owned by its language implementation and should run only the checks relevant to that implementation, plus shared conformance checks when shared specifications or fixtures change. Package publication must remain language-scoped and require an explicit, validated release condition.
+
+The root repository owns shared specifications, project governance, cross-language documentation, and the physical location of GitHub Actions workflow definitions.
 
 ## 8. Cross-language conformance
 
