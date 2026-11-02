@@ -20,7 +20,7 @@ Do not interpret a catalog entry as an implementation claim. See [Concepts](conc
 | Model-based reflex agent | Agent architecture | Update an explicit internal state from prior state and current percept, then apply condition-action rules | Implemented (experimental) — [module README](../src/AgentForge.Agents.ModelBasedReflex/README.md#quick-start) |
 | Goal-based agent | Agent architecture | Search possible state transitions for a sequence of actions that satisfies an explicit goal | Implemented (experimental) — [module README](../src/AgentForge.Agents.GoalBased/README.md#quick-start) |
 | Utility-based agent | Agent architecture | Compare candidate actions using a utility/preference function and select a maximum-utility action | Implemented (experimental) — [module README](../src/AgentForge.Agents.UtilityBased/README.md#quick-start) |
-| Learning agent | Agent architecture | Improve performance using feedback; commonly separates performance, learning, critic, and exploration/problem-generation responsibilities | Planned |
+| Learning agent | Agent architecture | Improve action selection from reward feedback; separates decision policy, learning state, critic feedback, and exploration | Implemented (experimental) — [module README](../src/AgentForge.Agents.Learning/README.md#quick-start) |
 | Rule-based / production-system agent | Agent architecture | Apply facts, rules, conflict resolution, and inference | Planned |
 | Reactive / subsumption agent | Agent architecture | Layered behaviors with priority and suppression/inhibition | Planned |
 | Deliberative agent | Agent architecture | Build an explicit world model and reason or plan before acting | Planned |
@@ -77,7 +77,8 @@ These are reusable strategies that may power a complete agent. They are not auto
 
 | Family | Methods and concepts | Status |
 |---|---|---|
-| Multi-armed bandits | Epsilon-greedy, optimistic initialization, UCB, Thompson sampling, contextual bandits | Planned |
+| Multi-armed bandits | Epsilon-greedy | Implemented (experimental) — [Learning module](../src/AgentForge.Agents.Learning/README.md) |
+| Multi-armed bandits | UCB, Thompson sampling, contextual bandits | Planned |
 | Dynamic programming | Markov Decision Processes, Bellman equations, policy iteration, value iteration | Planned |
 | Monte Carlo learning | Return estimation, on-policy and off-policy prediction/control | Planned |
 | Temporal-difference learning | TD(0), n-step TD, SARSA, Expected SARSA, Q-learning | Planned |
