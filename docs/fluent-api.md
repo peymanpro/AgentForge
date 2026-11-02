@@ -109,6 +109,28 @@ var agent = ReActAgentBuilder.Create()
 
 ReAct now exposes a module-specific builder. Plan-and-Execute and Reflection builder APIs remain part of the migration roadmap; their current implementation status must not be confused with the target API.
 
+### Plan-and-Execute
+
+```csharp
+var agent = PlanAndExecuteAgentBuilder.Create()
+    .WithPlanner(planner)
+    .WithStepHandlers(approvedHandlers)
+    .WithMaxPlanSteps(8)
+    .WithTimeout(TimeSpan.FromSeconds(60))
+    .Build();
+```
+
+### Reflection
+
+```csharp
+var agent = ReflectionAgentBuilder.Create()
+    .WithGenerator(generator)
+    .WithEvaluator(evaluator)
+    .WithMaxAttempts(3)
+    .WithStopOnNoImprovement()
+    .Build();
+```
+
 ## 3. Consistent construction and execution
 
 Where the concept is genuinely shared, builders should use a common vocabulary:
