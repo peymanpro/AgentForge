@@ -64,6 +64,7 @@ public sealed class GoalBasedAgentBuilder<TState, TGoal, TAction>
         return this;
     }
 
+    /// <summary>Configures the clock used for run timestamps.</summary>
     public GoalBasedAgentBuilder<TState, TGoal, TAction> WithTimeProvider(TimeProvider timeProvider)
     {
         ArgumentNullException.ThrowIfNull(timeProvider);
