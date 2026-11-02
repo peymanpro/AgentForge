@@ -26,6 +26,7 @@ Each independently useful agent architecture has its own module, focused API, an
 - [NuGet packages](#nuget-packages)
 - [Architecture](#architecture)
 - [Learning benchmark protocol](#learning-benchmark-protocol)
+- [Benchmarks](#benchmarks)
 - [Development](#development)
 - [License](#license)
 
@@ -563,6 +564,10 @@ Agent modules use the shared execution contract and do not depend on other agent
 ## Learning benchmark protocol
 
 AgentForge keeps stationary context-free bandits and contextual bandits as separate evaluation families. The benchmark protocol defines comparable environments, regret and reward metrics, reproducible seeds, parameter-tuning controls, and interpretation limits. See [Learning Bandit Benchmark Protocol](docs/learning-bandit-benchmark.md).
+
+## Benchmarks
+
+Reproducible experiments for learning policies live under [benchmarks](benchmarks/README.md). The first runner compares Epsilon-Greedy and Beta-Bernoulli Thompson Sampling on stationary context-free bandits. Contextual bandit experiments are maintained as a separate benchmark family.
 
 ## Development
 
