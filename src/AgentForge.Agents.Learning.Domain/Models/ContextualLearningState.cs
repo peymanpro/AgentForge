@@ -83,7 +83,7 @@ public sealed class ContextualLearningState<TAction> where TAction : notnull
 
         var next = new Dictionary<TAction, ContextualActionStatistics>(_statistics)
         {
-            [action] = new ContextualActionStatistics(matrix, vector)
+            [action] = new ContextualActionStatistics(matrix, vector, checked(current.ObservationCount + 1))
         };
         return new ContextualLearningState<TAction>(FeatureCount, Regularization, next);
     }
