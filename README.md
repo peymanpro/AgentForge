@@ -340,17 +340,17 @@ Register an application-specific `IReflectionGenerationStrategy` and an `IReflec
 ```csharp
 using AgentForge.Abstractions.Execution;
 using AgentForge.Agents.Reflection;
+using AgentForge.Agents.Reflection.Builders;
 using AgentForge.Agents.Reflection.Evaluation;
 using AgentForge.Agents.Reflection.Generation;
 using Microsoft.Extensions.DependencyInjection;
 
-var agent = new AgentHandle<string, ReflectionAgentOutput>(
-    new ReflectionAgent(
-        services.GetRequiredService<IReflectionGenerationStrategy>(),
-        services.GetRequiredService<IReflectionEvaluator>(),
-        new ReflectionAgentOptions(
-            maxAttempts: 3,
-            timeout: TimeSpan.FromSeconds(90))));
+var agent = ReflectionAgentBuilder.Create()
+    .WithGenerator(services.GetRequiredService<IReflectionGenerationStrategy>())
+    .WithEvaluator(services.GetRequiredService<IReflectionEvaluator>())
+    .WithMaxAttempts(3)
+    .WithTimeout(TimeSpan.FromSeconds(90))
+    .Build();
 
 var result = await agent.RunAsync(
     "Write a concise explanation of the CAP theorem.",
