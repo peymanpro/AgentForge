@@ -1,6 +1,17 @@
 # Adding a New Agent Module
 
-This document defines the implementation process for adding a new independently usable agent type.
+This document defines the implementation process for adding a new independently usable agent type to the modular Fluent API framework.
+
+## Consumer experience
+
+Every new agent should follow the same simple journey:
+
+1. The consumer installs only the agent's NuGet package.
+2. The consumer configures it through the module-specific Fluent API.
+3. `Build()` validates configuration and returns an immutable agent handle.
+4. The consumer executes it through `RunAsync()`.
+
+Required shared abstractions are resolved transitively. Unrelated agent modules and optional capabilities must not become dependencies. Do not introduce a mandatory all-in-one package.
 
 ## 1. Classify the component
 
@@ -42,14 +53,16 @@ Do not reference another agent module's concrete implementation. Compose through
 
 ## 4. Design the fluent API
 
-The builder should express the minimum required architecture-specific configuration. It should:
+The builder is the primary public construction experience, not a secondary convenience. It should express the minimum required architecture-specific configuration and make the happy path short enough to understand at a glance. It should:
 - Expose required strategies explicitly.
 - Use typed method signatures.
 - Provide a small common vocabulary for metadata, limits, and optional capabilities.
 - Validate required options in Build().
 - Freeze configuration after Build().
 - Avoid hidden remote calls or writes during Build().
-- Return a handle that supports RunAsync(input, cancellationToken).
+- Return the common `AgentHandle<TInput,TOutput>` with `RunAsync(input, cancellationToken)`.
+- Be available from the public agent package without requiring consumers to reference internal Domain/Application projects.
+- Use a module-specific entry point such as `SomeAgentBuilder.Create(...)`; do not add a universal builder with unrelated options.
 
 Do not add generic methods for features the agent does not support. A rule-based agent should not expose WithModel; a provider-backed ReAct agent should.
 
@@ -77,11 +90,12 @@ Each module needs:
 
 ## 7. Document and integrate
 
-The module README should describe purpose, supported architecture, builder API, dependencies, lifecycle, limits, failure semantics, security, and known limitations.
+The module README is the package landing page and should begin with a concise description, show the exact NuGet installation command, and demonstrate the Fluent API happy path. It should describe purpose, supported architecture, builder API, dependencies, lifecycle, limits, failure semantics, security, and known limitations.
 
 Add:
 - The project(s) to the solution.
 - The module to the agent catalog with an honest status.
+- The package and its dependencies to the root package inventory, ensuring no unrelated agent package is pulled in.
 - A roadmap entry.
 - A runnable sample.
 - Design notes for non-obvious choices.
