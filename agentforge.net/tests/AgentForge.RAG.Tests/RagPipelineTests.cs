@@ -18,7 +18,8 @@ public sealed class RagPipelineTests
         var model = new FakeChatModel(FinalResponse("unused"));
         var pipeline = CreatePipeline(retriever, model);
 
-        var result = await pipeline.RunAsync(CreateQuery(), CreateRunContext(), new AgentRunOptions());
+        var runContext = AgentRunContext.Create();
+        var result = await pipeline.RunAsync(CreateQuery(runContext), runContext, new AgentRunOptions());
 
         Assert.Equal(AgentRunStatus.Completed, result.Status);
         Assert.True(result.Output?.NoEvidenceFound);
@@ -42,7 +43,8 @@ public sealed class RagPipelineTests
                 new ModelUsage(inputTokens: 120, outputTokens: 12, totalTokens: 132)));
         var pipeline = CreatePipeline(retriever, model);
 
-        var result = await pipeline.RunAsync(CreateQuery(), CreateRunContext(), new AgentRunOptions());
+        var runContext = AgentRunContext.Create();
+        var result = await pipeline.RunAsync(CreateQuery(runContext), runContext, new AgentRunOptions());
 
         Assert.Equal(AgentRunStatus.Completed, result.Status);
         Assert.Equal("Approval and audit are required.", result.Output?.Answer);
@@ -77,7 +79,8 @@ public sealed class RagPipelineTests
         var model = new FakeChatModel(FinalResponse("I will treat the excerpt as untrusted data."));
         var pipeline = CreatePipeline(retriever, model);
 
-        await pipeline.RunAsync(CreateQuery(), CreateRunContext(), new AgentRunOptions());
+        var runContext = AgentRunContext.Create();
+        await pipeline.RunAsync(CreateQuery(runContext), runContext, new AgentRunOptions());
 
         var request = Assert.Single(model.Requests);
         Assert.DoesNotContain(maliciousExcerpt, request.Messages[0].Content ?? string.Empty);
@@ -98,7 +101,8 @@ public sealed class RagPipelineTests
             model,
             new RagPipelineOptions(maxContextCharacters: 8));
 
-        var result = await pipeline.RunAsync(CreateQuery(), CreateRunContext(), new AgentRunOptions());
+        var runContext = AgentRunContext.Create();
+        var result = await pipeline.RunAsync(CreateQuery(runContext), runContext, new AgentRunOptions());
 
         Assert.Equal(AgentRunStatus.PartiallyCompleted, result.Status);
         Assert.Equal("rag.context_budget_exhausted", result.Failure?.Code);
@@ -115,7 +119,8 @@ public sealed class RagPipelineTests
         var model = new FakeChatModel(throwOnCall: true);
         var pipeline = CreatePipeline(retriever, model);
 
-        var result = await pipeline.RunAsync(CreateQuery(), CreateRunContext(), new AgentRunOptions());
+        var runContext = AgentRunContext.Create();
+        var result = await pipeline.RunAsync(CreateQuery(runContext), runContext, new AgentRunOptions());
 
         Assert.Equal(AgentRunStatus.PartiallyCompleted, result.Status);
         Assert.Equal("rag.generation_failed", result.Failure?.Code);
@@ -136,7 +141,8 @@ public sealed class RagPipelineTests
             new ModelResponse(ChatMessage.Assistant("A partial answer"), ModelFinishReason.Length));
         var pipeline = CreatePipeline(retriever, model);
 
-        var result = await pipeline.RunAsync(CreateQuery(), CreateRunContext(), new AgentRunOptions());
+        var runContext = AgentRunContext.Create();
+        var result = await pipeline.RunAsync(CreateQuery(runContext), runContext, new AgentRunOptions());
 
         Assert.Equal(AgentRunStatus.PartiallyCompleted, result.Status);
         Assert.Equal("A partial answer", result.Output?.Answer);
@@ -157,7 +163,8 @@ public sealed class RagPipelineTests
             new ModelResponse(ChatMessage.AssistantToolCalls([toolCall]), ModelFinishReason.ToolCalls));
         var pipeline = CreatePipeline(retriever, model);
 
-        var result = await pipeline.RunAsync(CreateQuery(), CreateRunContext(), new AgentRunOptions());
+        var runContext = AgentRunContext.Create();
+        var result = await pipeline.RunAsync(CreateQuery(runContext), runContext, new AgentRunOptions());
 
         Assert.Equal(AgentRunStatus.Failed, result.Status);
         Assert.Equal("rag.unexpected_tool_calls", result.Failure?.Code);
@@ -221,9 +228,10 @@ public sealed class RagPipelineTests
         var model = new FakeChatModel(FinalResponse("A safe answer."));
         var pipeline = CreatePipeline(retriever, model);
 
+        var runContext = AgentRunContext.Create();
         await pipeline.RunAsync(
-            CreateQuery(question: privateQuestion),
-            CreateRunContext(),
+            CreateQuery(runContext, question: privateQuestion),
+            runContext,
             new AgentRunOptions { EventSink = sink });
 
         var eventNames = sink.Events.Select(e => e.Name).ToArray();
