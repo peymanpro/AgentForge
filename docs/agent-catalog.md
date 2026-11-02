@@ -14,8 +14,8 @@ Do not interpret a catalog entry as an implementation claim. See [Concepts](conc
 
 | Approach | Correct classification | Main idea | Status |
 |---|---|---|---|
-| Simple-reflex agent | Agent architecture | Select an action from the current percept using condition-action rules | Planned |
-| Model-based reflex agent | Agent architecture | Maintain an internal state/model to reason beyond the current percept | Planned |
+| Simple-reflex agent | Agent architecture | Select an action from the current percept using ordered condition-action rules | Implemented (experimental) — `AgentForge.Agents.Classical` |
+| Model-based reflex agent | Agent architecture | Update an explicit internal state from prior state and current percept, then apply condition-action rules | Implemented (experimental) — `AgentForge.Agents.Classical` |
 | Goal-based agent | Agent architecture | Select actions by considering goal achievement | Planned |
 | Utility-based agent | Agent architecture | Compare outcomes using a utility/preference function | Planned |
 | Learning agent | Agent architecture | Improve performance using feedback; commonly separates performance, learning, critic, and exploration/problem-generation responsibilities | Planned |

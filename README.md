@@ -13,7 +13,7 @@ AgentForge has two connected goals:
 
 The ambition is broad, but implementation claims remain evidence-based. A catalog entry is not the same as an implemented feature.
 
-> **Project status:** Active engineering foundation. Nine .NET source modules currently cover abstractions, model contracts, tools, ReAct, Planning, Reflection, retrieval, RAG, and bounded workflow orchestration. Their APIs are experimental. No NuGet package has been published, and NuGet publication is not a current objective.
+> **Project status:** Active engineering foundation. Ten .NET source modules currently cover abstractions, model contracts, tools, ReAct, Planning, Reflection, retrieval, RAG, and bounded workflow orchestration. Their APIs are experimental. No NuGet package has been published, and NuGet publication is not a current objective.
 
 ## Why AgentForge?
 
@@ -42,6 +42,7 @@ AgentForge/
 │   ├── AgentForge.Abstractions/
 │   ├── AgentForge.Models/
 │   ├── AgentForge.Tools/
+│   ├── AgentForge.Agents.Classical/
 │   ├── AgentForge.Agents.ReAct/
 │   ├── AgentForge.Agents.Planning/
 │   ├── AgentForge.Agents.Reflection/
@@ -72,6 +73,7 @@ Only implemented modules are created as source projects. Planned modules are tra
 | `AgentForge.Abstractions` | Agent execution contracts, context, results, failures, events | Experimental implementation |
 | `AgentForge.Models` | Provider-neutral chat model contracts and optional tool-calling capability | Experimental implementation |
 | `AgentForge.Tools` | Tool definitions, registry, validation, authorization, execution | Experimental implementation |
+| `AgentForge.Agents.Classical` | Deterministic simple-reflex and model-based reflex architectures | Experimental implementation |
 | `AgentForge.Agents.ReAct` | Bounded reasoning/action/observation loop | Experimental implementation |
 | `AgentForge.Agents.Planning` | Structured plan validation and bounded plan execution | Experimental implementation |
 | `AgentForge.Agents.Reflection` | Evaluation-guided iterative refinement | Experimental implementation |
@@ -117,6 +119,7 @@ From the repository root:
 dotnet restore AgentForge.sln
 dotnet build AgentForge.sln --configuration Release --no-restore
 dotnet test AgentForge.sln --configuration Release --no-build --no-restore
+dotnet run --project samples/AgentForge.ClassicalAgents.Sample
 dotnet run --project samples/AgentForge.Orchestration.Sample
 ```
 
@@ -144,6 +147,7 @@ The sample is deterministic and does not require a model API key.
 - [Architecture](docs/architecture.md)
 - [Implementation scope and status](docs/mvp-scope.md)
 - [Design notes](docs/design/README.md)
+- [Classical agent architecture design](docs/design/classical-agents.md)
 - [AgentForge specification](AGENTFORGE_SPEC.md)
 - [Roadmap](ROADMAP.md)
 - [Contributing](CONTRIBUTING.md)
