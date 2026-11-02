@@ -2,6 +2,14 @@
 
 A structured Plan-and-Execute agent that validates a generated plan before running its registered step handlers.
 
+## Installation
+
+After this package is published to NuGet.org, install it with:
+
+```bash
+dotnet add package AgentForge.Agents.Planning
+```
+
 ## Quick Start
 
 Register an application-specific `IPlanningStrategy` and only the `IPlanStepHandler` implementations that the agent is allowed to execute.

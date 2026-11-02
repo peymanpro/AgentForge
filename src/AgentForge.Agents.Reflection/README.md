@@ -2,6 +2,14 @@
 
 A bounded candidate-refinement agent that separates generation from independent evaluation.
 
+## Installation
+
+After this package is published to NuGet.org, install it with:
+
+```bash
+dotnet add package AgentForge.Agents.Reflection
+```
+
 ## Quick Start
 
 Register an application-specific `IReflectionGenerationStrategy` and an `IReflectionEvaluator`. The evaluator owns the acceptance criteria and returns actionable feedback for rejected candidates.

@@ -2,13 +2,15 @@
 
 A deterministic agent that updates an explicit internal state from the previous state and current percept before selecting an action.
 
-## Quick Start
+## Installation
 
-Add a project reference:
+After this package is published to NuGet.org, install it with:
 
 ```bash
-dotnet add path/to/YourApp.csproj reference src/AgentForge.Agents.ModelBasedReflex/AgentForge.Agents.ModelBasedReflex.csproj
+dotnet add package AgentForge.Agents.ModelBasedReflex
 ```
+
+## Quick Start
 
 Define the percept, state, and action types. Supply the state transition and ordered rules:
 

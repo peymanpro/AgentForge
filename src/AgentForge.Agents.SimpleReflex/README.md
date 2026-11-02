@@ -2,13 +2,15 @@
 
 A deterministic agent that selects an action from the current percept using ordered condition-action rules.
 
-## Quick Start
+## Installation
 
-Add a project reference:
+After this package is published to NuGet.org, install it with:
 
 ```bash
-dotnet add path/to/YourApp.csproj reference src/AgentForge.Agents.SimpleReflex/AgentForge.Agents.SimpleReflex.csproj
+dotnet add package AgentForge.Agents.SimpleReflex
 ```
+
+## Quick Start
 
 Define the percept and action types, then build and run the agent:
 
