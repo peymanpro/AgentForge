@@ -20,7 +20,7 @@ public sealed class LearningAgent<TAction> : IAgent<LearningAgentInput<TAction>,
         ArgumentNullException.ThrowIfNull(options);
         var started = _clock.GetUtcNow();
         if (cancellationToken.IsCancellationRequested)
-            return Task.FromResult(AgentRunResult<LearningAgentOutput<TAction>>.Stopped(AgentRunStatus.Cancelled, new AgentFailure("cancelled", "The learning decision was cancelled."), started, _clock.GetUtcNow()));
+            return Task.FromResult(AgentRunResult<LearningAgentOutput<TAction>>.Stopped(AgentRunStatus.Cancelled, new AgentFailure(AgentFailureCategory.Cancelled, "learning_cancelled", "The learning decision was cancelled."), started, _clock.GetUtcNow()));
         try
         {
             var output = _selection.Execute(input);
@@ -28,7 +28,7 @@ public sealed class LearningAgent<TAction> : IAgent<LearningAgentInput<TAction>,
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            return Task.FromResult(AgentRunResult<LearningAgentOutput<TAction>>.Stopped(AgentRunStatus.Failed, new AgentFailure("learning_decision_failed", ex.Message), started, _clock.GetUtcNow()));
+            return Task.FromResult(AgentRunResult<LearningAgentOutput<TAction>>.Stopped(AgentRunStatus.Failed, new AgentFailure(AgentFailureCategory.InternalFailure, "learning_decision_failed", ex.Message), started, _clock.GetUtcNow()));
         }
     }
 }
