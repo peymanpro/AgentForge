@@ -249,7 +249,7 @@ public sealed class ReflectionAgent : IAgent<string, ReflectionAgentOutput>
                 if (evaluation.IsAccepted)
                 {
                     bestCandidate = candidate;
-                    bestScore = evaluation.Score ?? bestScore;
+                    bestScore = evaluation.Score;
                     isAccepted = true;
                 }
                 else if (evaluation.Score is { } score)
