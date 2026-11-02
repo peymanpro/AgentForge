@@ -21,6 +21,7 @@ The APIs are **not stable**. No NuGet packages have been published.
 | `AgentForge.Tools` | Tool declarations, validation, immutable registry, application authorization, and execution | Experimental |
 | `AgentForge.Models` | Provider-neutral chat messages, model requests/responses, and optional native tool-calling capability | Experimental |
 | `AgentForge.Agents.ReAct` | Bounded ReAct loop with replaceable decision strategy and policy-controlled tools | Experimental |
+| `AgentForge.Agents.Planning` | Structured plan validation and sequential execution through registered step handlers | Experimental |
 
 No vendor-specific provider adapter is included yet. Applications will be able to implement `IChatModel` and, where supported, `IToolCallingChatModel` using their preferred provider SDK or HTTP integration.
 
@@ -34,11 +35,13 @@ agentforge.net/
 ├── src/
 │   ├── AgentForge.Abstractions/
 │   ├── AgentForge.Agents.ReAct/
+│   ├── AgentForge.Agents.Planning/
 │   ├── AgentForge.Models/
 │   └── AgentForge.Tools/
 └── tests/
     ├── AgentForge.Abstractions.Tests/
     ├── AgentForge.Agents.ReAct.Tests/
+    ├── AgentForge.Agents.Planning.Tests/
     ├── AgentForge.Models.Tests/
     └── AgentForge.Tools.Tests/
 ```
@@ -59,6 +62,7 @@ The repository-level workflow at `.github/workflows/agentforge-net-ci.yml` runs 
 
 - Keep model contracts provider-neutral and represent optional provider capabilities explicitly.
 - A model-generated tool call is a proposal, not permission to execute.
+- Planning uses structured plans, validates step types and output references before execution, and stops on the first failed step.
 - ReAct runs are bounded by model-turn, tool-invocation, step, and timeout limits.
 - Tool input validation and application authorization happen before tool execution.
 - Keep each project independently understandable and testable.

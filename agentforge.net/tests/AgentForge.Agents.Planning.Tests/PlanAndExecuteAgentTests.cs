@@ -39,7 +39,7 @@ public sealed class PlanAndExecuteAgentTests
 
         Assert.Equal(AgentRunStatus.Completed, result.Status);
         Assert.Equal(3, result.Output?.CompletedStepCount);
-        Assert.Equal(["first", "second", "third"], result.Output?.Steps.Select(step => step.StepId));
+        Assert.Equal(new[] { "first", "second", "third" }, result.Output?.Steps.Select(step => step.StepId));
         Assert.Equal(1, observedReferences.Count);
         Assert.Equal(1, first.ExecutionCount);
         Assert.Equal(1, second.ExecutionCount);
@@ -75,7 +75,7 @@ public sealed class PlanAndExecuteAgentTests
         var result = await agent.RunAsync("Perform the task.", AgentRunContext.Create(), new AgentRunOptions());
 
         Assert.Equal(AgentRunStatus.Rejected, result.Status);
-        Assert.Contains(result.Failure?.Code, ["plan.duplicate_step_id"]);
+        Assert.Equal("plan.duplicate_step_id", result.Failure?.Code);
         Assert.Equal(0, handler.ExecutionCount);
     }
 
