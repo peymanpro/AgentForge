@@ -20,6 +20,11 @@ public sealed class JsonContextAssembler : IContextAssembler
             throw new ArgumentOutOfRangeException(nameof(maxCharacters));
         }
 
+        if (chunks.Any(static chunk => chunk is null))
+        {
+            throw new ArgumentException("Retrieved chunks cannot contain null values.", nameof(chunks));
+        }
+
         var blocks = new List<(RetrievedChunk Chunk, string Text)>();
         foreach (var item in chunks)
         {

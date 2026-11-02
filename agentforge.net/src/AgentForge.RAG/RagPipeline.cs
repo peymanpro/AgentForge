@@ -429,23 +429,21 @@ public sealed class RagPipeline : IAgent<RagQuery, RagPipelineOutput>
             : CreateOutput(null, retrieval, assembled, null);
 
         var failure = new AgentFailure(category, code, message);
-        if (status == AgentRunStatus.PartiallyCompleted)
+        if (status == AgentRunStatus.PartiallyCompleted && output is not null)
         {
             return AgentRunResult<RagPipelineOutput>.PartiallyCompleted(
-                output ?? new RagPipelineOutput(
-                    null,
-                    RetrievalStatus.Failed,
-                    Array.Empty<RetrievedChunk>(),
-                    Array.Empty<RetrievedChunk>(),
-                    Array.Empty<string>(),
-                    null),
+                output,
                 failure,
                 startedAt,
                 _timeProvider.GetUtcNow());
         }
 
+        var terminalStatus = status == AgentRunStatus.PartiallyCompleted
+            ? AgentRunStatus.Failed
+            : status;
+
         return AgentRunResult<RagPipelineOutput>.Stopped(
-            status,
+            terminalStatus,
             failure,
             startedAt,
             _timeProvider.GetUtcNow(),

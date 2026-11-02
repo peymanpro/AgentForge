@@ -67,10 +67,23 @@ public sealed class RetrievalResult
         new(RetrievalStatus.NoResults, Array.Empty<RetrievedChunk>(), null);
 
     /// <summary>Creates a denied result.</summary>
-    public static RetrievalResult Denied(string message = "The application policy denied this retrieval operation.") =>
-        new(RetrievalStatus.Denied, Array.Empty<RetrievedChunk>(), new RetrievalFailure("retrieval.denied", message));
+    public static RetrievalResult Denied(string message = "The application policy denied this retrieval operation.")
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(message);
+        return new RetrievalResult(
+            RetrievalStatus.Denied,
+            Array.Empty<RetrievedChunk>(),
+            new RetrievalFailure("retrieval.denied", message));
+    }
 
     /// <summary>Creates a failed result.</summary>
-    public static RetrievalResult Failed(string code, string message) =>
-        new(RetrievalStatus.Failed, Array.Empty<RetrievedChunk>(), new RetrievalFailure(code, message));
+    public static RetrievalResult Failed(string code, string message)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(code);
+        ArgumentException.ThrowIfNullOrWhiteSpace(message);
+        return new RetrievalResult(
+            RetrievalStatus.Failed,
+            Array.Empty<RetrievedChunk>(),
+            new RetrievalFailure(code, message));
+    }
 }
