@@ -65,6 +65,17 @@ var agent = GoalBasedAgentBuilder
     .Build();
 ```
 
+### Reflection
+
+```csharp
+var agent = ReflectionAgentBuilder.Create()
+    .WithGenerator(generator)
+    .WithEvaluator(evaluator)
+    .WithMaxAttempts(3)
+    .WithStopOnNoImprovement()
+    .Build();
+```
+
 ### Utility-Based
 
 ```csharp
