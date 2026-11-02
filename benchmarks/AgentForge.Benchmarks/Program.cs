@@ -14,6 +14,11 @@ var scenarios = from arms in new[] { 5, 10, 20 }
                 from difficulty in new[] { "easy", "moderate", "difficult" }
                 select new Scenario(arms, difficulty, CreateProbabilities(arms, difficulty));
 
+// Warm up both implementations before collecting any latency samples.
+var warmupScenario = scenarios.First();
+_ = RunEpsilonGreedy(warmupScenario, 0, 200);
+_ = RunThompsonSampling(warmupScenario, 0, 200);
+
 var results = new List<RunResult>();
 foreach (var scenario in scenarios)
 foreach (var seed in seeds)
@@ -39,6 +44,11 @@ static string? GetOption(string[] arguments, string name)
     return index >= 0 && index + 1 < arguments.Length ? arguments[index + 1] : null;
 }
 
+static Random[] CreateRewardStreams(int seed, int armCount) =>
+    Enumerable.Range(0, armCount)
+        .Select(action => new Random(unchecked(seed * 104729 + armCount * 17 + action * 7919)))
+        .ToArray();
+
 static double[] CreateProbabilities(int armCount, string difficulty)
 {
     var (best, second) = difficulty switch
@@ -56,7 +66,7 @@ static double[] CreateProbabilities(int armCount, string difficulty)
 static RunResult RunEpsilonGreedy(Scenario scenario, int seed, int horizon)
 {
     var policyRandom = new Random(unchecked(seed * 7919 + scenario.ArmCount * 31));
-    var rewardRandom = new Random(unchecked(seed * 104729 + scenario.ArmCount * 17));
+    var rewardRandoms = CreateRewardStreams(seed, scenario.ArmCount);
     var policy = new EpsilonGreedyLearningPolicy<int>(0.1, policyRandom.NextDouble, policyRandom.Next);
     var state = new LearningState<int>();
     var regret = 0.0;
@@ -67,18 +77,18 @@ static RunResult RunEpsilonGreedy(Scenario scenario, int seed, int horizon)
 
     for (var round = 0; round < horizon; round++)
     {
+        var start = Stopwatch.GetTimestamp();
         var estimates = Enumerable.Range(0, scenario.ArmCount).Select(action =>
         {
             var statistics = state.GetStatistics(action);
             return new ActionEstimate<int>(action, statistics.ObservationCount, statistics.AverageReward);
         }).ToArray();
-        var start = Stopwatch.GetTimestamp();
         var selection = policy.Select(estimates, state.TotalObservations);
         latency[round] = Stopwatch.GetElapsedTime(start).TotalNanoseconds;
 
         var action = selection.Action;
         var expected = scenario.Probabilities[action];
-        var reward = rewardRandom.NextDouble() < expected ? 1.0 : 0.0;
+        var reward = rewardRandoms[action].NextDouble() < expected ? 1.0 : 0.0;
         rewardTotal += reward;
         regret += bestExpected - expected;
         if (Math.Abs(expected - bestExpected) < 1e-12) optimalSelections++;
@@ -91,7 +101,7 @@ static RunResult RunEpsilonGreedy(Scenario scenario, int seed, int horizon)
 static RunResult RunThompsonSampling(Scenario scenario, int seed, int horizon)
 {
     var policyRandom = new Random(unchecked(seed * 15485863 + scenario.ArmCount * 43));
-    var rewardRandom = new Random(unchecked(seed * 104729 + scenario.ArmCount * 17));
+    var rewardRandoms = CreateRewardStreams(seed, scenario.ArmCount);
     var alpha = Enumerable.Repeat(1.0, scenario.ArmCount).ToArray();
     var beta = Enumerable.Repeat(1.0, scenario.ArmCount).ToArray();
     var regret = 0.0;
@@ -117,7 +127,7 @@ static RunResult RunThompsonSampling(Scenario scenario, int seed, int horizon)
         latency[round] = Stopwatch.GetElapsedTime(start).TotalNanoseconds;
 
         var expected = scenario.Probabilities[action];
-        var reward = rewardRandom.NextDouble() < expected ? 1.0 : 0.0;
+        var reward = rewardRandoms[action].NextDouble() < expected ? 1.0 : 0.0;
         rewardTotal += reward;
         regret += bestExpected - expected;
         if (Math.Abs(expected - bestExpected) < 1e-12) optimalSelections++;
