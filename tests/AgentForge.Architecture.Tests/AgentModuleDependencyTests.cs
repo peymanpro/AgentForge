@@ -91,7 +91,7 @@ public sealed class AgentModuleDependencyTests
                         ?? throw new InvalidOperationException("A ProjectReference is missing its Include attribute.");
                     var referencedPath = Path.GetFullPath(Path.Combine(
                         projectDirectory,
-                        include.Replace('\\\\', Path.DirectorySeparatorChar)
+                        include.Replace('\\', Path.DirectorySeparatorChar)
                             .Replace('/', Path.DirectorySeparatorChar)));
                     return Path.GetFileNameWithoutExtension(referencedPath);
                 })
