@@ -104,18 +104,19 @@ The Fluent API is the primary entry point for application developers. Each agent
 Each agent module owns its fluent builder. Shared code can standardize option validation, naming, metadata, and the execution handle, but agent-specific methods remain local.
 
 ```csharp
-var agent = ReActAgentBuilder
-    .Create()
-    .WithModel(model)
-    .WithTools(tools => tools.Add(orderLookup))
-    .WithAuthorization(policy)
+var agent = ReActAgentBuilder.Create()
+    .WithDecisionStrategy(decisionStrategy)
+    .WithTools(approvedTools)
+    .WithAuthorization(authorizationPolicy)
+    .WithSystemPrompt("Use approved tools when useful.")
     .WithMaxModelTurns(8)
+    .WithMaxToolInvocations(12)
     .Build();
 
 var result = await agent.RunAsync("Find order 123.", cancellationToken);
 ```
 
-The example shows the intended API direction. The current ReAct module is still being migrated to this builder contract.
+The example shows the implemented ReAct builder API. Provider adapters remain application-supplied and are wrapped in an `IReactDecisionStrategy`.
 
 A user can compose independent modules with a workflow or multi-agent architecture. The orchestrator depends on `IAgent<TInput,TOutput>` or the public handle, never on a concrete ReAct/BDI/Research implementation.
 
@@ -152,4 +153,4 @@ A full solution build and test run is required before a module can be marked imp
 
 The Simple Reflex, Model-Based Reflex, Goal-Based, Utility-Based, and Learning modules currently expose module-specific fluent builders. Simple Reflex and Model-Based Reflex are the first examples of separate Domain/Application/public projects.
 
-ReAct now exposes a module-specific fluent builder. Planning and Reflection still need fluent public APIs and internal layer-boundary review. The next engineering priority is to make every implemented agent equally straightforward to construct, not to add a universal builder or a package that depends on every agent.
+ReAct, Plan-and-Execute, and Reflection now expose module-specific fluent builders. Internal layer-boundary review remains an ongoing task for these modules. The next engineering priority is to make every implemented agent equally straightforward to construct, not to add a universal builder or a package that depends on every agent.
