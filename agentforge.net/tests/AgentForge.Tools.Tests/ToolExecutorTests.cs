@@ -20,7 +20,7 @@ public sealed class ToolExecutorTests
         Assert.Equal(ToolExecutionStatus.Succeeded, result.Status);
         Assert.Equal(1, tool.ExecutionCount);
         Assert.Equal(1, policy.CallCount);
-        Assert.Equal(["validate", "authorize", "execute"], order);
+        Assert.Equal(new[] { "validate", "authorize", "execute" }, order);
         Assert.True(result.Output.HasValue);
         Assert.Equal(JsonValueKind.Object, result.Output.Value.ValueKind);
     }
@@ -57,7 +57,7 @@ public sealed class ToolExecutorTests
         Assert.Equal(ToolExecutionStatus.Denied, result.Status);
         Assert.Equal(0, tool.ExecutionCount);
         Assert.Equal(AgentFailureCategory.PolicyDenied, result.Failure?.Category);
-        Assert.Equal(["validate", "authorize"], order);
+        Assert.Equal(new[] { "validate", "authorize" }, order);
     }
 
     [Fact]
