@@ -12,7 +12,8 @@ A catalog entry is not an implementation claim. A module is marked implemented o
 - [x] Define module-specific fluent API conventions and a common run handle.
 - [x] Split Simple Reflex into its own Domain, Application, and public module projects.
 - [x] Split Model-Based Reflex into its own Domain, Application, and public module projects.
-- [ ] Add reusable architecture tests for layer direction and cross-agent isolation.
+- [x] Add architecture tests for Domain/Application/Public API dependency direction in the first two agent modules.
+- [ ] Expand architecture tests to every agent module as it migrates.
 - [ ] Add a consistent module template and build validation.
 
 ## Phase 1 — Shared runtime and public API foundation

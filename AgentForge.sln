@@ -10,6 +10,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Tools", "src\Age
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Tools.Tests", "tests\AgentForge.Tools.Tests\AgentForge.Tools.Tests.csproj", "{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Architecture.Tests", "tests\AgentForge.Architecture.Tests\AgentForge.Architecture.Tests.csproj", "{8A21F0A1-50F7-45A9-BB4A-5B2A6E7F9011}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.SimpleReflex.Domain", "src\AgentForge.Agents.SimpleReflex.Domain\AgentForge.Agents.SimpleReflex.Domain.csproj", "{D241A123-22C8-4B67-9710-1C6DE2E88401}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.SimpleReflex.Application", "src\AgentForge.Agents.SimpleReflex.Application\AgentForge.Agents.SimpleReflex.Application.csproj", "{D241A123-22C8-4B67-9710-1C6DE2E88402}"
@@ -80,6 +82,10 @@ Global
 		{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A21F0A1-50F7-45A9-BB4A-5B2A6E7F9011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A21F0A1-50F7-45A9-BB4A-5B2A6E7F9011}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A21F0A1-50F7-45A9-BB4A-5B2A6E7F9011}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A21F0A1-50F7-45A9-BB4A-5B2A6E7F9011}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D241A123-22C8-4B67-9710-1C6DE2E88401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D241A123-22C8-4B67-9710-1C6DE2E88401}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D241A123-22C8-4B67-9710-1C6DE2E88401}.Release|Any CPU.ActiveCfg = Release|Any CPU
