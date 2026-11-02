@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Retrieval</AssemblyName>
+    <RootNamespace>AgentForge.Retrieval</RootNamespace>
+    <PackageId>AgentForge.Retrieval</PackageId>
+    <Description>Provider-neutral, authorization-aware retrieval contracts for AgentForge.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;rag;retrieval;search;agent-engineering</PackageTags>
+  </PropertyGroup>
+</Project>
