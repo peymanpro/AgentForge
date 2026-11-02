@@ -163,7 +163,7 @@ public sealed class AgentWorkflow<TWorkflowInput> : IAgent<TWorkflowInput, Workf
                                 options,
                                 context,
                                 startedAt,
-                                AgentRunStatus.Failed,
+                                AgentRunStatus.PartiallyCompleted,
                                 failure.Category,
                                 failure.Code,
                                 failure.Message,

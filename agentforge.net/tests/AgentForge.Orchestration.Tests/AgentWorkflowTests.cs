@@ -103,9 +103,13 @@ public sealed class AgentWorkflowTests
                 context => context.GetOutput<ReviewResult>("review").NeedsRevision,
                 ["review"])
             .AddStep(
+                "prepare_revision",
+                (_, _) => Task.FromResult("prepared"),
+                runWhen: WorkflowStepCondition.WhenTrue("needs_revision"))
+            .AddStep(
                 "revise",
-                (context, _) => Task.FromResult(context.GetOutput<string>("unavailable")),
-                ["unavailable"],
+                (context, _) => Task.FromResult($"revised:{context.GetOutput<string>("prepare_revision")}"),
+                ["prepare_revision"],
                 WorkflowStepCondition.WhenTrue("needs_revision"))
             .AddStep(
                 "accept",
@@ -121,7 +125,8 @@ public sealed class AgentWorkflowTests
 
         Assert.Equal(AgentRunStatus.Completed, result.Status);
         Assert.Equal(WorkflowStepStatus.Skipped, result.Output?.Steps[1].Status);
-        Assert.Equal(WorkflowStepStatus.Completed, result.Output?.Steps[2].Status);
+        Assert.Equal(WorkflowStepStatus.Skipped, result.Output?.Steps[2].Status);
+        Assert.Equal(WorkflowStepStatus.Completed, result.Output?.Steps[3].Status);
         Assert.Equal("accepted:False", result.Output?.GetOutput<string>("accept"));
     }
 
