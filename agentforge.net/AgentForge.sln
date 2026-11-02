@@ -10,6 +10,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Tools", "src\Age
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Tools.Tests", "tests\AgentForge.Tools.Tests\AgentForge.Tools.Tests.csproj", "{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Models", "src\AgentForge.Models\AgentForge.Models.csproj", "{6DA4F277-C9AC-4E93-91E6-D337BFE24BE3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Models.Tests", "tests\AgentForge.Models.Tests\AgentForge.Models.Tests.csproj", "{80A1443D-D8A4-48D2-BF1A-CA6B2E95C3E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,5 +36,13 @@ Global
 		{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F31DD54B-CA6E-43B5-A5D1-7ACD10C4C0CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DA4F277-C9AC-4E93-91E6-D337BFE24BE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DA4F277-C9AC-4E93-91E6-D337BFE24BE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DA4F277-C9AC-4E93-91E6-D337BFE24BE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DA4F277-C9AC-4E93-91E6-D337BFE24BE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80A1443D-D8A4-48D2-BF1A-CA6B2E95C3E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80A1443D-D8A4-48D2-BF1A-CA6B2E95C3E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80A1443D-D8A4-48D2-BF1A-CA6B2E95C3E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80A1443D-D8A4-48D2-BF1A-CA6B2E95C3E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
