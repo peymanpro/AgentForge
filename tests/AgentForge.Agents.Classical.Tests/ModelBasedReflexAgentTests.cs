@@ -1,5 +1,6 @@
 using AgentForge.Abstractions.Execution;
 using AgentForge.Agents.Classical;
+using Xunit;
 
 namespace AgentForge.Agents.Classical.Tests;
 
