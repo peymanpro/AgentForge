@@ -7,6 +7,7 @@ on:
       - "src/**"
       - "tests/**"
       - "samples/**"
+      - "benchmarks/**"
       - "docs/**"
       - "AgentForge.sln"
       - "Directory.Build.props"
@@ -20,6 +21,7 @@ on:
       - "src/**"
       - "tests/**"
       - "samples/**"
+      - "benchmarks/**"
       - "docs/**"
       - "AgentForge.sln"
       - "Directory.Build.props"
@@ -59,6 +61,28 @@ jobs:
 
       - name: Test
         run: dotnet test AgentForge.sln --configuration Release --no-build --no-restore
+
+      - name: Build and smoke-test stationary bandit benchmarks
+        run: dotnet run --project benchmarks/AgentForge.Benchmarks/AgentForge.Benchmarks.csproj --configuration Release -- --output artifacts/benchmark-smoke
+
+      - name: Verify benchmark output
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import csv
+          from pathlib import Path
+
+          raw = list(csv.DictReader(Path("artifacts/benchmark-smoke/stationary-bandit-runs.csv").open()))
+          summary = list(csv.DictReader(Path("artifacts/benchmark-smoke/stationary-bandit-summary.csv").open()))
+          assert len(raw) == 36, f"Expected 36 benchmark runs, got {len(raw)}"
+          assert len(summary) == 18, f"Expected 18 summary rows, got {len(summary)}"
+          assert {row["algorithm"] for row in raw} == {"EpsilonGreedy", "ThompsonSampling"}
+          assert len({(row["arm_count"], row["difficulty"]) for row in raw}) == 9
+          for row in raw:
+              assert float(row["cumulative_pseudo_regret"]) >= 0
+              assert 0 <= float(row["optimal_action_rate"]) <= 1
+          print("Verified 36 deterministic smoke runs and 18 summary groups.")
+          PY
 
       - name: Pack agent modules
         shell: bash

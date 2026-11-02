@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>AgentForge.Benchmarks</AssemblyName>
+    <RootNamespace>AgentForge.Benchmarks</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/AgentForge.Agents.Learning/AgentForge.Agents.Learning.csproj" />
+  </ItemGroup>
+</Project>
