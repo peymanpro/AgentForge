@@ -177,8 +177,8 @@ public sealed class RagPipeline : IAgent<RagQuery, RagPipelineOutput>
                     AgentFailureCategory.RetrievalFailure,
                     retrievalResult.Failure?.Code ?? "rag.retrieval_failed",
                     retrievalResult.Failure?.Message ?? "The retrieval operation failed.",
-                    null,
-                    retrievalResult);
+                    retrievalResult,
+                    null);
             }
 
             if (retrievalResult.Status == RetrievalStatus.NoResults)
