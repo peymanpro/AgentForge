@@ -18,7 +18,7 @@ Do not interpret a catalog entry as an implementation claim. See [Concepts](conc
 |---|---|---|---|
 | Simple-reflex agent | Agent architecture | Select an action from the current percept using ordered condition-action rules | Implemented (experimental) — [module README](../src/AgentForge.Agents.SimpleReflex/README.md#quick-start) |
 | Model-based reflex agent | Agent architecture | Update an explicit internal state from prior state and current percept, then apply condition-action rules | Implemented (experimental) — [module README](../src/AgentForge.Agents.ModelBasedReflex/README.md#quick-start) |
-| Goal-based agent | Agent architecture | Select actions by considering goal achievement | Planned |
+| Goal-based agent | Agent architecture | Search possible state transitions for a sequence of actions that satisfies an explicit goal | Implemented (experimental) — [module README](../src/AgentForge.Agents.GoalBased/README.md#quick-start) |
 | Utility-based agent | Agent architecture | Compare candidate actions using a utility/preference function and select a maximum-utility action | Implemented (experimental) — [module README](../src/AgentForge.Agents.UtilityBased/README.md#quick-start) |
 | Learning agent | Agent architecture | Improve performance using feedback; commonly separates performance, learning, critic, and exploration/problem-generation responsibilities | Planned |
 | Rule-based / production-system agent | Agent architecture | Apply facts, rules, conflict resolution, and inference | Planned |
