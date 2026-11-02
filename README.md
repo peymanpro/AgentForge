@@ -100,6 +100,7 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [language implementation g
 ## Documentation
 
 - [Vision](docs/vision.md)
+- [Proposed MVP scope](docs/mvp-scope.md)
 - [Architecture](docs/architecture.md)
 - [Concepts and terminology](docs/concepts.md)
 - [Language implementation guide](docs/language-implementations.md)
