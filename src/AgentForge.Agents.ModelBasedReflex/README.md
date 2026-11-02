@@ -1,10 +1,21 @@
 # AgentForge.Agents.ModelBasedReflex
 
-A standalone, provider-independent Model-Based Reflex agent module.
+A deterministic agent that updates an explicit internal state from the previous state and current percept before selecting an action.
 
-## Fluent API
+## Quick Start
 
-```csharp
+Add a project reference:
+
+\`\`\`bash
+dotnet add path/to/YourApp.csproj reference src/AgentForge.Agents.ModelBasedReflex/AgentForge.Agents.ModelBasedReflex.csproj
+\`\`\`
+
+Define the percept, state, and action types. Supply the state transition and ordered rules:
+
+\`\`\`csharp
+using AgentForge.Agents.ModelBasedReflex.Builders;
+using AgentForge.Agents.ModelBasedReflex.Domain.Decisions;
+
 var agent = ModelBasedReflexAgentBuilder
     .Create<ThermostatPercept, ThermostatState, ThermostatAction>()
     .WithStateUpdater((previous, percept) => new ThermostatState(
@@ -12,37 +23,47 @@ var agent = ModelBasedReflexAgentBuilder
         CurrentTemperature: percept.TemperatureCelsius,
         TargetTemperature: percept.TargetCelsius))
     .When(
-        "temperature-rising-above-target",
+        "rising-above-target",
         state => state.CurrentTemperature > state.PreviousTemperature
             && state.CurrentTemperature > state.TargetTemperature,
         ThermostatAction.Cool)
     .When(
-        "temperature-falling-below-target",
+        "falling-below-target",
         state => state.CurrentTemperature < state.PreviousTemperature
             && state.CurrentTemperature < state.TargetTemperature,
         ThermostatAction.Heat)
     .Build();
 
 var result = await agent.RunAsync(
-    new ModelBasedReflexInput<ThermostatPercept, ThermostatState>(percept, previousState),
+    new ModelBasedReflexInput<ThermostatPercept, ThermostatState>(
+        new ThermostatPercept(29, 22),
+        new ThermostatState(27, 28, 22)),
     cancellationToken);
-```
 
-The state update and decision are explicit. The agent instance does not retain mutable state between runs; the host controls state persistence and lifetime.
+if (result.Output is { } output)
+{
+    Console.WriteLine(output.CurrentState);
+    Console.WriteLine(output.Decision.Action);
+}
 
-## Module boundaries
+public sealed record ThermostatPercept(double TemperatureCelsius, double TargetCelsius);
 
-- **Domain:** model-based input, rule, decision, and output types.
-- **Application:** state-update and decision use case implementing the shared agent contract.
-- **Infrastructure:** intentionally absent; the host supplies the state updater and owns state persistence.
-- **Public API / composition root:** the fluent builder validates configuration and composes the application use case.
+public sealed record ThermostatState(
+    double PreviousTemperature,
+    double CurrentTemperature,
+    double TargetTemperature);
 
-The module has no dependency on an LLM, provider SDK, tools, database, or dependency-injection container.
+public enum ThermostatAction
+{
+    Cool,
+    Heat
+}
+\`\`\`
 
-## Behavior and limits
+## Behavior
 
 - The state updater runs before rule evaluation.
-- Rules are evaluated in declaration order; the first match wins.
-- No match is a successful no-action result that still returns the updated state.
-- The selected action is a proposal. The host applies it to the environment.
-- Cancellation and run options use the shared execution contract.
+- Rules run in declaration order; the first match wins.
+- The host owns state persistence and supplies the previous state to each run.
+- No matching rule returns the updated state with a no-action decision.
+- No model, provider, or database is required.

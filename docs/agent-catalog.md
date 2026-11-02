@@ -16,8 +16,8 @@ Do not interpret a catalog entry as an implementation claim. See [Concepts](conc
 
 | Approach | Correct classification | Main idea | Status |
 |---|---|---|---|
-| Simple-reflex agent | Agent architecture | Select an action from the current percept using ordered condition-action rules | Implemented (experimental) — [module README](../src/AgentForge.Agents.SimpleReflex/README.md) |
-| Model-based reflex agent | Agent architecture | Update an explicit internal state from prior state and current percept, then apply condition-action rules | Implemented (experimental) — [module README](../src/AgentForge.Agents.ModelBasedReflex/README.md) |
+| Simple-reflex agent | Agent architecture | Select an action from the current percept using ordered condition-action rules | Implemented (experimental) — [module README](../src/AgentForge.Agents.SimpleReflex/README.md#quick-start) |
+| Model-based reflex agent | Agent architecture | Update an explicit internal state from prior state and current percept, then apply condition-action rules | Implemented (experimental) — [module README](../src/AgentForge.Agents.ModelBasedReflex/README.md#quick-start) |
 | Goal-based agent | Agent architecture | Select actions by considering goal achievement | Planned |
 | Utility-based agent | Agent architecture | Compare outcomes using a utility/preference function | Planned |
 | Learning agent | Agent architecture | Improve performance using feedback; commonly separates performance, learning, critic, and exploration/problem-generation responsibilities | Planned |
@@ -95,10 +95,10 @@ Implementation should begin with small tabular environments and deterministic si
 | Approach | Main mechanism | Classification | Status |
 |---|---|---|---|
 | Basic tool-using agent | Model proposes a tool call; runtime validates, authorizes, executes, and returns an observation | Agent pattern | Planned expansion |
-| ReAct | Interleave reasoning, action, observation, and stopping | Agent pattern | Implemented (experimental) — [module README](../src/AgentForge.Agents.ReAct/README.md) |
-| Plan-and-execute | Generate and validate a plan, then execute bounded steps | Agent pattern | Implemented (experimental) — [module README](../src/AgentForge.Agents.Planning/README.md) |
+| ReAct | Interleave reasoning, action, observation, and stopping | Agent pattern | Implemented (experimental) — [module README](../src/AgentForge.Agents.ReAct/README.md#quick-start) |
+| Plan-and-execute | Generate and validate a plan, then execute bounded steps | Agent pattern | Implemented (experimental) — [module README](../src/AgentForge.Agents.Planning/README.md#quick-start) |
 | Planner-replanner | Revise the remaining plan after new observations or failed steps | Agent pattern | Planned |
-| Reflection | Evaluate a candidate and use feedback to refine it | Agent pattern | Implemented (experimental) — [module README](../src/AgentForge.Agents.Reflection/README.md) |
+| Reflection | Evaluate a candidate and use feedback to refine it | Agent pattern | Implemented (experimental) — [module README](../src/AgentForge.Agents.Reflection/README.md#quick-start) |
 | Reflexion | Store verbal feedback/experience and use it in later attempts | Agent pattern | Planned |
 | Self-Refine | Iteratively generate, critique, and revise output | Refinement pattern | Planned |
 | Router / dispatcher | Classify a task and select a tool, agent, model, or execution path | Agent pattern when it owns the routing decision | Planned |
