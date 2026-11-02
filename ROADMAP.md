@@ -11,20 +11,23 @@ This roadmap describes intended direction, not promised release dates. Work may 
 - [ ] Define measurable acceptance criteria for the first implementation.
 - [ ] Establish issue labels, proposal process, and maintainer governance.
 
-## Phase 1 — First coherent implementation
+## Phase 1 — Complete .NET MVP
 
-The first implementation is expected to be .NET / C#.
+The first complete implementation is expected to be .NET / C#. The proposed scope and acceptance criteria are documented in [MVP Scope](docs/mvp-scope.md).
 
-- [ ] Define core execution and model abstractions.
+- [ ] Define core agent, execution-context, result, and event contracts.
 - [ ] Design provider-neutral model contracts with optional capabilities.
+- [ ] Implement tool definitions, validation, registration, and policy-controlled execution.
 - [ ] Implement a genuinely inspectable ReAct agent.
-- [ ] Implement tool definition, validation, invocation, and error handling.
-- [ ] Define execution context, cancellation, budgets, and tracing.
-- [ ] Add focused unit and integration tests.
-- [ ] Add runnable examples and algorithm-level documentation.
-- [ ] Define package boundaries and NuGet release workflow.
+- [ ] Implement a bounded Planning / Plan-and-Execute agent.
+- [ ] Implement a Reflection / Iterative Refinement agent with an explicit evaluator contract.
+- [ ] Add basic conversation context, retrieval abstraction, and RAG composition.
+- [ ] Add bounded sequential and conditional workflow composition.
+- [ ] Define cancellation, timeouts, execution budgets, and failure semantics.
+- [ ] Add deterministic fakes, focused tests, runnable examples, and algorithm-level documentation.
+- [ ] Review package boundaries and implement independent NuGet release workflows.
 
-The first milestone is complete only when its published scope is implemented, tested, documented, and runnable. It does not mean that every conceivable agent pattern has been implemented.
+The MVP is complete only when the approved scope is implemented, tested, documented, and runnable. The goal is a coherent initial library set, not every conceivable agent pattern.
 
 ## Phase 2 — Additional language implementations
 
