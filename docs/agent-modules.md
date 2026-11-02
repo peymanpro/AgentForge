@@ -131,3 +131,28 @@ A module is ready to be marked implemented when it has:
 ## 6. Why not one universal builder?
 
 A universal builder with every possible method would allow invalid combinations and make simple agents carry irrelevant concepts. Each module therefore owns its fluent API. Shared builder primitives may standardize naming, validation, options, and execution, but the configuration surface remains specific to the agent's architecture.
+
+
+## 7. Documentation ownership and discoverability
+
+Documentation has two complementary levels:
+
+- The repository-root README is the product entry point. It explains why AgentForge exists, helps users choose an architecture, summarizes the available and planned agents, and links to the detailed module documentation.
+- Every public agent module MUST contain its own README.md in the module's public project directory. This README is the source of truth for that agent's behavior and usage.
+
+A module README should cover, where relevant:
+
+1. The problem it solves and the architecture or pattern it implements.
+2. The decision loop or algorithm, including stop and acceptance conditions.
+3. A minimal, executable fluent-API example.
+4. Required and optional dependencies.
+5. Domain, Application, optional Infrastructure, and public API responsibilities.
+6. State ownership, concurrency expectations, and persistence boundaries.
+7. Budgets, timeouts, cancellation, failures, and partial outcomes.
+8. Tool permissions, trust boundaries, and side-effect behavior.
+9. Known limitations and current implementation status.
+10. Links to deeper design documents and runnable samples.
+
+The root README MUST link to every agent module that currently exists. The Agent Catalog records planned and research candidates; it must not imply that a planned agent already has a module. When a module is added or its public API changes, update its module README and the root README in the same change.
+
+Cross-cutting architecture decisions belong in the central docs/ tree. Avoid copying a complete module specification into the root README: the root document is the map, while the module README is the detailed guide for that module.
