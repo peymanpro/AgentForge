@@ -1,55 +1,53 @@
-# Foundation Scope and Completion Criteria
+# Current Product Baseline
 
-This document records the existing .NET foundation and the standards for expanding it into a comprehensive agent-engineering toolkit. It is not a NuGet release plan.
+This document records what exists today and what remains part of the implementation program. AgentForge is a library; examples and documentation support the developer experience but are not the product goal.
 
-## 1. Current baseline
+## 1. Implemented module slices
 
-The repository currently contains nine experimental source modules:
+The current repository contains these experimental modules and capabilities:
 
-- Abstractions and run lifecycle.
-- Provider-neutral chat model contracts.
-- Tool definitions, validation, authorization, and execution.
-- ReAct agent.
-- Plan-and-execute agent.
-- Reflection-based refinement agent.
-- Authorization-aware lexical retrieval.
-- RAG context assembly with source provenance.
-- Bounded sequential/conditional orchestration.
+- `AgentForge.Abstractions`: generic agent execution contract, normalized results, context, run options, and event hooks.
+- `AgentForge.Models`: provider-neutral chat request/response contracts.
+- `AgentForge.Tools`: tool schema, registry, validation, authorization, and execution.
+- `AgentForge.Agents.SimpleReflex`: separate Domain/Application/public projects and a fluent builder.
+- `AgentForge.Agents.ModelBasedReflex`: separate Domain/Application/public projects and a fluent builder.
+- `AgentForge.Agents.ReAct`: existing experimental implementation; Clean Architecture and fluent API migration pending.
+- `AgentForge.Agents.Planning`: existing experimental implementation; Clean Architecture and fluent API migration pending.
+- `AgentForge.Agents.Reflection`: existing experimental implementation; Clean Architecture and fluent API migration pending.
+- `AgentForge.Retrieval`: authorization-aware lexical retrieval baseline.
+- `AgentForge.RAG`: context assembly with source provenance.
+- `AgentForge.Orchestration`: bounded sequential and conditional workflow composition.
 
-This is a useful starting slice, not a complete agent-engineering platform.
+These modules do not yet represent a complete or production-ready agent platform.
 
-## 2. Completion philosophy
+## 2. Architecture migration work
 
-A feature is complete only when:
-- Its category and problem are clearly stated.
-- Its algorithm or behavior is implemented, not merely wrapped.
-- Its public contracts and dependencies are explicit.
-- Success, edge cases, failure, cancellation, and limits are tested.
-- Its security and privacy implications are documented.
-- A deterministic example demonstrates the behavior.
-- Module-level documentation explains the mechanism and trade-offs.
-- The entire solution builds and tests reproducibly.
+- Migrate existing LLM agent modules to the same Domain/Application/Infrastructure/Public API conventions.
+- Add module-level fluent builders.
+- Extract only genuinely shared runtime concerns into shared packages.
+- Add compile-time project boundaries and architecture tests.
+- Prevent cross-module concrete dependencies.
 
-## 3. Foundation areas to strengthen
+## 3. Agent coverage program
 
-- Aggregate budgets for nested agents and workflows.
-- Shared state and explicit state transitions.
-- Dependency-injection and runtime composition.
-- Structured model capabilities: streaming, structured output, embeddings, and multimodal.
-- Tool schema and validation strategy.
-- Privacy-safe tracing and model/tool call diagnostics.
-- Consistent fake implementations and test fixtures.
+See [Agent Catalog](agent-catalog.md) and [Roadmap](../ROADMAP.md). The remaining planned coverage includes classical agent types, symbolic/search/planning algorithms, optimization, reinforcement learning, additional LLM patterns, specialist agents, and multi-agent topologies.
 
-## 4. Agent coverage
+## 4. Capability coverage program
 
-Use [Agent Catalog](agent-catalog.md) as the inventory. It contains classical, search/planning, optimization, reinforcement-learning, LLM, specialized, and multi-agent approaches. It separates implemented work from planned designs and research candidates.
+Memory, persistent sessions, provider adapters, structured output, streaming, embeddings, multimodal integration, vector/hybrid retrieval, reranking, evaluation, security, observability, protocols, durable workflows, and deployment support remain to be built or expanded.
 
-The catalog is intentionally broader than the source tree. New projects should be created incrementally and only when each candidate has a concrete design and test plan.
+## 5. Definition of complete
 
-## 5. Capabilities and production engineering
-
-The long-term toolkit also needs state and memory, retrieval and knowledge, evaluation, observability, safety, cost and resource accounting, reliability, protocols, human approval, deployment, and specialized modalities. See [Capability Map](capability-map.md).
+A module is complete only when:
+- It has a public fluent builder and common execution handle.
+- Its Domain and Application boundaries follow dependency rules.
+- Required external capabilities are represented by ports.
+- Infrastructure exists only where necessary.
+- Build-time configuration is validated.
+- Its key behavior, failure paths, cancellation, and limits are tested.
+- A runnable usage example exists.
+- Full-solution CI is green.
 
 ## 6. Release policy
 
-No NuGet package has been published. There is no current objective to publish one. Development should prioritize a complete, coherent, well-tested, educational codebase. A future package release requires a separate decision after API stability, dependency, compatibility, security, documentation, and support policies have been reviewed.
+No NuGet package has been published. NuGet release remains a later decision after APIs, dependency policies, compatibility, security, documentation, and support expectations are reviewed.

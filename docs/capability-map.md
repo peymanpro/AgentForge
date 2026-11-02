@@ -1,6 +1,6 @@
 # Agent Engineering Capability Map
 
-Agents become reliable systems only when their surrounding capabilities are engineered deliberately. This map records the major areas that AgentForge should teach and eventually support.
+Agents become reliable systems only when their surrounding capabilities are engineered deliberately. This map records the major areas that AgentForge should support through optional, independently composable modules.
 
 ## 1. Model integration
 
@@ -135,4 +135,4 @@ Agents become reliable systems only when their surrounding capabilities are engi
 
 ## How to use this map
 
-A capability becomes a source module only when its public boundary and dependency requirements are clear. A topic may first exist as a design note, reference sample, or learning exercise. Do not create an empty project merely to represent a concept.
+A capability becomes a source module only when its public boundary and dependency requirements are clear. A topic may first exist as a design note or reference example. Do not create an empty project merely to represent a concept.

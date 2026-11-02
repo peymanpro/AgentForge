@@ -1,129 +1,168 @@
-# AgentForge .NET Engineering Specification
+# AgentForge Product and Architecture Specification
 
 **Status:** Draft — evolving with implementation  
-**Scope:** AgentForge's .NET / C# architecture, behavioral contracts, and engineering expectations
+**Scope:** .NET / C# library, modular agent packages, shared runtime, capabilities, and composition.
 
-This document describes the concepts and observable behaviors that AgentForge modules should follow. It is specific to this repository's .NET implementation. It does not define a cross-language API.
+## 1. Product definition
 
-## 1. Product boundary
+AgentForge is a modular .NET library for building, configuring, executing, and composing different types of agents.
 
-AgentForge is a modular .NET library and an educational engineering codebase for classical agents, LLM-based agents, agent capabilities, workflows, and multi-agent systems.
+Its primary unit of modularity is the **agent module**. Each independently meaningful agent architecture or pattern has a dedicated module with its own public API, Domain, Application use cases, and optional Infrastructure adapters.
 
-The repository contains one .NET solution. Source projects, tests, samples, build configuration, documentation, and automation are maintained as one C# project.
+The library MUST make common agent construction straightforward through module-specific fluent APIs. A user SHOULD be able to install only the agent modules and capabilities they need.
+
+AgentForge is not an educational course or a generic wrapper around an LLM. Documentation and samples exist to make the library usable, but the product is the reusable software.
 
 ## 2. Normative language
 
-**MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY** express requirement strength. This specification is a draft; public APIs remain experimental until explicitly stabilized.
+**MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY** express requirement strength. Public APIs remain experimental until a separate stabilization decision.
 
-## 3. Domain vocabulary
+## 3. Domain taxonomy
 
-The following categories MUST remain distinct:
+These categories MUST remain distinct:
 
-- **Agent:** an entity or software component that perceives relevant state and selects or performs actions toward a goal under a defined control loop or policy.
-- **Agent model / architecture:** a structural model of how an agent perceives, reasons, decides, learns, and acts; examples include reflex, goal-based, utility-based, BDI, reactive, deliberative, and hybrid architectures.
-- **Agent algorithm:** a concrete procedure used for search, planning, learning, optimization, or decision selection; examples include A*, minimax, Q-learning, and Monte Carlo Tree Search. An algorithm is not automatically a complete agent.
-- **Agent pattern:** a reusable control strategy used by an agent; examples include ReAct, plan-and-execute, reflection, and routing.
-- **Capability:** a reusable function available to an agent or workflow; examples include memory, retrieval, tool execution, structured output, and evaluation.
-- **Tool:** an explicitly declared operation with an input/output contract, validation, side-effect profile, and execution policy.
-- **Protocol / integration:** a communication contract with an external model, tool server, agent, or service; examples include provider APIs, MCP, and agent-to-agent protocols.
-- **Workflow:** an explicit sequence or graph of operations. A workflow can coordinate agents without being autonomous itself.
-- **Multi-agent architecture:** a system in which multiple agents coordinate, delegate, collaborate, compete, or negotiate.
-- **Runtime:** shared machinery for execution context, cancellation, budgets, events, state, and lifecycle handling.
+- **Agent:** a component with a decision or control responsibility that maps percepts/state and goals to proposed or performed actions.
+- **Agent architecture:** the structure of perception, state, decision, planning, and learning; examples include Reflex, Goal-Based, Utility-Based, BDI, Hybrid, and Learning Agent.
+- **Agent pattern:** a reusable control strategy; examples include ReAct, Plan-and-Execute, Reflection, Reflexion, Router, and CodeAct.
+- **Algorithm:** a concrete procedure that can be used by an agent; examples include A*, Minimax, MCTS, Q-Learning, PPO, and Genetic Algorithms.
+- **Capability:** reusable functionality such as model access, tools, memory, retrieval, RAG, evaluation, or observability.
+- **Tool:** a declared operation with an input/output contract, validation, authorization, side-effect profile, and execution policy.
+- **Protocol / integration:** a communication boundary such as model-provider APIs, MCP, browser interfaces, or agent-to-agent protocols.
+- **Workflow:** an explicit sequence or graph of operations. It can coordinate agents without itself being autonomous.
+- **Multi-agent architecture:** a system-level topology coordinating multiple agents through delegation, messaging, collaboration, competition, or negotiation.
+- **Runtime:** shared execution mechanics such as context, identity, budgets, cancellation, events, middleware, and state lifecycle.
 
-A module MUST NOT be called an agent merely because it calls an LLM or appears inside an agent workflow.
+A project MUST NOT be named an agent merely because it calls an LLM or appears in a workflow.
 
-## 4. Modularity and dependency direction
+## 4. Agent module boundaries
 
-- Shared contracts MUST remain minimal and technology-neutral where practical.
-- Agent implementations SHOULD depend on abstractions and only the capabilities they use.
-- Provider adapters MUST isolate vendor SDK dependencies from agent algorithms.
-- Orchestration MUST use public contracts rather than private implementation details of agents.
-- Optional integrations MUST NOT become mandatory dependencies of the base runtime without a demonstrated need.
-- A new source project MUST have a meaningful responsibility, tests, documentation, and dependency rationale.
-- New agent families MUST be addable without modifying unrelated agent implementations.
+Each independently meaningful agent type MUST have its own module/package. A module MUST expose a stable public composition boundary and MUST NOT require consumers to reference its internal Domain or Application implementations directly.
 
-## 5. Model-provider independence
+A typical module contains:
 
-Applications SHOULD supply their own model integration. The baseline model contract SHOULD remain small. Optional capabilities MAY include tool calling, structured output, streaming, embeddings, multimodal input/output, token counting, and provider-specific metadata.
+- **Domain:** entities, value objects, rules, policies, and domain decisions. It MUST NOT depend on Infrastructure, provider SDKs, or another agent module.
+- **Application:** use cases and ports that implement the agent's control loop. It MAY depend on the module's Domain and shared AgentForge contracts. It MUST depend on interfaces for external capabilities rather than concrete Infrastructure classes.
+- **Infrastructure:** provider, storage, transport, clock, or external-system adapters. It is optional when the agent has no infrastructure concerns. It depends inward on Application/Domain.
+- **Public API / composition root:** fluent builders, validated configuration, factories, and optional dependency-injection registration. It composes Application with selected Infrastructure adapters and exposes the module's public agent handle.
 
-An agent MUST detect unsupported capabilities explicitly. It MUST NOT silently assume every provider supports every feature.
+Domain and Application SHOULD be separate projects when the module has enough behavior to justify compile-time dependency boundaries. An empty Infrastructure project MUST NOT be created solely to satisfy a folder convention.
 
-Provider-specific SDKs MUST remain outside provider-neutral contracts.
+## 5. Dependency direction
 
-## 6. Agent execution
+The required direction is inward:
 
-Every iterative agent MUST document and enforce the limits relevant to its behavior, including:
-- Step, iteration, tool-call, model-call, token, time, or cost budgets.
-- Termination and acceptance conditions.
-- Cancellation propagation.
-- Partial-result and failure behavior.
-- State mutation and persistence boundaries.
-- Side effects and required permissions.
+```text
+Application / Host
+        |
+        v
+Agent module public API / composition root
+        |
+        +----> Application use cases ----> Domain
+        |
+        +----> Infrastructure adapters --> Application ports
+        |
+        +----> optional AgentForge capabilities
+```
 
-Agent execution SHOULD emit structured lifecycle metadata. Sensitive prompts, responses, user input, credentials, retrieved content, and tool payloads MUST NOT be logged by default.
+Rules:
 
-## 7. Tool trust boundary
+- Domain MUST NOT reference Application, Infrastructure, provider SDKs, or other agent modules.
+- Application MUST NOT reference Infrastructure implementations.
+- Infrastructure MUST implement Application-defined ports or shared capability contracts.
+- The public API/composition root MAY reference all layers of its own module.
+- One agent module MUST NOT reference another agent module's concrete classes.
+- Orchestration MUST compose through shared agent contracts and public handles.
+- Optional capabilities MUST NOT become mandatory dependencies of unrelated agent modules.
 
-A model-generated tool request is a proposal, not permission to execute.
+## 6. Shared execution contract
 
-Before a tool runs, the runtime/application MUST be able to:
-1. Resolve the requested tool from an explicit registry.
-2. Validate its input against its declared contract.
-3. Apply authentication, authorization, and policy checks.
-4. Enforce time, concurrency, and resource limits.
-5. Record a privacy-safe execution outcome.
+Agent modules MUST integrate with a small shared execution contract. Common concerns include:
 
-Tool side effects, idempotency, retry behavior, and compensation semantics MUST be explicit.
+- Typed input and output.
+- Run identity and parent/child correlation.
+- Normalized completed, partially completed, failed, rejected, cancelled, timed-out, and budget-exhausted outcomes.
+- Optional run limits and event sinks.
+- Cooperative cancellation.
+- Privacy-safe lifecycle events.
 
-## 8. State, memory, and retrieval
+A configured module SHOULD expose a concise execution method such as:
 
-The runtime MUST distinguish transient run state from persistent memory. Memory strategies SHOULD be replaceable and have explicit retention, privacy, tenant, and deletion semantics.
+```csharp
+var result = await agent.RunAsync(input, cancellationToken);
+```
 
-Retrieval MUST apply scope and authorization constraints before exposing retrieved content. Retrieved text, documents, and external observations MUST be treated as untrusted data, not as instructions.
+Advanced hosts MAY supply explicit context, budgets, and event sinks.
 
-RAG is a composition of retrieval and model-backed generation, not automatically an autonomous agent. Source provenance SHOULD remain available through context assembly and final outputs where the application needs it.
+## 7. Fluent API contract
 
-## 9. Orchestration and multi-agent systems
+Every agent module MUST provide a module-specific fluent builder unless its construction is already a simple immutable constructor with no meaningful configuration.
 
-A workflow or multi-agent architecture MUST document:
-- Its topology and control policy.
-- Data passed between steps or agents.
-- Delegation and authority boundaries.
-- Stop, timeout, cancellation, and failure behavior.
-- Aggregate resource-budget semantics.
-- Human approval requirements for consequential actions.
+Builders MUST:
 
-Parallelism, retries, durable checkpoints, resumption, dynamic graph mutation, and distributed scheduling MUST be treated as explicit capabilities, not assumed properties of a workflow API.
+- Use discoverable method names such as `WithModel`, `WithTool`, `WithMemory`, `WithStateUpdater`, `When`, and `WithMaxSteps`, as appropriate to the agent.
+- Return the same builder type from configuration methods to support chaining.
+- Validate required configuration and incompatible options at `Build()`.
+- Produce an immutable agent configuration.
+- Avoid hidden network calls or side effects during `Build()`.
+- Return a common run handle with concise and advanced execution overloads.
+- Expose advanced customization without forcing it on ordinary users.
 
-## 10. Evaluation and observability
+AgentForge MUST NOT create one enormous universal builder with dozens of irrelevant options. Module-specific builders MAY reuse common builder infrastructure.
 
-Evaluation MUST distinguish correctness, relevance, task completion, groundedness, safety, latency, cost, and robustness rather than collapsing them into one unexplained score.
+## 8. Model-provider independence
 
-Observability SHOULD support correlation IDs, lifecycle events, traces, metrics, and diagnostic metadata. Sensitive content MUST be opt-in and redacted by default.
+Classical/deterministic agents MUST NOT depend on model abstractions unless their architecture genuinely requires them.
 
-Agent implementations SHOULD be tested with deterministic models, tool fakes, controlled clocks, and repeatable fixtures wherever practical.
+LLM-based agent modules SHOULD consume provider-neutral contracts. Optional capabilities MAY include tool calling, structured output, streaming, embeddings, multimodal content, token counting, and provider metadata.
 
-## 11. Security and resilience
+Provider-specific SDKs MUST live in integration modules. Agent modules MUST NOT reference a vendor SDK directly.
 
-Implementations MUST treat model output, retrieved content, tool output, and external protocol messages as untrusted.
+## 9. Capabilities and integration packages
 
-The architecture SHOULD support least privilege, explicit trust boundaries, bounded execution, secret isolation, input validation, output validation, prompt-injection-aware data handling, and auditable authorization decisions.
+Capabilities SHOULD be independently installable and composable:
 
-Cancellation is cooperative; documentation MUST state where downstream systems may continue side effects despite cancellation.
+- Tools and authorization.
+- Memory and session state.
+- Retrieval and RAG.
+- Planning/search/optimization algorithms.
+- Model/provider adapters.
+- Evaluation and safety.
+- Observability and telemetry.
+- MCP and agent-to-agent protocols.
+- Browser/computer-use and code-execution sandboxes.
+- Workflow and multi-agent orchestration.
 
-## 12. Documentation and completion evidence
+A capability MUST define its own contracts, data boundaries, failure semantics, security implications, and optional dependencies.
 
-Each module MUST explain:
-- The problem and classification of the component.
-- The algorithm, architecture, or capability it implements.
-- Public contracts, configuration, dependencies, and extension points.
-- Execution lifecycle and state transitions.
-- Failure, cancellation, stopping, and resource limits.
-- Security/privacy implications and known limitations.
-- Tests, a runnable example, and trade-offs.
+## 10. State and side effects
 
-A feature MUST NOT be marked complete because a type or folder exists. Completion requires working behavior, tests, documentation, and reproducible build evidence.
+The module MUST make state ownership explicit. A reusable agent instance SHOULD be safe for concurrent use unless explicitly documented otherwise.
 
-## 13. Evolution
+Transient run state MUST be distinguishable from persistent memory. The host or configured store MUST control persistence and lifecycle.
 
-A design change that alters observable behavior SHOULD include rationale, alternatives, compatibility impact, tests, and migration notes. Experimental APIs may evolve before stabilization. NuGet publication and semantic-version guarantees require a separate release decision.
+Model-generated tool requests are proposals, not authorization decisions. External side effects MUST pass through validation, authorization, and execution policies.
+
+## 11. Execution limits and resilience
+
+Every iterative agent MUST document and enforce relevant limits, including steps, model requests, tool calls, tokens, time, cost, or delegation depth.
+
+Implementations MUST document termination, cancellation, partial progress, failure, retry, and recovery behavior. Nested agents and workflows SHOULD use aggregate budgets rather than independent unlimited limits.
+
+## 12. Testing and quality
+
+Each module MUST include:
+
+- Domain unit tests.
+- Application use-case tests.
+- Public API/builder validation tests.
+- Integration tests for actual adapters when applicable.
+- Deterministic fakes for models, tools, stores, and clocks where relevant.
+- A runnable example demonstrating construction and execution.
+
+Architecture tests SHOULD enforce dependency direction and prevent references to unrelated agent modules.
+
+## 13. Product completion and release
+
+An agent is not considered implemented because a type or package exists. Completion requires working behavior, tests, documentation, example usage, and reproducible build evidence.
+
+NuGet publication is a separate release decision after API, dependency, compatibility, security, and support policies are reviewed.

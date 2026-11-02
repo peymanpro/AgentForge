@@ -3,6 +3,7 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AgentForge.Agents.Classical\AgentForge.Agents.Classical.csproj" />
+    <ProjectReference Include="..\..\src\AgentForge.Agents.SimpleReflex\AgentForge.Agents.SimpleReflex.csproj" />
+    <ProjectReference Include="..\..\src\AgentForge.Agents.ModelBasedReflex\AgentForge.Agents.ModelBasedReflex.csproj" />
   </ItemGroup>
 </Project>

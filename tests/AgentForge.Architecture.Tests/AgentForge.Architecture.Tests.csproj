@@ -12,7 +12,4 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\AgentForge.Agents.Classical\AgentForge.Agents.Classical.csproj" />
-  </ItemGroup>
 </Project>

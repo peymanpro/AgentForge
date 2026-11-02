@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Agents.ModelBasedReflex</AssemblyName>
+    <RootNamespace>AgentForge.Agents.ModelBasedReflex</RootNamespace>
+    <PackageId>AgentForge.Agents.ModelBasedReflex</PackageId>
+    <Description>A standalone Model-Based Reflex agent module with a fluent API.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;model-based-reflex;fluent-api;agent-engineering</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+    <ProjectReference Include="..\AgentForge.Agents.ModelBasedReflex.Application\AgentForge.Agents.ModelBasedReflex.Application.csproj" />
+    <ProjectReference Include="..\AgentForge.Agents.ModelBasedReflex.Domain\AgentForge.Agents.ModelBasedReflex.Domain.csproj" />
+  </ItemGroup>
+</Project>

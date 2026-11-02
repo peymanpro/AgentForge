@@ -1,73 +1,58 @@
-# Classical Agent Architectures
+# Classical Agent Modules
 
-This design note defines how AgentForge will grow its deterministic, non-LLM agent families.
+This design note describes the module boundaries for the classical agent architectures in AgentForge. Each architecture is an independently usable module; the word "classical" is a taxonomy, not a single runtime package.
 
-## 1. Why classical agents belong here
+## 1. Product boundary
 
-Agent engineering did not begin with language models. Classical agents provide the clearest way to study perception, state, action, goals, utility, rules, search, planning, feedback, and control loops without introducing model-provider behavior into every example.
+Classical agents are deterministic or policy-driven agent implementations that do not inherently require language models. They share the execution contract but own separate decision logic and state semantics.
 
-AgentForge implements classical agents as first-class .NET modules alongside LLM-based agents. They use the same normalized run contract where appropriate, but their decision logic must remain independent from model-provider abstractions.
+An agent proposes an action. The application/environment adapter remains responsible for applying external effects and enforcing application permissions.
 
-## 2. Shared vocabulary
+## 2. Initial module split
 
-- **Environment:** the system or world in which an agent observes and acts.
-- **Percept:** the information currently observed from the environment.
-- **Internal state:** information retained or inferred from the current and previous percepts.
-- **Action:** a proposed operation that may change the environment.
-- **Policy:** the rule or decision procedure that maps information to an action.
-- **Goal:** a condition or desired state the agent attempts to reach.
-- **Utility:** a numerical preference model used to compare possible outcomes.
-- **Feedback:** an observation about the result of a previous action, used to update state or behavior.
-
-An AgentForge agent chooses or proposes an action. The environment adapter or application remains responsible for performing external side effects and enforcing its permissions.
-
-## 3. Current implementation boundary
-
-The `AgentForge.Agents.Classical` project currently provides:
-
-| Architecture | Decision input | Mechanism | State ownership |
+| Module | Input | Core decision | State ownership |
 |---|---|---|---|
-| Simple-reflex | Current percept | Ordered condition-action rules; first match wins | No retained state |
-| Model-based reflex | Previous state and current percept | Update internal state, then evaluate ordered rules | Explicitly passed in and returned |
+| `AgentForge.Agents.SimpleReflex` | Current percept | First matching ordered condition-action rule | No retained state |
+| `AgentForge.Agents.ModelBasedReflex` | Previous state + current percept | Update state, then evaluate ordered rules | Explicitly passed in and returned |
 
-These are bounded, deterministic decision steps, not environment simulators. The caller decides when to observe again and how to apply the chosen action.
+Each module contains its own Domain and Application projects plus a public API/composition-root project. Neither requires an Infrastructure project because neither needs provider, database, tool, or transport access.
 
-Model-based state is intentionally explicit in the input/output contract rather than hidden in mutable agent fields. This avoids cross-run state leakage and lets the application decide whether to keep state in memory, persist it, or reconstruct it.
+## 3. Simple Reflex
 
-## 4. Planned classical families
+The Domain layer defines condition-action rules and the result of a decision. The Application layer evaluates the rules in declared order. The public builder exposes:
 
-The implementation sequence is deliberately dependency-aware:
+- `Create<TPercept,TAction>()`
+- `When(name, condition, actionFactory)` or `When(name, condition, action)`
+- `WithTimeProvider(...)`
+- `Build()`
 
-1. **Goal-based agents and search:** define state-space and transition contracts; implement BFS, DFS, uniform-cost, greedy best-first, and A* as reusable search strategies; then compose them into goal-directed agents.
-2. **Utility-based agents:** define candidate-action evaluation, normalized utility values, deterministic tie-breaking, and multi-objective trade-offs.
-3. **Rule-based / production systems:** represent facts and working memory, match rule premises, define conflict-resolution strategies, and apply controlled rule firing.
-4. **Finite-state and behavior-tree controllers:** model explicit states, guards, transitions, sequence/selector nodes, and bounded ticks.
-5. **Reactive / subsumption systems:** define behavior layers, priority, inhibition, and arbitration.
-6. **Adversarial decision agents:** add minimax, alpha-beta, expectimax, and Monte Carlo Tree Search over explicit game-state interfaces.
-7. **BDI and hybrid architectures:** model beliefs, desires, intentions, deliberation, commitment, reconsideration, and reactive overrides.
-8. **Learning agents:** separate the performance element, learning element, critic, and problem generator; connect the architecture to bandits, MDPs, and reinforcement-learning algorithms.
+The first matching rule wins. If no rule matches, the agent returns a successful no-action outcome.
 
-The catalog also records optimization, scheduling, constraint reasoning, game theory, evolutionary algorithms, and multi-agent reinforcement learning. Those algorithms should be reusable strategies or domain examples where appropriate, not automatically separate agents.
+## 4. Model-Based Reflex
 
-## 5. Module design rules
+The Domain layer defines an input containing the latest percept and previous state, plus the updated-state output. Application calls the state updater, then evaluates ordered rules against the newly computed state.
 
-- Keep decision logic deterministic and testable wherever possible.
-- Do not force a live LLM or vendor SDK into classical agents.
-- Keep environment interaction behind explicit application-supplied contracts.
-- Avoid hidden mutable state on reusable agent instances.
-- Make rule ordering, tie-breaking, termination, and no-action behavior explicit.
-- Preserve the distinction between an agent architecture and a reusable algorithm.
-- Add a new source project only when a meaningful public boundary or dependency boundary justifies it.
-- Every implementation needs tests, a runnable example, a module README, a design explanation, and documented limitations.
+The public builder exposes:
 
-## 6. Learning objectives
+- `Create<TPercept,TState,TAction>()`
+- `WithStateUpdater(...)`
+- `When(name, condition, actionFactory)` or `When(name, condition, action)`
+- `WithTimeProvider(...)`
+- `Build()`
 
-After studying the classical modules, a developer should be able to:
+The agent instance does not retain mutable per-user state. The host chooses whether to store, persist, reconstruct, or discard the returned state.
 
-- Model a problem as states, percepts, actions, goals, transitions, and costs.
-- Explain the difference between a reflex policy and an internal world model.
-- Implement deterministic rule selection and reason about rule ordering.
-- Trace search frontiers, visited states, path costs, and heuristic behavior.
-- Compare goal satisfaction with utility maximization.
-- Explain how feedback, learning, and exploration differ from fixed policies.
-- Decide when an agent is unnecessary and a deterministic function or workflow is the better abstraction.
+## 5. Shared engineering rules
+
+- No model/provider dependency for deterministic decision modules.
+- No concrete dependency between the Simple Reflex and Model-Based Reflex modules.
+- No external action execution inside the decision use case.
+- Rule order, no-action behavior, cancellation, invalid options, and failures are explicit.
+- Builder configuration is validated before a run starts.
+- Each module has independent tests and a runnable example.
+
+## 6. Next classical modules
+
+The next independent modules are Goal-Based, Utility-Based, Rule-Based/Production-System, Learning Agent, Reactive/Subsumption, Deliberative, Hybrid, BDI, Finite-State, Behavior Tree, and Logic-Based. Search, planning, game-playing, optimization, and reinforcement-learning algorithms remain reusable algorithm packages; complete agents compose those strategies when their control architecture requires them.
+
+See [Agent Module Architecture](../agent-modules.md) for the common module template and [Roadmap](../../ROADMAP.md) for the implementation sequence.

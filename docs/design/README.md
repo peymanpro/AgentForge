@@ -2,6 +2,8 @@
 
 Design notes document engineering choices before they become stable public APIs. They are specific to the AgentForge .NET solution.
 
+See [Agent Module Architecture](../agent-modules.md) for the required Clean Architecture boundaries and [Fluent API Design](../fluent-api.md) for public builder conventions.
+
 A proposal is not an API guarantee. Its status must be updated when a design is implemented, revised, or rejected.
 
 ## Runtime and model foundations

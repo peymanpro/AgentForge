@@ -1,91 +1,80 @@
-# Engineering Landscape and Positioning
+# Competitive Landscape and Product Positioning
 
-**Purpose:** A decision framework for studying existing agent frameworks and avoiding vague or unsupported positioning claims.
+**Research snapshot:** 2026-11-02  
+**Purpose:** use current public documentation to inform AgentForge's architecture. This is not a feature leaderboard or a claim that AgentForge is superior.
 
-This document is not a leaderboard and does not claim that AgentForge is superior to another project. Framework capabilities change quickly; any future factual comparison must be based on dated official documentation and reproducible experiments.
+## 1. Microsoft Agent Framework
 
-## 1. Relevant categories
+Microsoft Agent Framework (MAF) is now the most relevant .NET reference implementation to study. Microsoft's April 2026 announcement states that MAF reached 1.0 GA on April 2, 2026 and positions it as the successor that brings together Semantic Kernel and AutoGen. Its public surface spans agents, workflows, agent harnesses, integrations, middleware, context providers, tool/MCP integrations, and hosting. <https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-at-build-2026-announce/> <https://learn.microsoft.com/agent-framework/>
 
-AgentForge should study several adjacent categories rather than treating every project as the same kind of framework:
+The current documentation describes several useful patterns:
 
-- **Agent application frameworks:** provide model interactions, tools, agent abstractions, and common application patterns.
-- **Graph/workflow runtimes:** provide explicit state, nodes, edges, branching, persistence, checkpointing, and human interruption.
-- **Model orchestration SDKs:** provide provider connectors, prompts, memory, retrieval, tools, and composition.
-- **Classical AI and planning libraries:** provide symbolic reasoning, search, constraint solving, optimization, game playing, and planning.
-- **Reinforcement-learning frameworks:** provide environments, policies, training loops, replay, evaluation, and simulation.
-- **Multi-agent simulation platforms:** provide agent populations, message passing, scheduling, and emergent coordination.
+- Agent loops that combine model interactions, conversations, and tools.
+- Middleware around agent behavior, context management, and model clients.
+- Workflow composition and agent participation in workflows.
+- Sequential, concurrent, handoff, group-chat, and Magentic multi-agent orchestrations.
+- Human-in-the-loop, checkpoints/resumption, observability, and hosting capabilities.
 
-Examples worth examining over time include Microsoft Agent Framework, Semantic Kernel, LangGraph, AutoGen, and established AI/search/RL libraries. Their scope and current status must be checked against their official sources before publishing a dated comparison.
+Official references:
+- [Agent Framework overview](https://learn.microsoft.com/en-us/agent-framework/overview/)
+- [Agent pipeline architecture](https://learn.microsoft.com/en-us/agent-framework/agents/agent-pipeline)
+- [Workflow orchestrations](https://learn.microsoft.com/en-us/agent-framework/workflows/orchestrations/)
+- [Workflow capabilities](https://learn.microsoft.com/en-us/agent-framework/workflows/)
 
-## 2. Comparison dimensions
+## 2. What AgentForge should learn from it
 
-When studying another framework, record evidence for each dimension:
+MAF demonstrates that production agents need more than a prompt and tool list. Its pipeline separation, optional context providers, middleware, sessions, explicit workflows, and observability are useful design references.
 
-| Dimension | Questions |
-|---|---|
-| Agent model | Which agent architectures and control loops are implemented? |
-| Classical AI | Are search, planning, symbolic reasoning, game strategies, or learning agents supported? |
-| Model independence | Can applications replace the model provider without rewriting agent logic? |
-| Tools | Are schemas, validation, permissions, side effects, and sandboxing explicit? |
-| State and memory | What state is transient or persistent? How are retention and deletion handled? |
-| Retrieval and RAG | Which lexical, vector, hybrid, graph, and reranking strategies exist? |
-| Orchestration | Are workflows sequential, graph-based, parallel, durable, and resumable? |
-| Multi-agent | Which delegation, messaging, negotiation, and coordination topologies exist? |
-| Evaluation | Are datasets, regression tests, judges, and quality metrics available? |
-| Observability | Can developers inspect correlated model, tool, retrieval, and workflow events? |
-| Security | How are untrusted content, authorization, secrets, and human approval addressed? |
-| Developer experience | Are APIs documented, examples runnable, and failure semantics understandable? |
-| Extensibility | Can new agent algorithms and capabilities be added without modifying unrelated modules? |
+AgentForge should adopt the underlying engineering ideas where appropriate:
+- A clear agent execution pipeline.
+- Explicit context/session ownership.
+- Interception points for middleware and policy.
+- Workflows as a distinct abstraction from autonomous agents.
+- Streaming and checkpointing as optional capabilities rather than hidden behavior.
+- Provider integrations behind contracts.
 
-A comparison should distinguish built-in behavior from integrations, examples, community packages, and features merely described on a roadmap.
+AgentForge should not duplicate the whole MAF API or make MAF a mandatory dependency.
 
-## 3. AgentForge's intended focus
+## 3. AgentForge's intended emphasis
 
-AgentForge is a **single .NET / C# repository** with two connected goals:
+AgentForge's product focus is different in three ways:
 
-1. A modular toolkit for building and composing agent systems.
-2. A source-level learning environment for understanding how the systems work.
+1. **Agent-architecture modules as the primary unit.** Simple Reflex, Model-Based Reflex, Goal-Based, Utility-Based, BDI, ReAct, Plan-and-Execute, Router, and multi-agent topologies are independently selectable modules, not a single general-purpose LLM agent class.
+2. **Clean Architecture inside every module.** Domain rules, application control loops, external adapters, and public composition APIs have clear dependency direction.
+3. **A consistent fluent construction experience.** Each module exposes only the configuration relevant to its architecture and returns a common execution handle.
 
-Its intended breadth is classical and modern:
-- Classical reflex, goal/utility, rule-based, reactive, deliberative, hybrid, and BDI agent architectures.
-- Search, planning, game-playing, optimization, bandits, and reinforcement learning.
-- LLM agent patterns such as ReAct, plan-and-execute, reflection, routing, and search-based reasoning.
-- Multi-agent architectures such as supervisor, hierarchy, peer collaboration, debate, contract-net, auctions, consensus, and swarms.
-- Capabilities and production engineering: models, tools, memory, retrieval, workflows, evaluation, observability, security, protocols, and deployment.
+The catalog deliberately also includes classical search, planning, optimization, learning agents, and specialist agents. Search algorithms such as A* and MCTS remain reusable algorithm packages rather than being mislabeled as agents.
 
-The [Agent Catalog](agent-catalog.md) distinguishes the planned landscape from implemented modules.
+## 4. Positioning comparison
 
-## 4. Current evidence-based position
+| Dimension | Microsoft Agent Framework (documented scope) | AgentForge target |
+|---|---|---|
+| General LLM agent loop | Strong built-in focus | Separate ReAct, tool-use, planning, and other agent modules |
+| Multi-agent orchestration | Sequential, concurrent, handoff, group chat, Magentic | Dedicated modules for each coordination topology |
+| Middleware/context/session | First-class documented pipeline concepts | Shared optional runtime capabilities |
+| Classical symbolic architectures | Not the central product focus in its main agent API | Core catalog and independently selectable agent modules |
+| Search/optimization/RL | Integrations and specialized labs may exist | Explicit algorithm and agent module families |
+| Clean Architecture per agent type | Not the central packaging unit in public docs | Required internal design convention |
+| Fluent API | Builder/pipeline APIs are present in selected areas | A consistent module-specific fluent builder for every agent type |
+| Provider integration | Broad provider and hosting ecosystem | Provider-neutral core with optional provider adapters |
+| Mandatory dependency | Framework's own abstraction/runtime | Only the module and capabilities selected by the application |
 
-At the current foundation stage:
-- The root repository is .NET-only.
-- Nine experimental source modules implement abstractions, model contracts, tools, ReAct, Planning, Reflection, retrieval, RAG, and bounded sequential/conditional orchestration.
-- APIs are not stable.
-- No NuGet package has been published, and publication is not a current objective.
-- Classical-agent, reinforcement-learning, advanced multi-agent, durable workflow, and production evaluation areas are planned rather than implemented.
+This is a comparison of stated product emphasis, not a measured quality ranking. Actual API coverage should be verified against the current SDK version before implementation decisions.
 
-These limitations should remain visible in project messaging.
+## 5. Other references
 
-## 5. Positioning claims to avoid
+Semantic Kernel remains relevant for concepts such as plugins, memory, filters, and prior orchestration patterns, but Microsoft positions Agent Framework as the convergence path for agent development. The Semantic Kernel documentation is useful for migration and historical design context: <https://learn.microsoft.com/en-us/semantic-kernel/>
 
-Do not claim:
-- To be the first, best, fastest, or most complete agent framework.
-- To implement every agent architecture because it appears in the catalog.
-- To be production-ready without operational evidence.
-- To support durable or distributed execution before it is tested.
-- To provide automatic factual verification merely because RAG or citations are present.
-- To provide secure execution merely because a tool policy interface exists.
+Other frameworks worth studying for specific ideas include LangGraph for stateful graph execution, AutoGen for multi-agent interaction history, and established search/RL libraries for deterministic algorithm implementations. Any direct feature comparison must be dated and grounded in the upstream docs.
 
-Prefer concrete statements about implemented algorithms, test coverage, supported capabilities, and known constraints.
+## 6. Design conclusion
 
-## 6. Ongoing research method
+AgentForge should not compete by having a larger list of methods in a generic agent builder. Its advantage should be the quality of its module boundaries and the developer experience of choosing exactly the agent architecture needed.
 
-For each major framework or paper:
-1. Read the original design or official documentation.
-2. Classify the component as an agent, algorithm, capability, protocol, workflow, or architecture.
-3. Reproduce a small deterministic scenario.
-4. Compare control flow, state, dependencies, limits, and failure behavior.
-5. Identify what can be learned or reused without copying unnecessary abstractions.
-6. Update AgentForge's catalog/design notes only when there is a clear implementation or learning benefit.
-
-The goal is informed engineering, not feature-count competition.
+The product will be successful when a developer can:
+- Choose an agent module by architecture.
+- Add only the necessary provider/capability packages.
+- Configure it with a short fluent chain.
+- Run it through a consistent API.
+- Compose it with other modules without tight coupling.
+- Inspect clear domain, application, and infrastructure boundaries when customization is needed.

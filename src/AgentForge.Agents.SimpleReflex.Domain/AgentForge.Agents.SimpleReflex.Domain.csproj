@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>AgentForge.Agents.SimpleReflex.Domain</AssemblyName>
+    <RootNamespace>AgentForge.Agents.SimpleReflex.Domain</RootNamespace>
+    <PackageId>AgentForge.Agents.SimpleReflex.Domain</PackageId>
+    <Description>Domain model for the Simple Reflex agent module.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
+    <PackageTags>ai;agents;simple-reflex;domain</PackageTags>
+  </PropertyGroup>
+</Project>

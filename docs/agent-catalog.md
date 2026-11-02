@@ -1,6 +1,8 @@
 # Agent and Algorithm Catalog
 
-This catalog is the long-term inventory for AgentForge. It is intentionally broader than the current implementation. It records classical approaches as well as modern LLM agents and multi-agent systems.
+This catalog is the product inventory for AgentForge. It is intentionally broader than the current implementation and records classical architectures, algorithms, modern LLM agent patterns, specialist agents, and multi-agent coordination systems.
+
+Each independently meaningful agent type is intended to have its own module/package. Algorithms, capabilities, and protocols remain distinct reusable packages rather than being mislabeled as agents.
 
 **Status meanings**
 - **Implemented (experimental):** working source code and tests exist in this repository; the API is not yet stable.
@@ -14,8 +16,8 @@ Do not interpret a catalog entry as an implementation claim. See [Concepts](conc
 
 | Approach | Correct classification | Main idea | Status |
 |---|---|---|---|
-| Simple-reflex agent | Agent architecture | Select an action from the current percept using ordered condition-action rules | Implemented (experimental) — `AgentForge.Agents.Classical` |
-| Model-based reflex agent | Agent architecture | Update an explicit internal state from prior state and current percept, then apply condition-action rules | Implemented (experimental) — `AgentForge.Agents.Classical` |
+| Simple-reflex agent | Agent architecture | Select an action from the current percept using ordered condition-action rules | Implemented (experimental) — [module README](../src/AgentForge.Agents.SimpleReflex/README.md) |
+| Model-based reflex agent | Agent architecture | Update an explicit internal state from prior state and current percept, then apply condition-action rules | Implemented (experimental) — [module README](../src/AgentForge.Agents.ModelBasedReflex/README.md) |
 | Goal-based agent | Agent architecture | Select actions by considering goal achievement | Planned |
 | Utility-based agent | Agent architecture | Compare outcomes using a utility/preference function | Planned |
 | Learning agent | Agent architecture | Improve performance using feedback; commonly separates performance, learning, critic, and exploration/problem-generation responsibilities | Planned |
@@ -86,17 +88,17 @@ These are reusable strategies that may power a complete agent. They are not auto
 | Hierarchical RL | Options, subgoals, temporal abstraction, hierarchical policies | Research |
 | Multi-agent RL | Independent learners, MADDPG, QMIX, value decomposition, centralized training/decentralized execution | Research |
 
-The learning sequence should begin with small tabular environments and deterministic simulations before deep RL. This keeps the mathematics, state transitions, reward design, exploration, and evaluation understandable.
+Implementation should begin with small tabular environments and deterministic simulations before deep RL. This keeps the mathematics, state transitions, reward design, exploration, and evaluation understandable.
 
 ## 4. LLM-based single-agent patterns
 
 | Approach | Main mechanism | Classification | Status |
 |---|---|---|---|
 | Basic tool-using agent | Model proposes a tool call; runtime validates, authorizes, executes, and returns an observation | Agent pattern | Planned expansion |
-| ReAct | Interleave reasoning, action, observation, and stopping | Agent pattern | Implemented (experimental) |
-| Plan-and-execute | Generate and validate a plan, then execute bounded steps | Agent pattern | Implemented (experimental) |
+| ReAct | Interleave reasoning, action, observation, and stopping | Agent pattern | Implemented (experimental) — [module README](../src/AgentForge.Agents.ReAct/README.md) |
+| Plan-and-execute | Generate and validate a plan, then execute bounded steps | Agent pattern | Implemented (experimental) — [module README](../src/AgentForge.Agents.Planning/README.md) |
 | Planner-replanner | Revise the remaining plan after new observations or failed steps | Agent pattern | Planned |
-| Reflection | Evaluate a candidate and use feedback to refine it | Agent pattern | Implemented (experimental) |
+| Reflection | Evaluate a candidate and use feedback to refine it | Agent pattern | Implemented (experimental) — [module README](../src/AgentForge.Agents.Reflection/README.md) |
 | Reflexion | Store verbal feedback/experience and use it in later attempts | Agent pattern | Planned |
 | Self-Refine | Iteratively generate, critique, and revise output | Refinement pattern | Planned |
 | Router / dispatcher | Classify a task and select a tool, agent, model, or execution path | Agent pattern when it owns the routing decision | Planned |

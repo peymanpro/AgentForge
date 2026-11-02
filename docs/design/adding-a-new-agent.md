@@ -1,67 +1,89 @@
-# Adding a New Agent to AgentForge
+# Adding a New Agent Module
 
-This guide defines the engineering and learning checklist for a new agent family.
+This document defines the implementation process for adding a new independently usable agent type.
 
-## 1. Classify the proposal
+## 1. Classify the component
 
-Choose the most accurate category:
-- Complete agent architecture.
-- Agent algorithm or decision strategy.
-- LLM agent pattern.
-- Multi-agent coordination architecture.
-- Capability, protocol, or workflow.
+Decide whether the proposal is a complete agent architecture, an agent pattern, an algorithm, a capability, a protocol, a workflow, or a multi-agent topology.
 
-An algorithm may be reusable inside an agent without being a complete agent. A protocol or workflow is not automatically an agent.
+A* is a search algorithm. MCP is a protocol. RAG is a capability/pipeline. A workflow is a composition mechanism. None should be called an autonomous agent merely because it is used by one.
 
-## 2. Write the design before the project
+## 2. Define the module boundary
+
+A new agent type normally receives its own public module, for example:
+
+- `AgentForge.Agents.GoalBased`
+- `AgentForge.Agents.BDI`
+- `AgentForge.Agents.Reflexion`
+- `AgentForge.MultiAgent.Supervisor`
 
 Record:
-- Problem and target scenario.
-- State, environment, goals, actions, observations, and assumptions.
-- Algorithm or control loop.
-- Inputs, outputs, and state transitions.
-- Required and optional model/tool/memory/retrieval capabilities.
-- Termination, cancellation, and resource budgets.
-- Failure, partial progress, and recovery behavior.
-- Security, privacy, and side-effect analysis.
-- Relationship to existing AgentForge modules.
+- Problem and target application scenario.
+- Inputs, outputs, state, goals, percepts, and actions.
+- Decision algorithm/control loop.
+- Termination and acceptance conditions.
+- Required ports and optional capabilities.
+- Resource budgets, cancellation, failure, and partial progress.
+- State ownership and persistence.
+- Security, permissions, and side-effect analysis.
+- Why the module is distinct from existing modules.
 
-## 3. Prove the algorithm deterministically
+## 3. Apply Clean Architecture
 
-Before using a live model, express the decision logic with a deterministic environment or fake model/tool. The tests should show why the algorithm makes a particular decision and when it stops.
+**Domain** contains core rules and concepts with no infrastructure dependency.
 
-Where relevant, compare it to a baseline:
-- A* versus uninformed search.
-- Utility-based versus goal-only action selection.
+**Application** implements the agent use case/control loop and defines ports for models, tools, memory, retrieval, or external services as needed.
+
+**Infrastructure** contains adapters that implement those ports. Omit this layer when the architecture has no external I/O requirement.
+
+**Public API/composition root** owns the fluent builder, validates configuration, composes the selected adapters, and returns an AgentHandle.
+
+Do not reference another agent module's concrete implementation. Compose through the shared agent contract.
+
+## 4. Design the fluent API
+
+The builder should express the minimum required architecture-specific configuration. It should:
+- Expose required strategies explicitly.
+- Use typed method signatures.
+- Provide a small common vocabulary for metadata, limits, and optional capabilities.
+- Validate required options in Build().
+- Freeze configuration after Build().
+- Avoid hidden remote calls or writes during Build().
+- Return a handle that supports RunAsync(input, cancellationToken).
+
+Do not add generic methods for features the agent does not support. A rule-based agent should not expose WithModel; a provider-backed ReAct agent should.
+
+## 5. Implement deterministic behavior first
+
+Where possible, prove the algorithm with deterministic fakes and fixtures before adding live model/provider adapters. Tests should demonstrate why the agent selects an action and how it stops.
+
+Relevant comparisons may include:
+- Goal satisfaction versus utility maximization.
 - ReAct versus plan-and-execute.
-- Reflection versus a simple retry.
-- One agent versus a coordinated team.
+- Reflection versus retry.
+- Supervisor delegation versus a fixed workflow.
+- A* versus uninformed search.
 
-## 4. Choose a project boundary
+## 6. Test the module
 
-Create a new `src/AgentForge.*` project only when at least one is true:
-- It has an independent public contract and user scenario.
-- It needs distinct dependencies or runtime capabilities.
-- It is reusable without the other agent modules.
-- Keeping it separate materially improves comprehension or test isolation.
+Each module needs:
+- Domain unit tests.
+- Application use-case tests.
+- Builder validation tests.
+- Architecture/dependency tests.
+- Integration tests for actual external adapters.
+- Success, no-op, invalid input, failure, cancellation, and budget cases.
+- State/concurrency tests where relevant.
 
-Do not create empty projects or generic strategy registries that hide the actual algorithm.
+## 7. Document and integrate
 
-## 5. Implement and teach
+The module README should describe purpose, supported architecture, builder API, dependencies, lifecycle, limits, failure semantics, security, and known limitations.
 
-Each module should include:
-- Public contracts and options.
-- The main algorithm implementation.
-- Explicit stopping and failure semantics.
-- Unit and scenario tests.
-- A deterministic runnable sample.
-- A README describing purpose, algorithm, lifecycle, configuration, limits, safety, and known limitations.
-- A design note and a learning exercise.
+Add:
+- The project(s) to the solution.
+- The module to the agent catalog with an honest status.
+- A roadmap entry.
+- A runnable sample.
+- Design notes for non-obvious choices.
 
-## 6. Integrate without coupling
-
-The new agent should compose through public contracts. It must not require unrelated agents to know its internal state or decision logic. Cross-cutting concerns belong in reusable runtime or capability modules only after their common semantics are demonstrated.
-
-## 7. Update the catalog and roadmap
-
-Mark the entry Implemented (experimental) only after tests, sample, docs, and solution integration pass. Record known limitations. Keep the API status honest.
+Only mark the module Implemented after all gates and CI pass.
