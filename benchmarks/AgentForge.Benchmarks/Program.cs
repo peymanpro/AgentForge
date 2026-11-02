@@ -2,6 +2,7 @@ using AgentForge.Agents.Learning.Domain.Models;
 using AgentForge.Agents.Learning.Policies;
 using System.Diagnostics;
 using System.Globalization;
+using AgentForge.Benchmarks;
 
 var full = args.Contains("--full", StringComparer.OrdinalIgnoreCase);
 var outputDirectory = GetOption(args, "--output") ?? Path.Combine(Environment.CurrentDirectory, "artifacts", "bandit-benchmarks");
@@ -28,6 +29,9 @@ await File.WriteAllTextAsync(summaryPath, Csv.WriteSummary(results), new System.
 Console.WriteLine($"Completed {results.Count} runs; horizon={horizon}; seeds={seeds.Length}.");
 Console.WriteLine($"Raw results: {rawPath}");
 Console.WriteLine($"Summary: {summaryPath}");
+
+await ContextualBenchmark.RunAsync(outputDirectory, seeds.Length, full ? horizon : 300);
+Console.WriteLine("Completed contextual LinUCB and Linear Thompson Sampling benchmarks.");
 
 static string? GetOption(string[] arguments, string name)
 {

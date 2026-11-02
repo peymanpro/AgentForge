@@ -4,7 +4,7 @@
 
 This document defines a reproducible evaluation protocol for the learning algorithms in AgentForge. The benchmark is an engineering experiment, not a claim that one policy is universally best.
 
-The benchmark keeps two problem families separate. Epsilon-Greedy and classical Thompson Sampling are evaluated on stationary, context-free multi-armed bandits. Disjoint LinUCB and (in a later implementation phase) Bayesian Linear Thompson Sampling are evaluated on contextual bandits. Results from these families must not be pooled into one leaderboard.
+The benchmark keeps two problem families separate. Epsilon-Greedy and classical Thompson Sampling are evaluated on stationary, context-free multi-armed bandits. Disjoint LinUCB and Bayesian Linear Thompson Sampling are evaluated on contextual bandits. Results from these families must not be pooled into one leaderboard.
 
 ## Questions
 

@@ -567,7 +567,7 @@ AgentForge keeps stationary context-free bandits and contextual bandits as separ
 
 ## Benchmarks
 
-Reproducible experiments for learning policies live under [benchmarks](benchmarks/README.md). The first runner compares Epsilon-Greedy and Beta-Bernoulli Thompson Sampling on stationary context-free bandits. Contextual bandit experiments are maintained as a separate benchmark family.
+Reproducible experiments for learning policies live under [benchmarks](benchmarks/README.md). The benchmark runner compares Epsilon-Greedy with Beta-Bernoulli Thompson Sampling on stationary context-free bandits, and LinUCB with Bayesian Linear Thompson Sampling on contextual bandits. The two families produce separate reports and are not ranked against each other.
 
 ## Development
 

@@ -81,7 +81,15 @@ jobs:
           for row in raw:
               assert float(row["cumulative_pseudo_regret"]) >= 0
               assert 0 <= float(row["optimal_action_rate"]) <= 1
-          print("Verified 36 deterministic smoke runs and 18 summary groups.")
+          contextual = list(csv.DictReader(Path("artifacts/benchmark-smoke/contextual-bandit-runs.csv").open()))
+          contextual_summary = list(csv.DictReader(Path("artifacts/benchmark-smoke/contextual-bandit-summary.csv").open()))
+          assert len(contextual) == 4, f"Expected 4 contextual smoke runs, got {len(contextual)}"
+          assert len(contextual_summary) == 2, f"Expected 2 contextual summary rows, got {len(contextual_summary)}"
+          assert {row["algorithm"] for row in contextual} == {"LinUCB", "LinearThompsonSampling"}
+          for row in contextual:
+              assert float(row["cumulative_pseudo_regret"]) >= -1e-8
+              assert 0 <= float(row["optimal_action_rate"]) <= 1
+          print("Verified stationary and contextual bandit smoke outputs.")
           PY
 
       - name: Pack agent modules
