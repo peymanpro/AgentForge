@@ -5,11 +5,11 @@
 
 ## 1. Product definition
 
-AgentForge is a modular .NET library for building, configuring, executing, and composing different types of agents.
+AgentForge is a modular .NET agent framework, delivered as independently installable NuGet packages, for building, configuring, executing, and composing different types of agents through concise Fluent APIs.
 
 Its primary unit of modularity is the **agent module**. Each independently meaningful agent architecture or pattern has a dedicated module with its own public API, Domain, Application use cases, and optional Infrastructure adapters.
 
-The library MUST make common agent construction straightforward through module-specific fluent APIs. A user SHOULD be able to install only the agent modules and capabilities they need.
+The framework MUST make common agent construction straightforward through module-specific Fluent APIs. A user MUST be able to install only the agent module and optional capabilities they need. No mandatory umbrella package may pull unrelated agents into the application.
 
 AgentForge is not an educational course or a generic wrapper around an LLM. Documentation and samples exist to make the library usable, but the product is the reusable software.
 
@@ -95,6 +95,8 @@ Advanced hosts MAY supply explicit context, budgets, and event sinks.
 
 ## 7. Fluent API contract
 
+The Fluent API is the primary consumer-facing construction model, not a secondary convenience. Each implemented module MUST provide a short happy path from module installation to `Build()` and `RunAsync()`. Shared concepts MUST use consistent naming, while architecture-specific configuration remains on the module-specific builder.
+
 Every agent module MUST provide a module-specific fluent builder unless its construction is already a simple immutable constructor with no meaningful configuration.
 
 Builders MUST:
@@ -117,7 +119,15 @@ LLM-based agent modules SHOULD consume provider-neutral contracts. Optional capa
 
 Provider-specific SDKs MUST live in integration modules. Agent modules MUST NOT reference a vendor SDK directly.
 
-## 9. Capabilities and integration packages
+## 9. Package installation and optionality
+
+- Each independently meaningful agent architecture or pattern MUST be independently installable as a NuGet package.
+- Required shared abstractions and internal implementation packages SHOULD be resolved transitively.
+- Installing one agent MUST NOT install unrelated agent modules.
+- Model providers, tools, memory, retrieval, RAG, evaluation, security, observability, and protocols MUST remain optional packages unless an agent's core behavior genuinely requires one.
+- A convenience bundle MAY be offered later, but it MUST be opt-in and MUST NOT replace the modular installation path.
+
+## 10. Capabilities and integration packages
 
 Capabilities SHOULD be independently installable and composable:
 
@@ -134,7 +144,7 @@ Capabilities SHOULD be independently installable and composable:
 
 A capability MUST define its own contracts, data boundaries, failure semantics, security implications, and optional dependencies.
 
-## 10. State and side effects
+## 11. State and side effects
 
 The module MUST make state ownership explicit. A reusable agent instance SHOULD be safe for concurrent use unless explicitly documented otherwise.
 
@@ -142,13 +152,13 @@ Transient run state MUST be distinguishable from persistent memory. The host or 
 
 Model-generated tool requests are proposals, not authorization decisions. External side effects MUST pass through validation, authorization, and execution policies.
 
-## 11. Execution limits and resilience
+## 12. Execution limits and resilience
 
 Every iterative agent MUST document and enforce relevant limits, including steps, model requests, tool calls, tokens, time, cost, or delegation depth.
 
 Implementations MUST document termination, cancellation, partial progress, failure, retry, and recovery behavior. Nested agents and workflows SHOULD use aggregate budgets rather than independent unlimited limits.
 
-## 12. Testing and quality
+## 13. Testing and quality
 
 Each module MUST include:
 
@@ -161,7 +171,7 @@ Each module MUST include:
 
 Architecture tests SHOULD enforce dependency direction and prevent references to unrelated agent modules.
 
-## 13. Product completion and release
+## 14. Product completion and release
 
 An agent is not considered implemented because a type or package exists. Completion requires working behavior, tests, documentation, example usage, and reproducible build evidence.
 
