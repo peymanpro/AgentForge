@@ -4,7 +4,7 @@
 
 AgentForge is an open-source, multi-language ecosystem for building, composing, and orchestrating AI agents. It aims to make agent engineering understandable, modular, extensible, and practical across programming languages.
 
-> **Project status:** Early foundation. The .NET implementation now contains experimental abstractions, model contracts, and policy-controlled tool execution modules. APIs are not stable and no packages have been released yet.
+> **Project status:** Early foundation. The .NET implementation now contains experimental abstractions, model contracts, policy-controlled tool execution, and an initial ReAct agent. APIs are not stable and no packages have been released yet.
 
 ## Why AgentForge?
 

@@ -20,7 +20,7 @@ public sealed class ReActAgentTests
         Assert.Equal(AgentRunStatus.Completed, result.Status);
         Assert.Equal("The answer is 42.", result.Output?.FinalResponse);
         Assert.Equal(1, result.Output?.ModelTurnCount);
-        Assert.Empty(result.Output?.ToolExecutions ?? []);
+        Assert.Empty(result.Output!.ToolExecutions);
     }
 
     [Fact]
