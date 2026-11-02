@@ -496,7 +496,32 @@ state = state.Observe(selected, reward);
 - Epsilon-greedy exploration balances trying alternatives with selecting the highest estimated reward.
 - The host owns execution, authorization, reward evaluation, and persistence.
 - Learning state is immutable; the host controls how it is persisted.
-- The initial implementation is a stationary, context-free bandit learner, not general reinforcement learning.
+- The epsilon-greedy learner is a stationary, context-free bandit.
+- The separate Contextual LinUCB implementation uses fixed-dimensional context features and a linear reward model per action.
+- Neither implementation is a general MDP or deep reinforcement-learning system.
+
+#### Contextual LinUCB Quick Start
+
+```csharp
+using AgentForge.Agents.Learning.Builders;
+using AgentForge.Agents.Learning.Domain.Models;
+
+var agent = ContextualLearningAgentBuilder.Create<string>()
+    .WithExplorationCoefficient(1.0)
+    .Build();
+
+var state = new ContextualLearningState<string>(featureCount: 2);
+var context = new[] { 0.7, 1.0 };
+var decision = await agent.RunAsync(
+    new ContextualLearningAgentInput<string>(["search", "recommend"], context, state),
+    cancellationToken);
+
+var selected = decision.Output!.SelectedAction;
+var reward = selected == "search" ? 1.0 : 0.4;
+state = state.Observe(selected, context, reward);
+```
+
+The host supplies and scales features, executes actions, evaluates rewards, and persists state. LinUCB uses a Cholesky-based solver and returns the predicted reward, exploration bonus, and upper-confidence score for the selected action.
 
 ## NuGet packages
 
