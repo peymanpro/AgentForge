@@ -1,6 +1,6 @@
 # AgentForge Roadmap
 
-AgentForge is a modular .NET agent library. This roadmap tracks implementation of independent agent modules, Clean Architecture boundaries, fluent APIs, reusable algorithms, and optional capabilities.
+AgentForge is a modular .NET agent framework delivered as independently installable NuGet packages. Its primary developer experience is selecting one agent, configuring it through a concise Fluent API, building it, and running it. This roadmap tracks API consistency, independent modules, reusable algorithms, and optional capabilities.
 
 A catalog entry is not an implementation claim. A module is marked implemented only after its public API, behavior, tests, example, and dependency direction are verified.
 
@@ -15,8 +15,13 @@ A catalog entry is not an implementation claim. A module is marked implemented o
 - [x] Add architecture tests for Domain/Application/Public API dependency direction in the first two agent modules.
 - [ ] Expand architecture tests to every agent module as it migrates.
 - [ ] Add a consistent module template and build validation.
+- [ ] Complete the Fluent API contract and package-independence checks across all implemented agents.
+- [ ] Add package dependency tests proving that installing one agent does not pull unrelated agent modules.
+- [ ] Add a shared builder/handle conformance test suite without introducing a universal mega-builder.
 
 ## Phase 1 — Shared runtime and public API foundation
+
+This phase prioritizes the developer experience: every implemented agent should have a consistent, concise construction and execution path. Avoid expanding the framework with unrelated infrastructure before the module APIs are coherent.
 
 - [x] Add a concise AgentHandle for simple and advanced execution overloads.
 - [ ] Review and consolidate run context, run options, failures, partial results, and event contracts.
@@ -30,9 +35,10 @@ A catalog entry is not an implementation claim. A module is marked implemented o
 ## Phase 2 — Migrate existing LLM agent modules
 
 - [ ] Refactor ReAct into Domain, Application, optional Infrastructure adapters, and a public fluent composition root.
+- [ ] Add a module-specific ReAct builder with a concise Build()/RunAsync() happy path.
 - [ ] Add a fluent ReAct builder for model, tool registry, authorization, limits, memory, and observability.
-- [ ] Refactor Plan-and-Execute into clean module layers and a fluent builder.
-- [ ] Refactor Reflection into clean module layers and a fluent builder.
+- [ ] Refactor Plan-and-Execute into clean module layers and a fluent builder; validate package independence.
+- [ ] Refactor Reflection into clean module layers and a fluent builder; validate package independence.
 - [ ] Add Planner-Replanner as its own module.
 - [ ] Add Router/Dispatcher and tool-selection agent module.
 - [ ] Add Reflexion and persistent experience feedback.

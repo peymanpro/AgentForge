@@ -1,49 +1,38 @@
 # Fluent API Design
 
-The fluent API is the primary construction experience for AgentForge. It should expose the essential parameters of an agent in a readable chain and hide repetitive object wiring without hiding the architecture.
+Fluent construction is the primary developer experience of AgentForge. A developer should be able to install one agent package, configure that agent with a short strongly typed chain, build it, and run it.
 
-## 1. Design goals
+## 1. The intended developer journey
 
-- Short happy path.
-- Explicit required dependencies.
-- Discoverable, typed configuration methods.
-- Compile-time type safety wherever possible.
-- Configuration errors detected during `Build()`, before a run starts.
-- Immutable configuration after building.
-- No implicit network calls or external side effects during building.
-- Optional advanced controls without burdening ordinary usage.
-- One consistent run experience across all agent modules.
+```text
+Choose an agent
+    -> Install its NuGet package
+    -> Configure with its module-specific Fluent API
+    -> Build()
+    -> RunAsync(input)
+```
 
-## 2. Common execution experience
+For example, a deterministic Learning Agent requires only its own module:
 
-A built agent is exposed as an `AgentHandle<TInput,TOutput>`:
+```bash
+dotnet add package AgentForge.Agents.Learning
+```
 
 ```csharp
+using AgentForge.Agents.Learning.Builders;
+
+var agent = LearningAgentBuilder.Create<string>()
+    .WithEpsilonGreedy(epsilon: 0.1)
+    .Build();
+
 var result = await agent.RunAsync(input, cancellationToken);
 ```
 
-Advanced hosts can pass run budgets, event sinks, and correlation context:
+The installation command becomes available after the package is published. Examples must always match the actual public API of the referenced module; proposed APIs must be labeled as illustrative.
 
-```csharp
-var result = await agent.RunAsync(
-    input,
-    context: AgentRunContext.Create(parentRunId),
-    options: new AgentRunOptions
-    {
-        MaxSteps = 12,
-        MaxModelRequests = 8,
-        MaxToolInvocations = 10,
-        Timeout = TimeSpan.FromSeconds(30),
-        EventSink = eventSink
-    },
-    cancellationToken);
-```
+## 2. Module-specific builders, shared experience
 
-The simple overload creates a run context and default options. It does not remove the advanced execution contract.
-
-## 3. Module-specific builders
-
-Each architecture has its own builder. The builder surface reflects the concepts needed by that architecture.
+Every agent module owns its builder and exposes only options meaningful to that architecture.
 
 ### Simple Reflex
 
@@ -65,99 +54,86 @@ var agent = ModelBasedReflexAgentBuilder
     .Build();
 ```
 
-### ReAct
-
-The intended API shape is:
+### Goal-Based
 
 ```csharp
-var agent = ReActAgentBuilder
-    .Create()
-    .WithModel(chatModel)
-    .WithSystemPrompt("You are a support agent.")
-    .WithTools(tools => tools
-        .Add<FindOrderTool>()
-        .Add<RefundRequestTool>())
-    .WithAuthorization(toolPolicy)
-    .WithMaxModelTurns(8)
-    .WithMaxToolInvocations(12)
-    .WithTimeout(TimeSpan.FromSeconds(45))
-    .Build();
-
-var result = await agent.RunAsync("Where is order 123?", cancellationToken);
-```
-
-The exact tool-registration API is implementation-dependent; authorization remains an application-controlled requirement.
-
-### Planning
-
-```csharp
-var agent = PlanAndExecuteAgentBuilder
-    .Create()
-    .WithPlanner(planner)
-    .WithStepHandler<LookupCustomerHandler>()
-    .WithStepHandler<CalculateEligibilityHandler>()
-    .WithMaxPlanSteps(8)
+var agent = GoalBasedAgentBuilder
+    .Create<State, Goal, Action>()
+    .WithSuccessors(GetSuccessors)
+    .WithGoalPredicate((state, goal) => IsSatisfied(state, goal))
+    .WithLimits(maxDepth: 20, maxExploredStates: 5_000)
     .Build();
 ```
 
-### Multi-agent coordination
+### Utility-Based
 
 ```csharp
-var team = SupervisorTeamBuilder
-    .Create()
-    .WithSupervisor(supervisor)
-    .AddWorker("research", researchAgent)
-    .AddWorker("writer", writingAgent)
-    .AddWorker("reviewer", reviewAgent)
-    .WithMaxDelegations(10)
+var agent = UtilityBasedAgentBuilder
+    .Create<Percept, Action>()
+    .WithCandidates(GetCandidates)
+    .WithUtility((percept, action) => Evaluate(percept, action))
     .Build();
-
-var result = await team.RunAsync(task, cancellationToken);
 ```
 
-These snippets define target API direction. They are not claims that every builder currently exists.
+### Learning
 
-## 4. Common method vocabulary
+```csharp
+var agent = LearningAgentBuilder.Create<string>()
+    .WithEpsilonGreedy(epsilon: 0.1)
+    .Build();
+```
 
-Use the same names where the concept is genuinely common:
+These examples reflect implemented builders. ReAct, Plan-and-Execute, and Reflection builder APIs are still part of the migration roadmap; their current implementation status must not be confused with the target API.
 
-- `Create<T...>()` or `Create()`: begin configuration.
-- `WithName`, `WithDescription`: optional metadata.
-- `WithModel`, `WithTools`, `WithMemory`, `WithRetrieval`: optional capabilities when relevant.
-- `WithTimeout`, `WithMaxSteps`, `WithBudget`: resource controls when relevant.
-- `UseMiddleware`: cross-cutting pipeline behavior when the module supports it.
-- `WithTimeProvider`: deterministic time control.
-- `Build()`: validate and create the immutable agent.
+## 3. Consistent construction and execution
 
-Agent-specific methods should remain specific. A deterministic reflex agent does not need `WithModel`; a model-driven ReAct agent does not need `WithStateUpdater`.
+Where the concept is genuinely shared, builders should use a common vocabulary:
 
-## 5. Build-time validation
+- `Create<T...>()` or `Create()`: start configuration.
+- `WithName(...)`, `WithDescription(...)`: optional metadata.
+- `WithTimeout(...)`, `WithMaxSteps(...)`, `WithBudget(...)`: relevant execution limits.
+- `WithTimeProvider(...)`: deterministic time control where timestamps are used.
+- `Build()`: validate and create the configured immutable agent.
 
-`Build()` should reject:
-- Missing required strategies or adapters.
-- Duplicate IDs and names.
-- Incompatible capabilities.
-- Invalid limits.
-- Invalid references between steps or policies.
-- Configurations that can only fail deterministically before execution.
+A built agent exposes the common handle:
 
-Runtime errors from providers, tools, stores, and user delegates are normalized during execution.
+```csharp
+var result = await agent.RunAsync(input, cancellationToken);
+```
+
+Advanced hosts may pass explicit run context and options. The common execution surface does not mean every agent supports every capability. Streaming, sessions, tools, memory, and model access remain opt-in contracts.
+
+## 4. Do not build a universal mega-builder
+
+AgentForge MUST NOT expose one builder with unrelated switches for every architecture.
+
+- A deterministic reflex agent should not expose `WithModel`.
+- A ReAct agent should expose model/tool configuration because they are central to its behavior.
+- A Goal-Based agent should expose successor, goal, and search-limit configuration.
+- A Learning Agent should expose its learning policy and relevant learning parameters.
+
+Shared builder infrastructure may validate common metadata or create the common handle, but module-specific builders own their public vocabulary.
+
+## 5. Build-time validation and immutability
+
+`Build()` should reject missing required strategies, predicates, or adapters; duplicate identifiers or invalid names; incompatible capabilities; invalid limits and numerical parameters; and invalid references between steps, tools, or policies.
+
+After Build, configuration must not be mutable through the builder. The built agent should own a defensive snapshot of the configuration and should be safe for concurrent runs unless the module explicitly documents otherwise.
 
 ## 6. No service locator and no hidden effects
 
-A builder MUST NOT silently resolve arbitrary services from global state. It may offer an explicit DI extension as an alternative composition mechanism.
+A builder MUST NOT silently resolve arbitrary services from global state. An explicit dependency-injection extension may be provided as an alternative composition path.
 
-A builder MUST NOT perform remote model calls, tool invocations, data writes, or expensive initialization during `Build()`. Such work begins only when the user runs the built agent or explicitly invokes a setup operation.
+A builder MUST NOT perform remote model calls, tool invocations, data writes, or expensive external initialization during Build. Such work begins only when the user runs the built agent or explicitly invokes a setup operation.
 
-## 7. Streaming, sessions, and advanced execution
+## 7. Package independence
 
-Not every agent is conversational or streaming. These are optional contracts, not mandatory methods on every agent.
+The public module package is the consumer-facing unit. Its shared abstractions and required internal projects are resolved transitively by NuGet.
 
-The architecture should eventually support:
-- Streaming run updates.
-- Explicit multi-turn sessions.
-- Session persistence and restore.
-- Pause/resume and human approval.
-- Nested agent execution with aggregate budgets.
+Installing one agent MUST NOT install unrelated agent modules. Optional providers, tools, memory, retrieval, evaluation, and observability packages are installed only when selected by the application.
 
-The basic `RunAsync` API remains available for single-run architectures.
+A mandatory `AgentForge` meta-package that depends on every agent is explicitly out of scope. An optional convenience bundle may be considered later without changing the modular default.
+
+## 8. Fluent API completion gate
+
+An agent module is not considered developer-ready until it has a module-specific builder with a concise happy path; strongly typed configuration methods; build-time validation and immutable built configuration; the common `AgentHandle<TInput,TOutput>` execution surface; tests for valid/invalid builder configuration and execution; a runnable sample and package README; and CI verification of build, tests, package contents, and README.

@@ -1,8 +1,8 @@
 # AgentForge
 
-**A modular .NET 10 library for building, running, and composing distinct agent architectures.**
+**A modular .NET 10 agent framework for building, configuring, and running different agent architectures through concise Fluent APIs.**
 
-Each independently useful agent architecture has its own module, focused API, and optional dependencies. This README contains the documentation and Quick Start for every current agent. Each NuGet module also ships its own package README.
+Install only the agent module you need. Each agent is an independently versioned NuGet package with its own focused Fluent API; shared abstractions arrive transitively, while unrelated agents and optional capabilities stay out of your dependency graph. This README contains the documentation and Quick Start for every current agent. Each NuGet module also ships its own package README.
 
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4.svg)](https://dotnet.microsoft.com/)
 [![CI](https://github.com/peymanpro/AgentForge/actions/workflows/agentforge-ci.yml/badge.svg?branch=main)](https://github.com/peymanpro/AgentForge/actions/workflows/agentforge-ci.yml)
@@ -13,6 +13,8 @@ Each independently useful agent architecture has its own module, focused API, an
 ## Contents
 
 - [Why AgentForge](#why-agentforge)
+- [Install only what you need](#install-only-what-you-need)
+- [Fluent construction model](#fluent-construction-model)
 - [Agent Quick Starts](#agent-quick-starts)
   - [Simple Reflex](#simple-reflex-quick-start)
   - [Model-Based Reflex](#model-based-reflex-quick-start)
@@ -42,6 +44,32 @@ AgentForge separates four concerns:
 - **Composition:** workflows and multi-agent coordination through shared execution contracts.
 
 This keeps dependencies small and makes each agent's decision process explicit and independently testable.
+
+## Install only what you need
+
+AgentForge is distributed as modular NuGet packages, not as a mandatory all-in-one bundle. Install the package for the architecture you want; NuGet resolves its required shared abstractions automatically. Add optional capabilities (models, tools, memory, retrieval, and so on) only when the selected agent needs them. There is no requirement to install unrelated agent packages.
+
+For example, a deterministic Learning Agent can be used without installing ReAct, RAG, or any model provider:
+
+```bash
+dotnet add package AgentForge.Agents.Learning
+```
+
+The package name and installation command are shown in each module's section below. Packages are not published yet; these commands become usable after the corresponding NuGet release.
+
+## Fluent construction model
+
+Each module exposes a discoverable, strongly typed builder. The method names are consistent where concepts are shared, while agent-specific configuration remains specific to that architecture. `Build()` validates configuration and returns the common `AgentHandle<TInput,TOutput>` execution surface.
+
+```csharp
+var agent = LearningAgentBuilder.Create<string>()
+    .WithEpsilonGreedy(epsilon: 0.1)
+    .Build();
+
+var result = await agent.RunAsync(input, cancellationToken);
+```
+
+There is deliberately no mandatory universal builder or package that references every agent. This keeps installation minimal and avoids exposing irrelevant options on agents that do not support them.
 
 ## Agent Quick Starts
 

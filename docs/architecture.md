@@ -4,6 +4,8 @@ AgentForge uses modular Clean Architecture. The system has shared execution/capa
 
 ## 1. Architectural overview
 
+The consumer chooses one or more agent packages; there is no mandatory package that pulls every agent into the application. NuGet resolves shared abstractions and required internal dependencies transitively. Optional capabilities are installed only when needed.
+
 ```text
 Application / Host
     |
@@ -97,6 +99,8 @@ These are target package boundaries. Planned names do not imply that packages al
 
 ## 5. Fluent API and composition
 
+The Fluent API is the primary entry point for application developers. Each agent module exposes a strongly typed builder and a short `Build()` / `RunAsync()` path. Common naming is standardized where concepts overlap; architecture-specific options remain local. See [Fluent API Design](fluent-api.md) for the public API contract.
+
 Each agent module owns its fluent builder. Shared code can standardize option validation, naming, metadata, and the execution handle, but agent-specific methods remain local.
 
 ```csharp
@@ -146,6 +150,6 @@ A full solution build and test run is required before a module can be marked imp
 
 ## 9. Current migration state
 
-The Simple Reflex and Model-Based Reflex modules are the first examples of separate Domain/Application/public projects and fluent builders. The previous combined `AgentForge.Agents.Classical` module is being retired.
+The Simple Reflex, Model-Based Reflex, Goal-Based, Utility-Based, and Learning modules currently expose module-specific fluent builders. Simple Reflex and Model-Based Reflex are the first examples of separate Domain/Application/public projects.
 
-ReAct, Planning, and Reflection already have separate top-level agent projects, but their internal layer boundaries and fluent public APIs still need migration. Their current experimental implementations are not yet examples of the final module template.
+ReAct, Planning, and Reflection already have separate top-level agent projects, but their fluent public APIs and internal layer boundaries still need migration. The next engineering priority is to make every implemented agent equally straightforward to construct, not to add a universal builder or a package that depends on every agent.
