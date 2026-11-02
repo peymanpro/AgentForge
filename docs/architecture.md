@@ -2,6 +2,8 @@
 
 **Status:** Initial architectural direction; subject to validation.
 
+See [ADR 0001: Multi-language ecosystem with shared specifications](decisions/0001-multilanguage-ecosystem.md) for the accepted high-level repository and implementation model.
+
 ## 1. Architectural model
 
 AgentForge separates shared meaning from language-specific implementation.
