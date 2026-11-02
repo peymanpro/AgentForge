@@ -57,6 +57,58 @@ public sealed class AgentModuleDependencyTests
             "src/AgentForge.Agents.ModelBasedReflex.Domain/AgentForge.Agents.ModelBasedReflex.Domain.csproj");
     }
 
+    [Fact]
+    public void PublicAgentModules_DoNotReferenceOtherAgentModules()
+    {
+        var repositoryRoot = FindRepositoryRoot();
+        var sourceDirectory = Path.Combine(repositoryRoot, "src");
+        var publicModuleProjects = Directory
+            .EnumerateFiles(sourceDirectory, "AgentForge.Agents.*.csproj", SearchOption.AllDirectories)
+            .Where(path =>
+            {
+                var projectName = Path.GetFileNameWithoutExtension(path);
+                return !projectName.EndsWith(".Domain", StringComparison.Ordinal)
+                    && !projectName.EndsWith(".Application", StringComparison.Ordinal)
+                    && !projectName.EndsWith(".Infrastructure", StringComparison.Ordinal);
+            })
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(publicModuleProjects);
+
+        foreach (var projectPath in publicModuleProjects)
+        {
+            var moduleName = Path.GetFileNameWithoutExtension(projectPath);
+            var projectDirectory = Path.GetDirectoryName(projectPath)
+                ?? throw new InvalidOperationException("The project directory could not be resolved.");
+            var document = XDocument.Load(projectPath);
+
+            var referencedAgentModules = document
+                .Descendants("ProjectReference")
+                .Select(element =>
+                {
+                    var include = element.Attribute("Include")?.Value
+                        ?? throw new InvalidOperationException("A ProjectReference is missing its Include attribute.");
+                    var referencedPath = Path.GetFullPath(Path.Combine(
+                        projectDirectory,
+                        include.Replace('\\\\', Path.DirectorySeparatorChar)
+                            .Replace('/', Path.DirectorySeparatorChar)));
+                    return Path.GetFileNameWithoutExtension(referencedPath);
+                })
+                .Concat(document.Descendants("PackageReference")
+                    .Select(element => element.Attribute("Include")?.Value ?? string.Empty))
+                .Where(reference => reference.StartsWith("AgentForge.Agents.", StringComparison.Ordinal))
+                .ToArray();
+
+            foreach (var reference in referencedAgentModules)
+            {
+                Assert.True(
+                    reference.StartsWith(moduleName + ".", StringComparison.Ordinal),
+                    $"{moduleName} must not depend on unrelated agent module {reference}.");
+            }
+        }
+    }
+
     private static void AssertProjectReferences(
         string projectRelativePath,
         params string[] expectedReferences)
