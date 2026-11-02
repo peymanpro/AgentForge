@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability reporting
+    url: https://github.com/peymanpro/AgentForge/blob/main/SECURITY.md
+    about: Please read the private reporting instructions. Do not publish vulnerabilities in public issues.
