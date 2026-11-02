@@ -1,5 +1,6 @@
 using AgentForge.Abstractions.Execution;
 using AgentForge.Models.Chat;
+using AgentForge.Models.Contracts;
 using AgentForge.Tools;
 
 namespace AgentForge.Agents.ReAct.Builders;
@@ -30,6 +31,16 @@ public sealed class ReActAgentBuilderConfiguration
     private TimeSpan _timeout = TimeSpan.FromSeconds(45);
     private int _maxToolObservationCharacters = 16_384;
     private TimeProvider? _timeProvider;
+
+    /// <summary>
+    /// Configures a native tool-calling chat model using the built-in decision strategy.
+    /// </summary>
+    public ReActAgentBuilderConfiguration WithModel(IToolCallingChatModel model)
+    {
+        ArgumentNullException.ThrowIfNull(model);
+        _decisionStrategy = new NativeToolCallingDecisionStrategy(model);
+        return this;
+    }
 
     /// <summary>
     /// Configures the provider-neutral strategy used to obtain model decisions.
