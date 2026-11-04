@@ -65,6 +65,20 @@ public sealed class RuleBasedAgentTests
     }
 
     [Fact]
+    public async Task RuleFailurePreservesPartialTraceAndFailureReason()
+    {
+        var agent = RuleBasedAgentBuilder.Create<Counter, string>()
+            .When("throws", _ => true, _ => throw new InvalidOperationException("private details"), memory => memory)
+            .Build();
+
+        var result = await agent.RunAsync(new RuleBasedAgentInput<Counter>(new Counter(0)));
+
+        Assert.Equal(AgentRunStatus.Failed, result.Status);
+        Assert.Equal("rule_based.execution_failed", result.Failure?.Code);
+        Assert.Equal(RuleBasedTerminationReason.ExecutionFailed, result.Output?.TerminationReason);
+    }
+
+    [Fact]
     public void BuilderRequiresAtLeastOneRuleAndUniqueNames()
     {
         Assert.Throws<InvalidOperationException>(() =>
