@@ -19,6 +19,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Update="README.md" Pack="true" PackagePath="\\" />
+    <None Update="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
