@@ -107,19 +107,32 @@ jobs:
           set -euo pipefail
           mkdir -p artifacts/packages
           for project in \
+            src/AgentForge.Abstractions/AgentForge.Abstractions.csproj \
+            src/AgentForge.Tools/AgentForge.Tools.csproj \
+            src/AgentForge.Models/AgentForge.Models.csproj \
+            src/AgentForge.Agents.SimpleReflex.Domain/AgentForge.Agents.SimpleReflex.Domain.csproj \
+            src/AgentForge.Agents.SimpleReflex.Application/AgentForge.Agents.SimpleReflex.Application.csproj \
             src/AgentForge.Agents.SimpleReflex/AgentForge.Agents.SimpleReflex.csproj \
+            src/AgentForge.Agents.ModelBasedReflex.Domain/AgentForge.Agents.ModelBasedReflex.Domain.csproj \
+            src/AgentForge.Agents.ModelBasedReflex.Application/AgentForge.Agents.ModelBasedReflex.Application.csproj \
             src/AgentForge.Agents.ModelBasedReflex/AgentForge.Agents.ModelBasedReflex.csproj \
+            src/AgentForge.Agents.UtilityBased.Domain/AgentForge.Agents.UtilityBased.Domain.csproj \
+            src/AgentForge.Agents.UtilityBased.Application/AgentForge.Agents.UtilityBased.Application.csproj \
+            src/AgentForge.Agents.UtilityBased/AgentForge.Agents.UtilityBased.csproj \
+            src/AgentForge.Agents.GoalBased.Domain/AgentForge.Agents.GoalBased.Domain.csproj \
+            src/AgentForge.Agents.GoalBased.Application/AgentForge.Agents.GoalBased.Application.csproj \
+            src/AgentForge.Agents.GoalBased/AgentForge.Agents.GoalBased.csproj \
+            src/AgentForge.Agents.Learning.Domain/AgentForge.Agents.Learning.Domain.csproj \
+            src/AgentForge.Agents.Learning.Application/AgentForge.Agents.Learning.Application.csproj \
+            src/AgentForge.Agents.Learning/AgentForge.Agents.Learning.csproj \
             src/AgentForge.Agents.ReAct/AgentForge.Agents.ReAct.csproj \
             src/AgentForge.Agents.Planning/AgentForge.Agents.Planning.csproj \
-            src/AgentForge.Agents.Reflection/AgentForge.Agents.Reflection.csproj \
-            src/AgentForge.Agents.UtilityBased/AgentForge.Agents.UtilityBased.csproj \
-            src/AgentForge.Agents.GoalBased/AgentForge.Agents.GoalBased.csproj \
-            src/AgentForge.Agents.Learning/AgentForge.Agents.Learning.csproj
+            src/AgentForge.Agents.Reflection/AgentForge.Agents.Reflection.csproj
           do
             dotnet pack "$project" --configuration Release --no-build --no-restore --output artifacts/packages
           done
 
-      - name: Verify NuGet package readmes
+      - name: Verify NuGet package dependency graph and readmes
         shell: bash
         run: |
           python3 - <<'PY'
@@ -128,38 +141,196 @@ jobs:
           import zipfile
           from pathlib import Path
 
-          expected = [
+          expected_dependencies = {
+              "AgentForge.Abstractions": set(),
+              "AgentForge.Tools": {"AgentForge.Abstractions"},
+              "AgentForge.Models": {"AgentForge.Tools"},
+              "AgentForge.Agents.SimpleReflex.Domain": set(),
+              "AgentForge.Agents.SimpleReflex.Application": {
+                  "AgentForge.Abstractions",
+                  "AgentForge.Agents.SimpleReflex.Domain",
+              },
+              "AgentForge.Agents.SimpleReflex": {
+                  "AgentForge.Abstractions",
+                  "AgentForge.Agents.SimpleReflex.Application",
+                  "AgentForge.Agents.SimpleReflex.Domain",
+              },
+              "AgentForge.Agents.ModelBasedReflex.Domain": set(),
+              "AgentForge.Agents.ModelBasedReflex.Application": {
+                  "AgentForge.Abstractions",
+                  "AgentForge.Agents.ModelBasedReflex.Domain",
+              },
+              "AgentForge.Agents.ModelBasedReflex": {
+                  "AgentForge.Abstractions",
+                  "AgentForge.Agents.ModelBasedReflex.Application",
+                  "AgentForge.Agents.ModelBasedReflex.Domain",
+              },
+              "AgentForge.Agents.UtilityBased.Domain": set(),
+              "AgentForge.Agents.UtilityBased.Application": {
+                  "AgentForge.Abstractions",
+                  "AgentForge.Agents.UtilityBased.Domain",
+              },
+              "AgentForge.Agents.UtilityBased": {
+                  "AgentForge.Abstractions",
+                  "AgentForge.Agents.UtilityBased.Application",
+                  "AgentForge.Agents.UtilityBased.Domain",
+              },
+              "AgentForge.Agents.GoalBased.Domain": set(),
+              "AgentForge.Agents.GoalBased.Application": {
+                  "AgentForge.Abstractions",
+                  "AgentForge.Agents.GoalBased.Domain",
+              },
+              "AgentForge.Agents.GoalBased": {
+                  "AgentForge.Abstractions",
+                  "AgentForge.Agents.GoalBased.Application",
+                  "AgentForge.Agents.GoalBased.Domain",
+              },
+              "AgentForge.Agents.Learning.Domain": set(),
+              "AgentForge.Agents.Learning.Application": {
+                  "AgentForge.Agents.Learning.Domain",
+              },
+              "AgentForge.Agents.Learning": {
+                  "AgentForge.Abstractions",
+                  "AgentForge.Agents.Learning.Application",
+                  "AgentForge.Agents.Learning.Domain",
+              },
+              "AgentForge.Agents.ReAct": {
+                  "AgentForge.Abstractions",
+                  "AgentForge.Models",
+                  "AgentForge.Tools",
+              },
+              "AgentForge.Agents.Planning": {"AgentForge.Abstractions"},
+              "AgentForge.Agents.Reflection": {"AgentForge.Abstractions"},
+          }
+
+          public_agent_packages = {
               "AgentForge.Agents.SimpleReflex",
               "AgentForge.Agents.ModelBasedReflex",
-              "AgentForge.Agents.ReAct",
-              "AgentForge.Agents.Planning",
-              "AgentForge.Agents.Reflection",
               "AgentForge.Agents.UtilityBased",
               "AgentForge.Agents.GoalBased",
               "AgentForge.Agents.Learning",
-          ]
+              "AgentForge.Agents.ReAct",
+              "AgentForge.Agents.Planning",
+              "AgentForge.Agents.Reflection",
+          }
 
-          for package_id in expected:
-              matches = [Path(path) for path in glob.glob("artifacts/packages/*.nupkg")
-                         if Path(path).name.startswith(package_id + ".")]
-              assert len(matches) == 1, f"Expected one package for {package_id}, found {matches}"
+          packages_by_id = {}
+          for package_path in map(Path, glob.glob("artifacts/packages/*.nupkg")):
+              with zipfile.ZipFile(package_path) as package:
+                  nuspec_name = next(
+                      name for name in package.namelist()
+                      if name.endswith(".nuspec")
+                  )
+                  nuspec = ET.fromstring(package.read(nuspec_name))
+                  package_id_node = next(
+                      node for node in nuspec.iter()
+                      if node.tag.rsplit("}", 1)[-1] == "id"
+                  )
+                  package_id = package_id_node.text
+                  packages_by_id.setdefault(package_id, []).append(package_path)
+
+          for package_id, expected in expected_dependencies.items():
+              matches = packages_by_id.get(package_id, [])
+              assert len(matches) == 1, (
+                  f"Expected one package with nuspec id {package_id}, found {matches}"
+              )
 
               with zipfile.ZipFile(matches[0]) as package:
                   entries = set(package.namelist())
-                  assert "README.md" in entries, f"{package_id} does not contain README.md"
-
-                  nuspec_name = next(name for name in entries if name.endswith(".nuspec"))
+                  nuspec_name = next(
+                      name for name in entries if name.endswith(".nuspec")
+                  )
                   nuspec = ET.fromstring(package.read(nuspec_name))
-                  readme_element = next((node for node in nuspec.iter() if node.tag.endswith("readme")), None)
-                  assert readme_element is not None and readme_element.text == "README.md", \
-                      f"{package_id} does not declare README.md in its nuspec"
+                  dependencies = {
+                      node.attrib["id"]
+                      for node in nuspec.iter()
+                      if node.tag.rsplit("}", 1)[-1] == "dependency"
+                      and "id" in node.attrib
+                  }
+                  assert dependencies == expected, (
+                      f"{package_id} dependency mismatch. "
+                      f"Expected {sorted(expected)}, got {sorted(dependencies)}"
+                  )
 
-                  markdown = package.read("README.md").decode("utf-8")
-                  assert "## Quick Start" in markdown, f"{package_id} is missing Quick Start"
-                  assert "```csharp" in markdown, f"{package_id} is missing a C# code example"
+                  if package_id in public_agent_packages:
+                      assert "README.md" in entries, (
+                          f"{package_id} does not contain README.md"
+                      )
+                      readme_element = next(
+                          (
+                              node for node in nuspec.iter()
+                              if node.tag.rsplit("}", 1)[-1] == "readme"
+                          ),
+                          None,
+                      )
+                      assert readme_element is not None and readme_element.text == "README.md", (
+                          f"{package_id} does not declare README.md in its nuspec"
+                      )
+                      markdown = package.read("README.md").decode("utf-8")
+                      assert "## Quick Start" in markdown, (
+                          f"{package_id} is missing Quick Start"
+                      )
+                      assert "```csharp" in markdown, (
+                          f"{package_id} is missing a C# code example"
+                      )
 
-              print(f"Verified NuGet README: {package_id}")
+              print(f"Verified package dependency graph: {package_id}")
+
+          print(
+              f"Verified {len(expected_dependencies)} package manifests and "
+              f"{len(public_agent_packages)} public agent package READMEs."
+          )
           PY
+
+      - name: Verify single-package consumer installation
+        shell: bash
+        run: |
+          set -euo pipefail
+          consumer_dir="$(mktemp -d)"
+
+          cat > "$consumer_dir/PackageConsumer.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <OutputType>Exe</OutputType>
+              <TargetFramework>net10.0</TargetFramework>
+              <ImplicitUsings>enable</ImplicitUsings>
+              <Nullable>enable</Nullable>
+            </PropertyGroup>
+            <ItemGroup>
+              <PackageReference Include="AgentForge.Agents.SimpleReflex" Version="1.0.0" />
+            </ItemGroup>
+          </Project>
+          EOF
+
+          cat > "$consumer_dir/Program.cs" <<'EOF'
+          using AgentForge.Agents.SimpleReflex.Builders;
+
+          var agent = SimpleReflexAgentBuilder
+              .Create<ThermostatPercept, ThermostatAction>()
+              .When(
+                  "too-hot",
+                  percept => percept.TemperatureCelsius > percept.TargetCelsius + 1,
+                  ThermostatAction.Cool)
+              .Build();
+
+          var result = await agent.RunAsync(new ThermostatPercept(29, 22));
+          if (result.Output?.Decision.HasAction != true
+              || result.Output.Decision.Action != ThermostatAction.Cool)
+          {
+              throw new InvalidOperationException("The packaged Simple Reflex agent returned an unexpected decision.");
+          }
+
+          public sealed record ThermostatPercept(double TemperatureCelsius, double TargetCelsius);
+
+          public enum ThermostatAction
+          {
+              Cool,
+              Heat
+          }
+          EOF
+
+          dotnet restore "$consumer_dir/PackageConsumer.csproj" --source "$GITHUB_WORKSPACE/artifacts/packages"
+          dotnet run --project "$consumer_dir/PackageConsumer.csproj" --configuration Release --no-restore
 
   full-benchmarks:
     name: Full reproducible bandit benchmarks
