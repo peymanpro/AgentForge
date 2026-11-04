@@ -4,7 +4,7 @@ A structured Plan-and-Execute agent that validates a generated plan before runni
 
 ## Installation
 
-After this package is published to NuGet.org, install it with:
+Install this package from NuGet.org:
 
 ```bash
 dotnet add package CSharp.AgentForge.Agents.Planning
