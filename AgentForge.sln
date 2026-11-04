@@ -84,6 +84,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.Learning"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.Learning.Tests", "tests\AgentForge.Agents.Learning.Tests\AgentForge.Agents.Learning.Tests.csproj", "{B17A0001-0000-4000-8000-000000000004}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.RuleBased", "src\AgentForge.Agents.RuleBased\AgentForge.Agents.RuleBased.csproj", "{CA1A0001-0000-4000-8000-000000000001}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.RuleBased.Tests", "tests\AgentForge.Agents.RuleBased.Tests\AgentForge.Agents.RuleBased.Tests.csproj", "{CA1A0001-0000-4000-8000-000000000002}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.Subsumption", "src\AgentForge.Agents.Subsumption\AgentForge.Agents.Subsumption.csproj", "{CA1A0001-0000-4000-8000-000000000003}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgentForge.Agents.Subsumption.Tests", "tests\AgentForge.Agents.Subsumption.Tests\AgentForge.Agents.Subsumption.Tests.csproj", "{CA1A0001-0000-4000-8000-000000000004}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -254,5 +262,21 @@ Global
 		{A17B0001-0000-4000-8000-000000000004}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A17B0001-0000-4000-8000-000000000004}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A17B0001-0000-4000-8000-000000000004}.Release|Any CPU.Build.0 = Release|Any CPU
+        {CA1A0001-0000-4000-8000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {CA1A0001-0000-4000-8000-000000000001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {CA1A0001-0000-4000-8000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {CA1A0001-0000-4000-8000-000000000001}.Release|Any CPU.Build.0 = Release|Any CPU
+        {CA1A0001-0000-4000-8000-000000000002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {CA1A0001-0000-4000-8000-000000000002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {CA1A0001-0000-4000-8000-000000000002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {CA1A0001-0000-4000-8000-000000000002}.Release|Any CPU.Build.0 = Release|Any CPU
+        {CA1A0001-0000-4000-8000-000000000003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {CA1A0001-0000-4000-8000-000000000003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {CA1A0001-0000-4000-8000-000000000003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {CA1A0001-0000-4000-8000-000000000003}.Release|Any CPU.Build.0 = Release|Any CPU
+        {CA1A0001-0000-4000-8000-000000000004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {CA1A0001-0000-4000-8000-000000000004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {CA1A0001-0000-4000-8000-000000000004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {CA1A0001-0000-4000-8000-000000000004}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
