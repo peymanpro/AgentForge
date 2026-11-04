@@ -49,6 +49,7 @@ internal sealed class BdiAgent<TBelief, TDesire, TIntention, TObservation, TActi
 
             var intentions = input.CurrentIntentions
                 .Where(intention => commitmentPolicy(beliefs, intention))
+                .Distinct()
                 .Take(maxIntentions)
                 .ToList();
 
