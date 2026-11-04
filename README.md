@@ -5,10 +5,11 @@
 Install only the agent module you need. Each agent is an independently versioned NuGet package with its own focused Fluent API; shared abstractions arrive transitively, while unrelated agents and optional capabilities stay out of your dependency graph. This README contains the documentation and Quick Start for every current agent. Each NuGet module also ships its own package README.
 
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4.svg)](https://dotnet.microsoft.com/)
+[![NuGet packages](https://img.shields.io/badge/NuGet-Browse%20packages-004880?logo=nuget)](https://www.nuget.org/packages?q=CSharp.AgentForge)
 [![CI](https://github.com/peymanpro/AgentForge/actions/workflows/agentforge-ci.yml/badge.svg?branch=main)](https://github.com/peymanpro/AgentForge/actions/workflows/agentforge-ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> **Status:** Experimental. Public APIs may change. NuGet packages are not published yet.
+> **Status:** Published on NuGet.org (v1.0.0). Public APIs may evolve as the framework develops.
 
 ## Contents
 
@@ -57,7 +58,7 @@ For example, a deterministic Learning Agent can be used without installing ReAct
 dotnet add package CSharp.AgentForge.Agents.Learning
 ```
 
-The package name and installation command are shown in each module's section below. Packages are not published yet; these commands become usable after the corresponding NuGet release.
+All current agent modules are published on NuGet.org. Browse the [AgentForge packages](https://www.nuget.org/packages?q=CSharp.AgentForge) and install only the module you need.
 
 ## Fluent construction model
 
@@ -100,7 +101,7 @@ A deterministic agent that selects an action from the current percept using orde
 
 #### Installation
 
-After this package is published to NuGet.org, install it with:
+Install the package from NuGet.org:
 
 ```bash
 dotnet add package CSharp.AgentForge.Agents.SimpleReflex
@@ -156,7 +157,7 @@ A deterministic agent that updates an explicit internal state from the previous 
 
 #### Installation
 
-After this package is published to NuGet.org, install it with:
+Install the package from NuGet.org:
 
 ```bash
 dotnet add package CSharp.AgentForge.Agents.ModelBasedReflex
@@ -316,7 +317,7 @@ A tool-using agent that alternates model decisions, authorized tool execution, a
 
 #### Installation
 
-After this package is published to NuGet.org, install it with:
+Install the package from NuGet.org:
 
 ```bash
 dotnet add package CSharp.AgentForge.Agents.ReAct
@@ -364,7 +365,7 @@ A structured Plan-and-Execute agent that validates a generated plan before runni
 
 #### Installation
 
-After this package is published to NuGet.org, install it with:
+Install the package from NuGet.org:
 
 ```bash
 dotnet add package CSharp.AgentForge.Agents.Planning
@@ -411,7 +412,7 @@ A bounded candidate-refinement agent that separates generation from independent 
 
 #### Installation
 
-After this package is published to NuGet.org, install it with:
+Install the package from NuGet.org:
 
 ```bash
 dotnet add package CSharp.AgentForge.Agents.Reflection
@@ -457,7 +458,7 @@ A decision agent that evaluates the available candidate actions and proposes the
 
 #### Installation
 
-After this package is published to NuGet.org, install it with:
+Install the package from NuGet.org:
 
 ```bash
 dotnet add package CSharp.AgentForge.Agents.UtilityBased
@@ -529,7 +530,7 @@ A goal-directed search agent that explores the state space and returns a shortes
 
 #### Installation
 
-After this package is published to NuGet.org:
+Install the package from NuGet.org:
 
 ```bash
 dotnet add package CSharp.AgentForge.Agents.GoalBased
@@ -641,22 +642,22 @@ The host supplies and scales features, executes actions, evaluates rewards, and 
 
 Each agent is distributed as an independent package. The package IDs and package-specific READMEs are:
 
-| Package ID | Package README |
+| Package ID | NuGet | Package README |
 |---|---|
-| `CSharp.AgentForge.Agents.SimpleReflex` | [Simple Reflex](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.SimpleReflex/README.md) |
-| `CSharp.AgentForge.Agents.ModelBasedReflex` | [Model-Based Reflex](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.ModelBasedReflex/README.md) |
-| `CSharp.AgentForge.Agents.ReAct` | [ReAct](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.ReAct/README.md) |
-| `CSharp.AgentForge.Agents.Planning` | [Plan-and-Execute](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Planning/README.md) |
-| `CSharp.AgentForge.Agents.Reflection` | [Reflection](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Reflection/README.md) |
-| `CSharp.AgentForge.Agents.UtilityBased` | [Utility-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.UtilityBased/README.md) |
-| `CSharp.AgentForge.Agents.GoalBased` | [Goal-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.GoalBased/README.md) |
-| `CSharp.AgentForge.Agents.Learning` | [Learning](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Learning/README.md) |
-| `CSharp.AgentForge.Agents.RuleBased` | [Rule-Based / Production System](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.RuleBased/README.md) |
-| `CSharp.AgentForge.Agents.Subsumption` | [Subsumption](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Subsumption/README.md) |
+| `CSharp.AgentForge.Agents.SimpleReflex` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.SimpleReflex/) | [Simple Reflex](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.SimpleReflex/README.md) |
+| `CSharp.AgentForge.Agents.ModelBasedReflex` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.ModelBasedReflex/) | [Model-Based Reflex](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.ModelBasedReflex/README.md) |
+| `CSharp.AgentForge.Agents.ReAct` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.ReAct/) | [ReAct](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.ReAct/README.md) |
+| `CSharp.AgentForge.Agents.Planning` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Planning/) | [Plan-and-Execute](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Planning/README.md) |
+| `CSharp.AgentForge.Agents.Reflection` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Reflection/) | [Reflection](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Reflection/README.md) |
+| `CSharp.AgentForge.Agents.UtilityBased` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.UtilityBased/) | [Utility-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.UtilityBased/README.md) |
+| `CSharp.AgentForge.Agents.GoalBased` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.GoalBased/) | [Goal-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.GoalBased/README.md) |
+| `CSharp.AgentForge.Agents.Learning` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Learning/) | [Learning](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Learning/README.md) |
+| `CSharp.AgentForge.Agents.RuleBased` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.RuleBased/) | [Rule-Based / Production System](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.RuleBased/README.md) |
+| `CSharp.AgentForge.Agents.Subsumption` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Subsumption/) | [Subsumption](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Subsumption/README.md) |
 
 Each package project declares its module README through `PackageReadmeFile` and includes that Markdown file in the `.nupkg`. NuGet.org therefore displays the matching agent's description and Quick Start on that package's page.
 
-Packages have not been published yet. Once released, install the selected module with:
+All 10 agent modules are available on NuGet.org. Select a package above to open its NuGet Gallery page, or install a module directly:
 
 ```bash
 dotnet add package CSharp.AgentForge.Agents.SimpleReflex
