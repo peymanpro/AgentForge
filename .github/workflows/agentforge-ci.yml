@@ -127,7 +127,9 @@ jobs:
             src/AgentForge.Agents.Learning/AgentForge.Agents.Learning.csproj \
             src/AgentForge.Agents.ReAct/AgentForge.Agents.ReAct.csproj \
             src/AgentForge.Agents.Planning/AgentForge.Agents.Planning.csproj \
-            src/AgentForge.Agents.Reflection/AgentForge.Agents.Reflection.csproj
+            src/AgentForge.Agents.Reflection/AgentForge.Agents.Reflection.csproj \\
+            src/AgentForge.Agents.RuleBased/AgentForge.Agents.RuleBased.csproj \\
+            src/AgentForge.Agents.Subsumption/AgentForge.Agents.Subsumption.csproj
           do
             dotnet pack "$project" --configuration Release --no-build --no-restore --output artifacts/packages
           done
@@ -201,6 +203,8 @@ jobs:
               },
               "AgentForge.Agents.Planning": {"AgentForge.Abstractions"},
               "AgentForge.Agents.Reflection": {"AgentForge.Abstractions"},
+              "AgentForge.Agents.RuleBased": {"AgentForge.Abstractions"},
+              "AgentForge.Agents.Subsumption": {"AgentForge.Abstractions"},
           }
 
           public_agent_packages = {
@@ -212,6 +216,8 @@ jobs:
               "AgentForge.Agents.ReAct",
               "AgentForge.Agents.Planning",
               "AgentForge.Agents.Reflection",
+              "AgentForge.Agents.RuleBased",
+              "AgentForge.Agents.Subsumption",
           }
 
           packages_by_id = {}
