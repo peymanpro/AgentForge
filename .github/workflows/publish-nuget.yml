@@ -57,7 +57,7 @@ jobs:
               raise SystemExit("Directory.Build.props must define <Version>.")
 
           base = node.text.strip()
-          match = re.fullmatch(r"(\\d+)\\.(\\d+)\\.(\\d+)", base)
+          match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", base)
           if not match:
               raise SystemExit(f"Expected a stable three-part base version, got {base!r}.")
 
@@ -85,6 +85,8 @@ jobs:
 
       - name: Pack all distributable projects
         shell: bash
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.value }}
         run: |
           set -euo pipefail
           mkdir -p artifacts/packages
