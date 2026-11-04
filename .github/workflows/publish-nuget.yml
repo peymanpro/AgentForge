@@ -212,7 +212,7 @@ jobs:
             AgentForge.Agents.Subsumption
           )
           for package_id in "${package_ids[@]}"; do
-            package="artifacts/packages/${package_id}.${PACKAGE_VERSION.nupkg"
+            package="artifacts/packages/${package_id}.${PACKAGE_VERSION}.nupkg"
             test -f "$package"
             echo "Publishing $package_id $PACKAGE_VERSION"
             dotnet nuget push "$package" \
