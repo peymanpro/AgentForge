@@ -14,6 +14,8 @@ An agent proposes an action. The application/environment adapter remains respons
 |---|---|---|---|
 | `AgentForge.Agents.SimpleReflex` | Current percept | First matching ordered condition-action rule | No retained state |
 | `AgentForge.Agents.ModelBasedReflex` | Previous state + current percept | Update state, then evaluate ordered rules | Explicitly passed in and returned |
+| `AgentForge.Agents.RuleBased` | Explicit working memory | Forward-chain the first applicable production rule and update memory | Explicitly passed in and returned |
+| `AgentForge.Agents.Subsumption` | Current percept | Highest-priority active behavior layer suppresses lower layers | Host supplies each percept cycle |
 
 Each module contains its own Domain and Application projects plus a public API/composition-root project. Neither requires an Infrastructure project because neither needs provider, database, tool, or transport access.
 
@@ -42,7 +44,32 @@ The public builder exposes:
 
 The agent instance does not retain mutable per-user state. The host chooses whether to store, persist, reconstruct, or discard the returned state.
 
-## 5. Shared engineering rules
+## 5. Rule-Based / Production System
+
+The Rule-Based module models a forward-chaining production system rather than a one-shot reflex decision. Each rule has a condition, an action factory, and a working-memory transformation. The first applicable rule fires; evaluation then restarts from the beginning.
+
+The builder exposes:
+
+- `Create<TMemory,TAction>()`
+- `When(name, condition, actionFactory, apply)`
+- `WithMaxFirings(...)`
+- `Build()`
+
+The working memory is explicit input/output, rule execution is bounded, and the returned output preserves the firing trace. This initial implementation does not claim to be a general logic-programming engine or support backward chaining.
+
+## 6. Subsumption Architecture
+
+The Subsumption module represents reactive behavior as independent layers with explicit priorities. Layers are evaluated from highest to lowest priority; the first active layer chooses the action and suppresses lower layers for that decision cycle. Equal priorities retain registration order.
+
+The builder exposes:
+
+- `Create<TPercept,TAction>()`
+- `WithLayer(name, priority, isActive, actionFactory)`
+- `Build()`
+
+The module evaluates one percept at a time. Sensor scheduling, persistent state, and physical action execution remain host responsibilities.
+
+## 7. Shared engineering rules
 
 - No model/provider dependency for deterministic decision modules.
 - No concrete dependency between the Simple Reflex and Model-Based Reflex modules.
@@ -51,8 +78,8 @@ The agent instance does not retain mutable per-user state. The host chooses whet
 - Builder configuration is validated before a run starts.
 - Each module has independent tests and a runnable example.
 
-## 6. Next classical modules
+## 8. Next classical modules
 
-The next independent modules are Goal-Based, Utility-Based, Rule-Based/Production-System, Learning Agent, Reactive/Subsumption, Deliberative, Hybrid, BDI, Finite-State, Behavior Tree, and Logic-Based. Search, planning, game-playing, optimization, and reinforcement-learning algorithms remain reusable algorithm packages; complete agents compose those strategies when their control architecture requires them.
+The next independent modules are Deliberative, Hybrid / Three-Layer, BDI, Finite-State, Behavior Tree, and Logic-Based. Search, planning, game-playing, optimization, and reinforcement-learning algorithms remain reusable algorithm packages; complete agents compose those strategies when their control architecture requires them.
 
 See [Agent Module Architecture](../agent-modules.md) for the common module template and [Roadmap](../../ROADMAP.md) for the implementation sequence.
