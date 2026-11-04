@@ -9,7 +9,11 @@
     <PackageTags>ai;agents;utility-based;application</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
-    <ProjectReference Include="..\AgentForge.Agents.UtilityBased.Domain\AgentForge.Agents.UtilityBased.Domain.csproj" />
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj">
+      <TreatAsPackageReference>true</TreatAsPackageReference>
+    </ProjectReference>
+    <ProjectReference Include="..\AgentForge.Agents.UtilityBased.Domain\AgentForge.Agents.UtilityBased.Domain.csproj">
+      <TreatAsPackageReference>false</TreatAsPackageReference>
+    </ProjectReference>
   </ItemGroup>
 </Project>
