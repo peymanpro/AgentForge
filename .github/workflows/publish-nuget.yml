@@ -1,0 +1,265 @@
+name: Publish AgentForge packages to NuGet
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Directory.Build.props"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nuget-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build, verify, and publish NuGet packages
+    if: contains(github.event.head_commit.message, 'release:')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.403
+
+      - name: Determine package version
+        id: version
+        shell: bash
+        run: |
+          version="$(python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          root = ET.parse("Directory.Build.props").getroot()
+          node = next(
+              (element for element in root.iter()
+               if element.tag.rsplit("}", 1)[-1] == "Version"),
+              None,
+          )
+          if node is None or not (node.text or "").strip():
+              raise SystemExit("Directory.Build.props must define <Version>.")
+          print(node.text.strip())
+          PY
+          )"
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+          echo "Publishing AgentForge package version: $version"
+
+      - name: Restore
+        run: dotnet restore AgentForge.sln
+
+      - name: Build
+        run: dotnet build AgentForge.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test AgentForge.sln --configuration Release --no-build --no-restore
+
+      - name: Pack all distributable projects
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/packages
+          projects=(
+            src/AgentForge.Abstractions/AgentForge.Abstractions.csproj
+            src/AgentForge.Tools/AgentForge.Tools.csproj
+            src/AgentForge.Models/AgentForge.Models.csproj
+            src/AgentForge.Agents.SimpleReflex.Domain/AgentForge.Agents.SimpleReflex.Domain.csproj
+            src/AgentForge.Agents.ModelBasedReflex.Domain/AgentForge.Agents.ModelBasedReflex.Domain.csproj
+            src/AgentForge.Agents.UtilityBased.Domain/AgentForge.Agents.UtilityBased.Domain.csproj
+            src/AgentForge.Agents.GoalBased.Domain/AgentForge.Agents.GoalBased.Domain.csproj
+            src/AgentForge.Agents.Learning.Domain/AgentForge.Agents.Learning.Domain.csproj
+            src/AgentForge.Agents.SimpleReflex.Application/AgentForge.Agents.SimpleReflex.Application.csproj
+            src/AgentForge.Agents.ModelBasedReflex.Application/AgentForge.Agents.ModelBasedReflex.Application.csproj
+            src/AgentForge.Agents.UtilityBased.Application/AgentForge.Agents.UtilityBased.Application.csproj
+            src/AgentForge.Agents.GoalBased.Application/AgentForge.Agents.GoalBased.Application.csproj
+            src/AgentForge.Agents.Learning.Application/AgentForge.Agents.Learning.Application.csproj
+            src/AgentForge.Agents.SimpleReflex/AgentForge.Agents.SimpleReflex.csproj
+            src/AgentForge.Agents.ModelBasedReflex/AgentForge.Agents.ModelBasedReflex.csproj
+            src/AgentForge.Agents.UtilityBased/AgentForge.Agents.UtilityBased.csproj
+            src/AgentForge.Agents.GoalBased/AgentForge.Agents.GoalBased.csproj
+            src/AgentForge.Agents.Learning/AgentForge.Agents.Learning.csproj
+            src/AgentForge.Agents.ReAct/AgentForge.Agents.ReAct.csproj
+            src/AgentForge.Agents.Planning/AgentForge.Agents.Planning.csproj
+            src/AgentForge.Agents.Reflection/AgentForge.Agents.Reflection.csproj
+            src/AgentForge.Agents.RuleBased/AgentForge.Agents.RuleBased.csproj
+            src/AgentForge.Agents.Subsumption/AgentForge.Agents.Subsumption.csproj
+          )
+          for project in "${projects[@]}"; do
+            dotnet pack "$project" --configuration Release --no-build --no-restore --output artifacts/packages
+          done
+
+      - name: Verify package IDs, version, and agent READMEs
+        shell: bash
+        env:
+          EXPECTED_VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          python3 - <<'PY'
+          import glob
+          import os
+          import xml.etree.ElementTree as ET
+          import zipfile
+          from pathlib import Path
+
+          expected_version = os.environ["EXPECTED_VERSION"]
+          expected = {
+              "AgentForge.Abstractions", "AgentForge.Tools", "AgentForge.Models",
+              "AgentForge.Agents.SimpleReflex.Domain",
+              "AgentForge.Agents.ModelBasedReflex.Domain",
+              "AgentForge.Agents.UtilityBased.Domain",
+              "AgentForge.Agents.GoalBased.Domain",
+              "AgentForge.Agents.Learning.Domain",
+              "AgentForge.Agents.SimpleReflex.Application",
+              "AgentForge.Agents.ModelBasedReflex.Application",
+              "AgentForge.Agents.UtilityBased.Application",
+              "AgentForge.Agents.GoalBased.Application",
+              "AgentForge.Agents.Learning.Application",
+              "AgentForge.Agents.SimpleReflex",
+              "AgentForge.Agents.ModelBasedReflex",
+              "AgentForge.Agents.UtilityBased",
+              "AgentForge.Agents.GoalBased",
+              "AgentForge.Agents.Learning",
+              "AgentForge.Agents.ReAct",
+              "AgentForge.Agents.Planning",
+              "AgentForge.Agents.Reflection",
+              "AgentForge.Agents.RuleBased",
+              "AgentForge.Agents.Subsumption",
+          }
+          public_agents = {
+              "AgentForge.Agents.SimpleReflex",
+              "AgentForge.Agents.ModelBasedReflex",
+              "AgentForge.Agents.UtilityBased",
+              "AgentForge.Agents.GoalBased",
+              "AgentForge.Agents.Learning",
+              "AgentForge.Agents.ReAct",
+              "AgentForge.Agents.Planning",
+              "AgentForge.Agents.Reflection",
+              "AgentForge.Agents.RuleBased",
+              "AgentForge.Agents.Subsumption",
+          }
+          found = set()
+          for path in map(Path, glob.glob("artifacts/packages/*.nupkg")):
+              with zipfile.ZipFile(path) as package:
+                  nuspec_name = next(name for name in package.namelist() if name.endswith(".nuspec"))
+                  root = ET.fromstring(package.read(nuspec_name))
+                  metadata = next(node for node in root.iter() if node.tag.rsplit("}", 1)[-1] == "metadata")
+                  fields = {node.tag.rsplit("}", 1)[-1]: (node.text or "").strip() for node in metadata}
+                  package_id = fields["id"]
+                  version = fields["version"]
+                  assert version == expected_version, f"{package_id}: expected {expected_version}, got {version}"
+                  assert package_id not in found, f"Duplicate package ID: {package_id}"
+                  found.add(package_id)
+                  if package_id in public_agents:
+                      entries = set(package.namelist())
+                      assert "README.md" in entries, f"{package_id} has no embedded README.md"
+                      markdown = package.read("README.md").decode("utf-8")
+                      assert "## Quick Start" in markdown and "```csharp" in markdown, f"{package_id} README is incomplete"
+          assert found == expected, f"Package set mismatch. Missing={sorted(expected-found)}, unexpected={sorted(found-expected)}"
+          print(f"Verified {len(found)} NuGet packages at version {expected_version}, including all {len(public_agents)} agent READMEs.")
+          PY
+
+      - name: Validate NuGet publisher configuration
+        env:
+          NUGET_USER: ${{ vars.NUGET_USER }}
+        run: |
+          if [ -z "$NUGET_USER" ]; then
+            echo "::error::Add the NuGet profile name as the repository Actions variable NUGET_USER."
+            exit 1
+          fi
+
+      - name: NuGet login (OIDC to short-lived API key)
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: ${{ vars.NUGET_USER }}
+
+      - name: Publish packages in dependency order
+        shell: bash
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+          PACKAGE_VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          set -euo pipefail
+          package_ids=(
+            AgentForge.Abstractions
+            AgentForge.Tools
+            AgentForge.Models
+            AgentForge.Agents.SimpleReflex.Domain
+            AgentForge.Agents.ModelBasedReflex.Domain
+            AgentForge.Agents.UtilityBased.Domain
+            AgentForge.Agents.GoalBased.Domain
+            AgentForge.Agents.Learning.Domain
+            AgentForge.Agents.SimpleReflex.Application
+            AgentForge.Agents.ModelBasedReflex.Application
+            AgentForge.Agents.UtilityBased.Application
+            AgentForge.Agents.GoalBased.Application
+            AgentForge.Agents.Learning.Application
+            AgentForge.Agents.SimpleReflex
+            AgentForge.Agents.ModelBasedReflex
+            AgentForge.Agents.UtilityBased
+            AgentForge.Agents.GoalBased
+            AgentForge.Agents.Learning
+            AgentForge.Agents.ReAct
+            AgentForge.Agents.Planning
+            AgentForge.Agents.Reflection
+            AgentForge.Agents.RuleBased
+            AgentForge.Agents.Subsumption
+          )
+          for package_id in "${package_ids[@]}"; do
+            package="artifacts/packages/${package_id}.${PACKAGE_VERSION.nupkg"
+            test -f "$package"
+            echo "Publishing $package_id $PACKAGE_VERSION"
+            dotnet nuget push "$package" \
+              --api-key "$NUGET_API_KEY" \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          done
+
+      - name: Verify NuGet.org package availability
+        shell: bash
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          set -euo pipefail
+          package_ids=(
+            AgentForge.Abstractions AgentForge.Tools AgentForge.Models
+            AgentForge.Agents.SimpleReflex.Domain
+            AgentForge.Agents.ModelBasedReflex.Domain
+            AgentForge.Agents.UtilityBased.Domain
+            AgentForge.Agents.GoalBased.Domain
+            AgentForge.Agents.Learning.Domain
+            AgentForge.Agents.SimpleReflex.Application
+            AgentForge.Agents.ModelBasedReflex.Application
+            AgentForge.Agents.UtilityBased.Application
+            AgentForge.Agents.GoalBased.Application
+            AgentForge.Agents.Learning.Application
+            AgentForge.Agents.SimpleReflex
+            AgentForge.Agents.ModelBasedReflex
+            AgentForge.Agents.UtilityBased
+            AgentForge.Agents.GoalBased
+            AgentForge.Agents.Learning
+            AgentForge.Agents.ReAct
+            AgentForge.Agents.Planning
+            AgentForge.Agents.Reflection
+            AgentForge.Agents.RuleBased
+            AgentForge.Agents.Subsumption
+          )
+          for package_id in "${package_ids[@]}"; do
+            id_lower="$(printf '%s' "$package_id" | tr '[:upper:]' '[:lower:]')"
+            url="https://api.nuget.org/v3-flatcontainer/$id_lower/$PACKAGE_VERSION/$id_lower.$PACKAGE_VERSION.nupkg"
+            curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors "$url" --output /dev/null
+            echo "Verified $package_id $PACKAGE_VERSION on NuGet.org"
+          done
+          {
+            echo "## AgentForge NuGet release"
+            echo
+            echo "- Version: `$PACKAGE_VERSION`"
+            echo "- Published packages: `23`"
+            echo "- Public agent modules: `10`"
+          } >> "$GITHUB_STEP_SUMMARY"
