@@ -6,13 +6,13 @@ A standalone rule-based production-system agent. It evaluates ordered condition/
 
 After publication to NuGet.org:
 
-\`\`\`bash
+```bash
 dotnet add package AgentForge.Agents.RuleBased
-\`\`\`
+```
 
 ## Quick Start
 
-\`\`\`csharp
+```csharp
 using AgentForge.Agents.RuleBased.Builders;
 using AgentForge.Agents.RuleBased.Models;
 
@@ -37,7 +37,7 @@ Console.WriteLine(result.Output?.FinalWorkingMemory);
 Console.WriteLine(string.Join(", ", result.Output?.FiredRules ?? []));
 
 public sealed record Inventory(string Sku, int Stock, int ReorderPoint, int ReorderQuantity);
-\`\`\`
+```
 
 ## Execution semantics
 
@@ -45,8 +45,8 @@ public sealed record Inventory(string Sku, int Stock, int ReorderPoint, int Reor
 - The selected rule creates an action and transforms working memory.
 - Evaluation restarts from the first rule after every firing.
 - The cycle ends successfully when no rule applies.
-- \`WithMaxFirings\` and the shared \`AgentRunOptions.MaxSteps\` bound execution.
-- Hitting a firing limit while another rule remains applicable returns \`BudgetExhausted\` and preserves the partial trace.
+- `WithMaxFirings` and the shared `AgentRunOptions.MaxSteps` bound execution.
+- Hitting a firing limit while another rule remains applicable returns `BudgetExhausted` and preserves the partial trace.
 - The input memory is not mutated by the framework; use immutable state or copy-on-write transformations.
 
 ## Boundaries
@@ -55,9 +55,9 @@ This module implements a forward-chaining production-system control loop. It doe
 
 ## Fluent configuration
 
-- \`When(name, condition, actionFactory, apply)\` registers one ordered production rule.
-- \`WithMaxFirings(value)\` sets the per-run firing ceiling (default: 32).
-- \`WithTimeProvider(provider)\` configures run timestamps.
-- \`Build()\` validates that at least one rule exists and returns the common \`AgentHandle\`.
+- `When(name, condition, actionFactory, apply)` registers one ordered production rule.
+- `WithMaxFirings(value)` sets the per-run firing ceiling (default: 32).
+- `WithTimeProvider(provider)` configures run timestamps.
+- `Build()` validates that at least one rule exists and returns the common `AgentHandle`.
 
 The host owns working-memory persistence, action authorization, and external effects.
