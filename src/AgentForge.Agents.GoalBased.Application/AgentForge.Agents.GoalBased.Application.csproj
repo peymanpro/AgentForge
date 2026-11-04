@@ -9,11 +9,7 @@
     <PackageTags>ai;agents;goal-based;application;search</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj">
-      <TreatAsPackageReference>true</TreatAsPackageReference>
-    </ProjectReference>
-    <ProjectReference Include="..\AgentForge.Agents.GoalBased.Domain\AgentForge.Agents.GoalBased.Domain.csproj">
-      <TreatAsPackageReference>false</TreatAsPackageReference>
-    </ProjectReference>
+    <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
+    <ProjectReference Include="..\AgentForge.Agents.GoalBased.Domain\AgentForge.Agents.GoalBased.Domain.csproj" />
   </ItemGroup>
 </Project>
