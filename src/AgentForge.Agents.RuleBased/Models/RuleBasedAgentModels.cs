@@ -11,7 +11,13 @@ public enum RuleBasedTerminationReason
     RulesExhausted,
 
     /// <summary>The configured firing limit was reached while another rule remained applicable.</summary>
-    MaxFiringsReached
+    MaxFiringsReached,
+
+    /// <summary>A rule threw while evaluating or applying working memory.</summary>
+    ExecutionFailed,
+
+    /// <summary>The run was cancelled before the production system became quiescent.</summary>
+    Cancelled
 }
 
 /// <summary>Contains the resulting working memory and the rule-firing trace.</summary>
