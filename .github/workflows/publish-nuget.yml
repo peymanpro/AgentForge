@@ -253,11 +253,39 @@ jobs:
             CSharp.AgentForge.Agents.RuleBased
             CSharp.AgentForge.Agents.Subsumption
           )
+          # NuGet.org validates and indexes new packages asynchronously. Give the
+          # complete release a shared 15-minute propagation window rather than
+          # failing on an immediate 404 after a successful push.
+          verification_deadline=$((SECONDS + 900))
+          echo "Waiting up to 15 minutes for NuGet.org package validation and indexing."
+
           for package_id in "${package_ids[@]}"; do
             id_lower="$(printf '%s' "$package_id" | tr '[:upper:]' '[:lower:]')"
             url="https://api.nuget.org/v3-flatcontainer/$id_lower/$PACKAGE_VERSION/$id_lower.$PACKAGE_VERSION.nupkg"
-            curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors "$url" --output /dev/null
-            echo "Verified $package_id $PACKAGE_VERSION on NuGet.org"
+
+            while true; do
+              http_status="$(curl --silent --show-error --location --output /dev/null --write-out '%{http_code}' "$url" || true)"
+
+              if [ "$http_status" = "200" ]; then
+                echo "Verified $package_id $PACKAGE_VERSION on NuGet.org"
+                break
+              fi
+
+              case "$http_status" in
+                000|404|408|429|500|502|503|504)
+                  if (( SECONDS >= verification_deadline )); then
+                    echo "::error::NuGet.org did not make $package_id $PACKAGE_VERSION downloadable within 15 minutes (last HTTP status: $http_status)."
+                    exit 1
+                  fi
+                  echo "NuGet.org has not exposed $package_id $PACKAGE_VERSION yet (HTTP $http_status); retrying in 15 seconds."
+                  sleep 15
+                  ;;
+                *)
+                  echo "::error::Unexpected HTTP status $http_status while verifying $package_id $PACKAGE_VERSION."
+                  exit 1
+                  ;;
+              esac
+            done
           done
           {
             echo "## AgentForge NuGet release"
