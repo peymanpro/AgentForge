@@ -7,7 +7,7 @@ A deterministic agent that selects an action from the current percept using orde
 After this package is published to NuGet.org, install it with:
 
 ```bash
-dotnet add package AgentForge.Agents.SimpleReflex
+dotnet add package CSharp.AgentForge.Agents.SimpleReflex
 ```
 
 ## Quick Start

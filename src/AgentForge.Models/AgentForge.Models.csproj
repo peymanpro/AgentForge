@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AgentForge.Models</AssemblyName>
     <RootNamespace>AgentForge.Models</RootNamespace>
-    <PackageId>AgentForge.Models</PackageId>
+    <PackageId>CSharp.AgentForge.Models</PackageId>
     <Description>Provider-neutral model contracts and optional capabilities for AgentForge.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>

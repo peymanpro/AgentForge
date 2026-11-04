@@ -7,7 +7,7 @@ A tool-using agent that alternates model decisions, authorized tool execution, a
 After this package is published to NuGet.org, install it with:
 
 ```bash
-dotnet add package AgentForge.Agents.ReAct
+dotnet add package CSharp.AgentForge.Agents.ReAct
 ```
 
 ## Quick Start

@@ -7,7 +7,7 @@ A standalone layered reactive agent based on the Subsumption Architecture. Indep
 After publication to NuGet.org:
 
 ```bash
-dotnet add package AgentForge.Agents.Subsumption
+dotnet add package CSharp.AgentForge.Agents.Subsumption
 ```
 
 ## Quick Start

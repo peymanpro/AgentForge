@@ -7,7 +7,7 @@ A standalone rule-based production-system agent. It evaluates ordered condition/
 After publication to NuGet.org:
 
 ```bash
-dotnet add package AgentForge.Agents.RuleBased
+dotnet add package CSharp.AgentForge.Agents.RuleBased
 ```
 
 ## Quick Start

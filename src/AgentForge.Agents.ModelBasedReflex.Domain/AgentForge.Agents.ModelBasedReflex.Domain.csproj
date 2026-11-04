@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AgentForge.Agents.ModelBasedReflex.Domain</AssemblyName>
     <RootNamespace>AgentForge.Agents.ModelBasedReflex.Domain</RootNamespace>
-    <PackageId>AgentForge.Agents.ModelBasedReflex.Domain</PackageId>
+    <PackageId>CSharp.AgentForge.Agents.ModelBasedReflex.Domain</PackageId>
     <Description>Domain model for the Model-Based Reflex agent module.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>

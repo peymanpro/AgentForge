@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AgentForge.Agents.GoalBased</AssemblyName>
     <RootNamespace>AgentForge.Agents.GoalBased</RootNamespace>
-    <PackageId>AgentForge.Agents.GoalBased</PackageId>
+    <PackageId>CSharp.AgentForge.Agents.GoalBased</PackageId>
     <Description>A standalone Goal-Based agent module with bounded breadth-first search.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>

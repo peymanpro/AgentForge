@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AgentForge.Agents.SimpleReflex</AssemblyName>
     <RootNamespace>AgentForge.Agents.SimpleReflex</RootNamespace>
-    <PackageId>AgentForge.Agents.SimpleReflex</PackageId>
+    <PackageId>CSharp.AgentForge.Agents.SimpleReflex</PackageId>
     <Description>A standalone Simple Reflex agent module with a fluent API.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>

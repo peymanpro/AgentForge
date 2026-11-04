@@ -7,7 +7,7 @@ A standalone Goal-Based agent module that searches a state space for an action s
 After this package is published to NuGet.org:
 
 ```bash
-dotnet add package AgentForge.Agents.GoalBased
+dotnet add package CSharp.AgentForge.Agents.GoalBased
 ```
 
 ## Quick Start
