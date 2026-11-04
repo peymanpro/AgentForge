@@ -4,7 +4,7 @@ A standalone Utility-Based agent module that evaluates available candidate actio
 
 ## Installation
 
-After this package is published to NuGet.org, install it with:
+Install this package from NuGet.org:
 
 ```bash
 dotnet add package CSharp.AgentForge.Agents.UtilityBased

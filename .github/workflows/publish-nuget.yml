@@ -5,9 +5,11 @@ on:
   push:
     branches: [main]
     paths:
+      - "src/**"
       - "Directory.Build.props"
-      - "src/**/*.csproj"
-      - ".github/workflows/publish-nuget.yml"
+      - "Directory.Build.targets"
+      - "AgentForge.sln"
+      - "global.json"
 
 permissions:
   contents: read
@@ -19,7 +21,6 @@ concurrency:
 jobs:
   publish:
     name: Build, verify, and publish NuGet packages
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,9 +39,14 @@ jobs:
       - name: Determine package version
         id: version
         shell: bash
+        env:
+          RELEASE_RUN_NUMBER: ${{ github.run_number }}
         run: |
           version="$(python3 - <<'PY'
+          import os
+          import re
           import xml.etree.ElementTree as ET
+
           root = ET.parse("Directory.Build.props").getroot()
           node = next(
               (element for element in root.iter()
@@ -49,23 +55,38 @@ jobs:
           )
           if node is None or not (node.text or "").strip():
               raise SystemExit("Directory.Build.props must define <Version>.")
-          print(node.text.strip())
+
+          base = node.text.strip()
+          match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", base)
+          if not match:
+              raise SystemExit(f"Expected a stable three-part base version, got {base!r}.")
+
+          major, minor, base_patch = map(int, match.groups())
+          run_number = int(os.environ["RELEASE_RUN_NUMBER"])
+          patch = max(base_patch + 1, run_number)
+          print(f"{major}.{minor}.{patch}")
           PY
           )"
           echo "value=$version" >> "$GITHUB_OUTPUT"
           echo "Publishing AgentForge package version: $version"
 
       - name: Restore
-        run: dotnet restore AgentForge.sln
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.value }}
+        run: dotnet restore AgentForge.sln -p:Version="$PACKAGE_VERSION"
 
       - name: Build
-        run: dotnet build AgentForge.sln --configuration Release --no-restore
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.value }}
+        run: dotnet build AgentForge.sln --configuration Release --no-restore -p:Version="$PACKAGE_VERSION"
 
       - name: Test
         run: dotnet test AgentForge.sln --configuration Release --no-build --no-restore
 
       - name: Pack all distributable projects
         shell: bash
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.value }}
         run: |
           set -euo pipefail
           mkdir -p artifacts/packages
@@ -95,7 +116,7 @@ jobs:
             src/AgentForge.Agents.Subsumption/AgentForge.Agents.Subsumption.csproj
           )
           for project in "${projects[@]}"; do
-            dotnet pack "$project" --configuration Release --no-build --no-restore --output artifacts/packages
+            dotnet pack "$project" --configuration Release --no-build --no-restore -p:Version="${PACKAGE_VERSION}" --output artifacts/packages
           done
 
       - name: Verify package IDs, version, and agent READMEs
@@ -158,13 +179,26 @@ jobs:
                   assert version == expected_version, f"{package_id}: expected {expected_version}, got {version}"
                   assert package_id not in found, f"Duplicate package ID: {package_id}"
                   found.add(package_id)
+                  entries = set(package.namelist())
+                  assert "README.md" in entries, f"{package_id} has no embedded README.md"
+                  readme_element = next(
+                      (node for node in metadata
+                       if node.tag.rsplit("}", 1)[-1] == "readme"),
+                      None,
+                  )
+                  assert readme_element is not None and readme_element.text == "README.md", (
+                      f"{package_id} does not declare README.md in its nuspec"
+                  )
+                  markdown = package.read("README.md").decode("utf-8")
+                  assert markdown.strip().startswith("# ") and len(markdown.strip()) >= 100, (
+                      f"{package_id} README is missing or incomplete"
+                  )
                   if package_id in public_agents:
-                      entries = set(package.namelist())
-                      assert "README.md" in entries, f"{package_id} has no embedded README.md"
-                      markdown = package.read("README.md").decode("utf-8")
-                      assert "## Quick Start" in markdown and "```csharp" in markdown, f"{package_id} README is incomplete"
+                      assert "## Quick Start" in markdown and "```csharp" in markdown, (
+                          f"{package_id} README is missing its Quick Start or C# example"
+                      )
           assert found == expected, f"Package set mismatch. Missing={sorted(expected-found)}, unexpected={sorted(found-expected)}"
-          print(f"Verified {len(found)} NuGet packages at version {expected_version}, including all {len(public_agents)} agent READMEs.")
+          print(f"Verified {len(found)} NuGet packages at version {expected_version}; every package includes a README, including all {len(public_agents)} public agent READMEs.")
           PY
 
       - name: Validate NuGet publisher configuration

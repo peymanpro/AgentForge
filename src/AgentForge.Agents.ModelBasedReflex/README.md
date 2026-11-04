@@ -4,7 +4,7 @@ A deterministic agent that updates an explicit internal state from the previous 
 
 ## Installation
 
-After this package is published to NuGet.org, install it with:
+Install this package from NuGet.org:
 
 ```bash
 dotnet add package CSharp.AgentForge.Agents.ModelBasedReflex

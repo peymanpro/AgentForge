@@ -11,6 +11,7 @@ on:
       - "docs/**"
       - "AgentForge.sln"
       - "Directory.Build.props"
+      - "Directory.Build.targets"
       - "global.json"
       - "AGENTFORGE_SPEC.md"
       - "README.md"
@@ -26,6 +27,8 @@ on:
       - "docs/**"
       - "AgentForge.sln"
       - "Directory.Build.props"
+      - "Directory.Build.targets"
+      - ".github/workflows/publish-nuget.yml"
       - "global.json"
       - "AGENTFORGE_SPEC.md"
       - "README.md"
@@ -259,21 +262,27 @@ jobs:
                       f"Expected {sorted(expected)}, got {sorted(dependencies)}"
                   )
 
+                  assert "README.md" in entries, (
+                      f"{package_id} does not contain README.md"
+                  )
+                  readme_element = next(
+                      (
+                          node for node in nuspec.iter()
+                          if node.tag.rsplit("}", 1)[-1] == "readme"
+                      ),
+                      None,
+                  )
+                  assert readme_element is not None and readme_element.text == "README.md", (
+                      f"{package_id} does not declare README.md in its nuspec"
+                  )
+                  markdown = package.read("README.md").decode("utf-8")
+                  assert markdown.strip().startswith("# "), (
+                      f"{package_id} README must start with a Markdown heading"
+                  )
+                  assert len(markdown.strip()) >= 100, (
+                      f"{package_id} README is too short to document the package"
+                  )
                   if package_id in public_agent_packages:
-                      assert "README.md" in entries, (
-                          f"{package_id} does not contain README.md"
-                      )
-                      readme_element = next(
-                          (
-                              node for node in nuspec.iter()
-                              if node.tag.rsplit("}", 1)[-1] == "readme"
-                          ),
-                          None,
-                      )
-                      assert readme_element is not None and readme_element.text == "README.md", (
-                          f"{package_id} does not declare README.md in its nuspec"
-                      )
-                      markdown = package.read("README.md").decode("utf-8")
                       assert "## Quick Start" in markdown, (
                           f"{package_id} is missing Quick Start"
                       )
@@ -281,11 +290,11 @@ jobs:
                           f"{package_id} is missing a C# code example"
                       )
 
-              print(f"Verified package dependency graph: {package_id}")
+              print(f"Verified package dependency graph and README: {package_id}")
 
           print(
               f"Verified {len(expected_dependencies)} package manifests and "
-              f"{len(public_agent_packages)} public agent package READMEs."
+              f"{len(expected_dependencies)} embedded package READMEs."
           )
           PY
 

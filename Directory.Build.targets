@@ -1,0 +1,10 @@
+<Project>
+  <!-- Every packable project with a PackageId ships its project-local README. -->
+  <PropertyGroup Condition="'$(IsPackable)' != 'false' and '$(PackageId)' != ''">
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' != 'false' and '$(PackageId)' != ''">
+    <None Update="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>
