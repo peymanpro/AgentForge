@@ -11,12 +11,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
-    <ProjectReference Include="..\AgentForge.Agents.UtilityBased.Application\AgentForge.Agents.UtilityBased.Application.csproj">
-      <TreatAsPackageReference>false</TreatAsPackageReference>
-    </ProjectReference>
-    <ProjectReference Include="..\AgentForge.Agents.UtilityBased.Domain\AgentForge.Agents.UtilityBased.Domain.csproj">
-      <TreatAsPackageReference>false</TreatAsPackageReference>
-    </ProjectReference>
+    <ProjectReference Include="..\AgentForge.Agents.UtilityBased.Application\AgentForge.Agents.UtilityBased.Application.csproj" />
+    <ProjectReference Include="..\AgentForge.Agents.UtilityBased.Domain\AgentForge.Agents.UtilityBased.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="README.md" Pack="true" PackagePath="\" />
