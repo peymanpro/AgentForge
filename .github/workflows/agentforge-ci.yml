@@ -214,13 +214,25 @@ jobs:
               "AgentForge.Agents.Reflection",
           }
 
+          packages_by_id = {}
+          for package_path in map(Path, glob.glob("artifacts/packages/*.nupkg")):
+              with zipfile.ZipFile(package_path) as package:
+                  nuspec_name = next(
+                      name for name in package.namelist()
+                      if name.endswith(".nuspec")
+                  )
+                  nuspec = ET.fromstring(package.read(nuspec_name))
+                  package_id_node = next(
+                      node for node in nuspec.iter()
+                      if node.tag.rsplit("}", 1)[-1] == "id"
+                  )
+                  package_id = package_id_node.text
+                  packages_by_id.setdefault(package_id, []).append(package_path)
+
           for package_id, expected in expected_dependencies.items():
-              matches = [
-                  Path(path) for path in glob.glob("artifacts/packages/*.nupkg")
-                  if Path(path).name.startswith(package_id + ".")
-              ]
+              matches = packages_by_id.get(package_id, [])
               assert len(matches) == 1, (
-                  f"Expected one package for {package_id}, found {matches}"
+                  f"Expected one package with nuspec id {package_id}, found {matches}"
               )
 
               with zipfile.ZipFile(matches[0]) as package:
@@ -232,7 +244,8 @@ jobs:
                   dependencies = {
                       node.attrib["id"]
                       for node in nuspec.iter()
-                      if node.tag.endswith("dependency") and "id" in node.attrib
+                      if node.tag.rsplit("}", 1)[-1] == "dependency"
+                      and "id" in node.attrib
                   }
                   assert dependencies == expected, (
                       f"{package_id} dependency mismatch. "
@@ -246,7 +259,7 @@ jobs:
                       readme_element = next(
                           (
                               node for node in nuspec.iter()
-                              if node.tag.endswith("readme")
+                              if node.tag.rsplit("}", 1)[-1] == "readme"
                           ),
                           None,
                       )
@@ -257,7 +270,7 @@ jobs:
                       assert "## Quick Start" in markdown, (
                           f"{package_id} is missing Quick Start"
                       )
-                      assert "```csharp" in markdown, (
+                      assert "\`\`\`csharp" in markdown, (
                           f"{package_id} is missing a C# code example"
                       )
 
