@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AgentForge.Agents.UtilityBased.Application</AssemblyName>
     <RootNamespace>AgentForge.Agents.UtilityBased.Application</RootNamespace>
-    <PackageId>AgentForge.Agents.UtilityBased.Application</PackageId>
+    <PackageId>CSharp.AgentForge.Agents.UtilityBased.Application</PackageId>
     <Description>Application use cases for the Utility-Based agent module.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>

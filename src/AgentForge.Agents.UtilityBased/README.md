@@ -7,7 +7,7 @@ A standalone Utility-Based agent module that evaluates available candidate actio
 After this package is published to NuGet.org, install it with:
 
 ```bash
-dotnet add package AgentForge.Agents.UtilityBased
+dotnet add package CSharp.AgentForge.Agents.UtilityBased
 ```
 
 ## Quick Start

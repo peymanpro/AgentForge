@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AgentForge.Agents.ReAct</AssemblyName>
     <RootNamespace>AgentForge.Agents.ReAct</RootNamespace>
-    <PackageId>AgentForge.Agents.ReAct</PackageId>
+    <PackageId>CSharp.AgentForge.Agents.ReAct</PackageId>
     <Description>A bounded, inspectable ReAct agent implementation for AgentForge.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AgentForge.Agents.ModelBasedReflex</AssemblyName>
     <RootNamespace>AgentForge.Agents.ModelBasedReflex</RootNamespace>
-    <PackageId>AgentForge.Agents.ModelBasedReflex</PackageId>
+    <PackageId>CSharp.AgentForge.Agents.ModelBasedReflex</PackageId>
     <Description>A standalone Model-Based Reflex agent module with a fluent API.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>

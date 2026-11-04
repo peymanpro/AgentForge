@@ -7,7 +7,7 @@ A bounded candidate-refinement agent that separates generation from independent 
 After this package is published to NuGet.org, install it with:
 
 ```bash
-dotnet add package AgentForge.Agents.Reflection
+dotnet add package CSharp.AgentForge.Agents.Reflection
 ```
 
 ## Quick Start

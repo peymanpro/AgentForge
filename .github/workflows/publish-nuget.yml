@@ -1,10 +1,13 @@
 name: Publish AgentForge packages to NuGet
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
       - "Directory.Build.props"
+      - "src/**/*.csproj"
+      - ".github/workflows/publish-nuget.yml"
 
 permissions:
   contents: read
@@ -16,7 +19,7 @@ concurrency:
 jobs:
   publish:
     name: Build, verify, and publish NuGet packages
-    if: contains(github.event.head_commit.message, 'release:')
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'release:')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -109,39 +112,39 @@ jobs:
 
           expected_version = os.environ["EXPECTED_VERSION"]
           expected = {
-              "AgentForge.Abstractions", "AgentForge.Tools", "AgentForge.Models",
-              "AgentForge.Agents.SimpleReflex.Domain",
-              "AgentForge.Agents.ModelBasedReflex.Domain",
-              "AgentForge.Agents.UtilityBased.Domain",
-              "AgentForge.Agents.GoalBased.Domain",
-              "AgentForge.Agents.Learning.Domain",
-              "AgentForge.Agents.SimpleReflex.Application",
-              "AgentForge.Agents.ModelBasedReflex.Application",
-              "AgentForge.Agents.UtilityBased.Application",
-              "AgentForge.Agents.GoalBased.Application",
-              "AgentForge.Agents.Learning.Application",
-              "AgentForge.Agents.SimpleReflex",
-              "AgentForge.Agents.ModelBasedReflex",
-              "AgentForge.Agents.UtilityBased",
-              "AgentForge.Agents.GoalBased",
-              "AgentForge.Agents.Learning",
-              "AgentForge.Agents.ReAct",
-              "AgentForge.Agents.Planning",
-              "AgentForge.Agents.Reflection",
-              "AgentForge.Agents.RuleBased",
-              "AgentForge.Agents.Subsumption",
+              "CSharp.AgentForge.Abstractions", "CSharp.AgentForge.Tools", "CSharp.AgentForge.Models",
+              "CSharp.AgentForge.Agents.SimpleReflex.Domain",
+              "CSharp.AgentForge.Agents.ModelBasedReflex.Domain",
+              "CSharp.AgentForge.Agents.UtilityBased.Domain",
+              "CSharp.AgentForge.Agents.GoalBased.Domain",
+              "CSharp.AgentForge.Agents.Learning.Domain",
+              "CSharp.AgentForge.Agents.SimpleReflex.Application",
+              "CSharp.AgentForge.Agents.ModelBasedReflex.Application",
+              "CSharp.AgentForge.Agents.UtilityBased.Application",
+              "CSharp.AgentForge.Agents.GoalBased.Application",
+              "CSharp.AgentForge.Agents.Learning.Application",
+              "CSharp.AgentForge.Agents.SimpleReflex",
+              "CSharp.AgentForge.Agents.ModelBasedReflex",
+              "CSharp.AgentForge.Agents.UtilityBased",
+              "CSharp.AgentForge.Agents.GoalBased",
+              "CSharp.AgentForge.Agents.Learning",
+              "CSharp.AgentForge.Agents.ReAct",
+              "CSharp.AgentForge.Agents.Planning",
+              "CSharp.AgentForge.Agents.Reflection",
+              "CSharp.AgentForge.Agents.RuleBased",
+              "CSharp.AgentForge.Agents.Subsumption",
           }
           public_agents = {
-              "AgentForge.Agents.SimpleReflex",
-              "AgentForge.Agents.ModelBasedReflex",
-              "AgentForge.Agents.UtilityBased",
-              "AgentForge.Agents.GoalBased",
-              "AgentForge.Agents.Learning",
-              "AgentForge.Agents.ReAct",
-              "AgentForge.Agents.Planning",
-              "AgentForge.Agents.Reflection",
-              "AgentForge.Agents.RuleBased",
-              "AgentForge.Agents.Subsumption",
+              "CSharp.AgentForge.Agents.SimpleReflex",
+              "CSharp.AgentForge.Agents.ModelBasedReflex",
+              "CSharp.AgentForge.Agents.UtilityBased",
+              "CSharp.AgentForge.Agents.GoalBased",
+              "CSharp.AgentForge.Agents.Learning",
+              "CSharp.AgentForge.Agents.ReAct",
+              "CSharp.AgentForge.Agents.Planning",
+              "CSharp.AgentForge.Agents.Reflection",
+              "CSharp.AgentForge.Agents.RuleBased",
+              "CSharp.AgentForge.Agents.Subsumption",
           }
           found = set()
           for path in map(Path, glob.glob("artifacts/packages/*.nupkg")):
@@ -187,29 +190,29 @@ jobs:
         run: |
           set -euo pipefail
           package_ids=(
-            AgentForge.Abstractions
-            AgentForge.Tools
-            AgentForge.Models
-            AgentForge.Agents.SimpleReflex.Domain
-            AgentForge.Agents.ModelBasedReflex.Domain
-            AgentForge.Agents.UtilityBased.Domain
-            AgentForge.Agents.GoalBased.Domain
-            AgentForge.Agents.Learning.Domain
-            AgentForge.Agents.SimpleReflex.Application
-            AgentForge.Agents.ModelBasedReflex.Application
-            AgentForge.Agents.UtilityBased.Application
-            AgentForge.Agents.GoalBased.Application
-            AgentForge.Agents.Learning.Application
-            AgentForge.Agents.SimpleReflex
-            AgentForge.Agents.ModelBasedReflex
-            AgentForge.Agents.UtilityBased
-            AgentForge.Agents.GoalBased
-            AgentForge.Agents.Learning
-            AgentForge.Agents.ReAct
-            AgentForge.Agents.Planning
-            AgentForge.Agents.Reflection
-            AgentForge.Agents.RuleBased
-            AgentForge.Agents.Subsumption
+            CSharp.AgentForge.Abstractions
+            CSharp.AgentForge.Tools
+            CSharp.AgentForge.Models
+            CSharp.AgentForge.Agents.SimpleReflex.Domain
+            CSharp.AgentForge.Agents.ModelBasedReflex.Domain
+            CSharp.AgentForge.Agents.UtilityBased.Domain
+            CSharp.AgentForge.Agents.GoalBased.Domain
+            CSharp.AgentForge.Agents.Learning.Domain
+            CSharp.AgentForge.Agents.SimpleReflex.Application
+            CSharp.AgentForge.Agents.ModelBasedReflex.Application
+            CSharp.AgentForge.Agents.UtilityBased.Application
+            CSharp.AgentForge.Agents.GoalBased.Application
+            CSharp.AgentForge.Agents.Learning.Application
+            CSharp.AgentForge.Agents.SimpleReflex
+            CSharp.AgentForge.Agents.ModelBasedReflex
+            CSharp.AgentForge.Agents.UtilityBased
+            CSharp.AgentForge.Agents.GoalBased
+            CSharp.AgentForge.Agents.Learning
+            CSharp.AgentForge.Agents.ReAct
+            CSharp.AgentForge.Agents.Planning
+            CSharp.AgentForge.Agents.Reflection
+            CSharp.AgentForge.Agents.RuleBased
+            CSharp.AgentForge.Agents.Subsumption
           )
           for package_id in "${package_ids[@]}"; do
             package="artifacts/packages/${package_id}.${PACKAGE_VERSION}.nupkg"
@@ -228,27 +231,27 @@ jobs:
         run: |
           set -euo pipefail
           package_ids=(
-            AgentForge.Abstractions AgentForge.Tools AgentForge.Models
-            AgentForge.Agents.SimpleReflex.Domain
-            AgentForge.Agents.ModelBasedReflex.Domain
-            AgentForge.Agents.UtilityBased.Domain
-            AgentForge.Agents.GoalBased.Domain
-            AgentForge.Agents.Learning.Domain
-            AgentForge.Agents.SimpleReflex.Application
-            AgentForge.Agents.ModelBasedReflex.Application
-            AgentForge.Agents.UtilityBased.Application
-            AgentForge.Agents.GoalBased.Application
-            AgentForge.Agents.Learning.Application
-            AgentForge.Agents.SimpleReflex
-            AgentForge.Agents.ModelBasedReflex
-            AgentForge.Agents.UtilityBased
-            AgentForge.Agents.GoalBased
-            AgentForge.Agents.Learning
-            AgentForge.Agents.ReAct
-            AgentForge.Agents.Planning
-            AgentForge.Agents.Reflection
-            AgentForge.Agents.RuleBased
-            AgentForge.Agents.Subsumption
+            CSharp.AgentForge.Abstractions CSharp.AgentForge.Tools CSharp.AgentForge.Models
+            CSharp.AgentForge.Agents.SimpleReflex.Domain
+            CSharp.AgentForge.Agents.ModelBasedReflex.Domain
+            CSharp.AgentForge.Agents.UtilityBased.Domain
+            CSharp.AgentForge.Agents.GoalBased.Domain
+            CSharp.AgentForge.Agents.Learning.Domain
+            CSharp.AgentForge.Agents.SimpleReflex.Application
+            CSharp.AgentForge.Agents.ModelBasedReflex.Application
+            CSharp.AgentForge.Agents.UtilityBased.Application
+            CSharp.AgentForge.Agents.GoalBased.Application
+            CSharp.AgentForge.Agents.Learning.Application
+            CSharp.AgentForge.Agents.SimpleReflex
+            CSharp.AgentForge.Agents.ModelBasedReflex
+            CSharp.AgentForge.Agents.UtilityBased
+            CSharp.AgentForge.Agents.GoalBased
+            CSharp.AgentForge.Agents.Learning
+            CSharp.AgentForge.Agents.ReAct
+            CSharp.AgentForge.Agents.Planning
+            CSharp.AgentForge.Agents.Reflection
+            CSharp.AgentForge.Agents.RuleBased
+            CSharp.AgentForge.Agents.Subsumption
           )
           for package_id in "${package_ids[@]}"; do
             id_lower="$(printf '%s' "$package_id" | tr '[:upper:]' '[:lower:]')"

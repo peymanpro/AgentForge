@@ -90,7 +90,7 @@ The policy tries unseen candidates first, then explores with probability epsilon
 After publication to NuGet.org:
 
 ```bash
-dotnet add package AgentForge.Agents.Learning
+dotnet add package CSharp.AgentForge.Agents.Learning
 ```
 
 ## Architecture

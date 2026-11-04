@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AgentForge.Tools</AssemblyName>
     <RootNamespace>AgentForge.Tools</RootNamespace>
-    <PackageId>AgentForge.Tools</PackageId>
+    <PackageId>CSharp.AgentForge.Tools</PackageId>
     <Description>Tool contracts and policy-controlled execution for AgentForge agents.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>

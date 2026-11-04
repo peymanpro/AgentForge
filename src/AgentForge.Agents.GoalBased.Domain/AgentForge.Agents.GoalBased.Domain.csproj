@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AgentForge.Agents.GoalBased.Domain</AssemblyName>
     <RootNamespace>AgentForge.Agents.GoalBased.Domain</RootNamespace>
-    <PackageId>AgentForge.Agents.GoalBased.Domain</PackageId>
+    <PackageId>CSharp.AgentForge.Agents.GoalBased.Domain</PackageId>
     <Description>Domain model for the Goal-Based agent module.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>AgentForge.Agents.Planning</AssemblyName>
     <RootNamespace>AgentForge.Agents.Planning</RootNamespace>
-    <PackageId>AgentForge.Agents.Planning</PackageId>
+    <PackageId>CSharp.AgentForge.Agents.Planning</PackageId>
     <Description>A structured, validated Plan-and-Execute agent for AgentForge.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
