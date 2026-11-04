@@ -21,6 +21,7 @@ concurrency:
 jobs:
   publish:
     name: Build, verify, and publish NuGet packages
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -322,9 +323,8 @@ jobs:
             done
           done
           {
-            echo "## AgentForge NuGet release"
-            echo
-            echo "- Version: `$PACKAGE_VERSION`"
-            echo "- Published packages: `23`"
-            echo "- Public agent modules: `10`"
+            printf '## AgentForge NuGet release\n\n'
+            printf -- '- Version: `%s`\n' "$PACKAGE_VERSION"
+            printf -- '- Published packages: `23`\n'
+            printf -- '- Public agent modules: `10`\n'
           } >> "$GITHUB_STEP_SUMMARY"
