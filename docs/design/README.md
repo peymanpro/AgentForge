@@ -18,7 +18,7 @@ A proposal is not an API guarantee. Its status must be updated when a design is 
 
 | Document | Responsibility | Current status |
 |---|---|---|
-| [Classical Agent Architectures](classical-agents.md) | Deterministic reflex agents and the extension path for goal-based, utility-based, search, BDI, and learning architectures | Simple-reflex and model-based reflex implemented experimentally |
+| [Classical Agent Architectures](classical-agents.md) | Deterministic reflex, production-system, subsumption, goal, utility, and learning architectures | Simple Reflex, Model-Based Reflex, Rule-Based, Subsumption, Goal-Based, Utility-Based, and Learning implemented experimentally |
 | [ReAct Execution](react-agent-execution.md) | Decision/action/observation lifecycle and stopping behavior | Implemented experimentally |
 | [Planning Execution](planning-agent-execution.md) | Structured plan generation, validation, execution, and failure policy | Implemented experimentally |
 | [Reflection Execution](reflection-agent-execution.md) | Evaluation, feedback, bounded refinement, and acceptance | Implemented experimentally |
