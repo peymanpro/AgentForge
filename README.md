@@ -9,7 +9,7 @@ Install only the agent module you need. Each agent is an independently versioned
 [![CI](https://github.com/peymanpro/AgentForge/actions/workflows/agentforge-ci.yml/badge.svg?branch=main)](https://github.com/peymanpro/AgentForge/actions/workflows/agentforge-ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> **Status:** Published on NuGet.org (v1.0.0). Public APIs may evolve as the framework develops.
+> **Status:** Published on NuGet.org. Current package versions are shown on their individual NuGet Gallery pages; public APIs may evolve as the framework develops.
 
 ## Contents
 
@@ -644,16 +644,16 @@ Each agent is distributed as an independent package. The package IDs and package
 
 | Package ID | NuGet | Package README |
 |---|---|---|
-| `CSharp.AgentForge.Agents.SimpleReflex` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.SimpleReflex/) | [Simple Reflex](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.SimpleReflex/README.md) |
-| `CSharp.AgentForge.Agents.ModelBasedReflex` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.ModelBasedReflex/) | [Model-Based Reflex](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.ModelBasedReflex/README.md) |
-| `CSharp.AgentForge.Agents.ReAct` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.ReAct/) | [ReAct](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.ReAct/README.md) |
-| `CSharp.AgentForge.Agents.Planning` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Planning/) | [Plan-and-Execute](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Planning/README.md) |
-| `CSharp.AgentForge.Agents.Reflection` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Reflection/) | [Reflection](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Reflection/README.md) |
-| `CSharp.AgentForge.Agents.UtilityBased` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.UtilityBased/) | [Utility-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.UtilityBased/README.md) |
-| `CSharp.AgentForge.Agents.GoalBased` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.GoalBased/) | [Goal-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.GoalBased/README.md) |
-| `CSharp.AgentForge.Agents.Learning` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Learning/) | [Learning](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Learning/README.md) |
-| `CSharp.AgentForge.Agents.RuleBased` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.RuleBased/) | [Rule-Based / Production System](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.RuleBased/README.md) |
-| `CSharp.AgentForge.Agents.Subsumption` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Subsumption/) | [Subsumption](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Subsumption/README.md) |
+| `CSharp.AgentForge.Agents.SimpleReflex` | [NuGet](https://www.nuget.org/packages/CSharp.AgentForge.Agents.SimpleReflex/) | [Simple Reflex](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.SimpleReflex/README.md) |
+| `CSharp.AgentForge.Agents.ModelBasedReflex` | [NuGet](https://www.nuget.org/packages/CSharp.AgentForge.Agents.ModelBasedReflex/) | [Model-Based Reflex](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.ModelBasedReflex/README.md) |
+| `CSharp.AgentForge.Agents.ReAct` | [NuGet](https://www.nuget.org/packages/CSharp.AgentForge.Agents.ReAct/) | [ReAct](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.ReAct/README.md) |
+| `CSharp.AgentForge.Agents.Planning` | [NuGet](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Planning/) | [Plan-and-Execute](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Planning/README.md) |
+| `CSharp.AgentForge.Agents.Reflection` | [NuGet](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Reflection/) | [Reflection](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Reflection/README.md) |
+| `CSharp.AgentForge.Agents.UtilityBased` | [NuGet](https://www.nuget.org/packages/CSharp.AgentForge.Agents.UtilityBased/) | [Utility-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.UtilityBased/README.md) |
+| `CSharp.AgentForge.Agents.GoalBased` | [NuGet](https://www.nuget.org/packages/CSharp.AgentForge.Agents.GoalBased/) | [Goal-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.GoalBased/README.md) |
+| `CSharp.AgentForge.Agents.Learning` | [NuGet](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Learning/) | [Learning](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Learning/README.md) |
+| `CSharp.AgentForge.Agents.RuleBased` | [NuGet](https://www.nuget.org/packages/CSharp.AgentForge.Agents.RuleBased/) | [Rule-Based / Production System](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.RuleBased/README.md) |
+| `CSharp.AgentForge.Agents.Subsumption` | [NuGet](https://www.nuget.org/packages/CSharp.AgentForge.Agents.Subsumption/) | [Subsumption](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Subsumption/README.md) |
 
 Each package project declares its module README through `PackageReadmeFile` and includes that Markdown file in the `.nupkg`. NuGet.org therefore displays the matching agent's description and Quick Start on that package's page.
 
