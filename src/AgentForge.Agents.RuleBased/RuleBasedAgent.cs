@@ -79,7 +79,7 @@ internal sealed class RuleBasedAgent<TMemory, TAction>(
                     "The production-system run was cancelled."),
                 startedAt,
                 timeProvider.GetUtcNow(),
-                CreateOutput(RuleBasedTerminationReason.RulesExhausted)));
+                CreateOutput(RuleBasedTerminationReason.Cancelled)));
         }
         catch (Exception)
         {
@@ -91,7 +91,7 @@ internal sealed class RuleBasedAgent<TMemory, TAction>(
                     "A production rule failed during evaluation or execution."),
                 startedAt,
                 timeProvider.GetUtcNow(),
-                CreateOutput(RuleBasedTerminationReason.RulesExhausted)));
+                CreateOutput(RuleBasedTerminationReason.ExecutionFailed)));
         }
 
         RuleBasedAgentOutput<TMemory, TAction> CreateOutput(RuleBasedTerminationReason reason) =>
