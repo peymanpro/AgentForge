@@ -6,13 +6,13 @@ A standalone layered reactive agent based on the Subsumption Architecture. Indep
 
 After publication to NuGet.org:
 
-\`\`\`bash
+```bash
 dotnet add package AgentForge.Agents.Subsumption
-\`\`\`
+```
 
 ## Quick Start
 
-\`\`\`csharp
+```csharp
 using AgentForge.Agents.Subsumption.Builders;
 using AgentForge.Agents.Subsumption.Models;
 
@@ -48,7 +48,7 @@ public enum RobotAction
     TurnAway,
     MoveForward
 }
-\`\`\`
+```
 
 ## Arbitration semantics
 
@@ -65,8 +65,8 @@ Simple Reflex is an ordered list of condition-action rules within one rule set. 
 
 ## Fluent configuration
 
-- \`WithLayer(name, priority, isActive, actionFactory)\` registers a behavior layer.
-- \`WithTimeProvider(provider)\` configures run timestamps.
-- \`Build()\` validates the layer catalog and returns the common \`AgentHandle\`.
+- `WithLayer(name, priority, isActive, actionFactory)` registers a behavior layer.
+- `WithTimeProvider(provider)` configures run timestamps.
+- `Build()` validates the layer catalog and returns the common `AgentHandle`.
 
 The layer predicates and action factories should be deterministic, bounded, and free of external side effects.
