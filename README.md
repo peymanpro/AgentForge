@@ -232,13 +232,13 @@ A deterministic production-system agent that applies ordered rules to explicit w
 
 #### Installation
 
-\`\`\`bash
+```bash
 dotnet add package AgentForge.Agents.RuleBased
-\`\`\`
+```
 
 #### Rule-Based Production System Quick Start
 
-\`\`\`csharp
+```csharp
 using AgentForge.Agents.RuleBased.Builders;
 using AgentForge.Agents.RuleBased.Models;
 
@@ -258,13 +258,13 @@ Console.WriteLine(result.Output?.FinalWorkingMemory);
 Console.WriteLine(string.Join(", ", result.Output?.FiredRules ?? []));
 
 public sealed record Inventory(string Sku, int Stock, int ReorderPoint, int ReorderQuantity);
-\`\`\`
+```
 
 #### Behavior
 
 - Rules run in registration order; the first applicable rule fires.
 - The selected rule emits an action and transforms working memory; evaluation then restarts.
-- The run ends when no rule applies or returns \`BudgetExhausted\` when a firing limit is reached.
+- The run ends when no rule applies or returns `BudgetExhausted` when a firing limit is reached.
 - The host owns memory persistence, action authorization, and external side effects.
 - Unlike Simple Reflex, this module iterates over changing working memory rather than making one decision from one percept.
 
@@ -274,13 +274,13 @@ A layered reactive agent inspired by the Subsumption Architecture. Independent b
 
 #### Installation
 
-\`\`\`bash
+```bash
 dotnet add package AgentForge.Agents.Subsumption
-\`\`\`
+```
 
 #### Subsumption Quick Start
 
-\`\`\`csharp
+```csharp
 using AgentForge.Agents.Subsumption.Builders;
 using AgentForge.Agents.Subsumption.Models;
 
@@ -300,7 +300,7 @@ Console.WriteLine(result.Output?.Action);
 
 public sealed record RobotPercept(double ObstacleDistanceMeters);
 public enum RobotAction { Stop, TurnAway, MoveForward }
-\`\`\`
+```
 
 #### Behavior
 
