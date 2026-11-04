@@ -9,7 +9,7 @@ on:
       - "samples/**"
       - "benchmarks/**"
       - "docs/**"
-      - "AgentForge.sln"
+      - "CSharp.AgentForge.sln"
       - "Directory.Build.props"
       - "global.json"
       - "AGENTFORGE_SPEC.md"
@@ -23,7 +23,7 @@ on:
       - "samples/**"
       - "benchmarks/**"
       - "docs/**"
-      - "AgentForge.sln"
+      - "CSharp.AgentForge.sln"
       - "Directory.Build.props"
       - "global.json"
       - "AGENTFORGE_SPEC.md"
@@ -144,80 +144,80 @@ jobs:
           from pathlib import Path
 
           expected_dependencies = {
-              "AgentForge.Abstractions": set(),
-              "AgentForge.Tools": {"AgentForge.Abstractions"},
-              "AgentForge.Models": {"AgentForge.Tools"},
-              "AgentForge.Agents.SimpleReflex.Domain": set(),
-              "AgentForge.Agents.SimpleReflex.Application": {
-                  "AgentForge.Abstractions",
-                  "AgentForge.Agents.SimpleReflex.Domain",
+              "CSharp.AgentForge.Abstractions": set(),
+              "CSharp.AgentForge.Tools": {"CSharp.AgentForge.Abstractions"},
+              "CSharp.AgentForge.Models": {"CSharp.AgentForge.Tools"},
+              "CSharp.AgentForge.Agents.SimpleReflex.Domain": set(),
+              "CSharp.AgentForge.Agents.SimpleReflex.Application": {
+                  "CSharp.AgentForge.Abstractions",
+                  "CSharp.AgentForge.Agents.SimpleReflex.Domain",
               },
-              "AgentForge.Agents.SimpleReflex": {
-                  "AgentForge.Abstractions",
-                  "AgentForge.Agents.SimpleReflex.Application",
-                  "AgentForge.Agents.SimpleReflex.Domain",
+              "CSharp.AgentForge.Agents.SimpleReflex": {
+                  "CSharp.AgentForge.Abstractions",
+                  "CSharp.AgentForge.Agents.SimpleReflex.Application",
+                  "CSharp.AgentForge.Agents.SimpleReflex.Domain",
               },
-              "AgentForge.Agents.ModelBasedReflex.Domain": set(),
-              "AgentForge.Agents.ModelBasedReflex.Application": {
-                  "AgentForge.Abstractions",
-                  "AgentForge.Agents.ModelBasedReflex.Domain",
+              "CSharp.AgentForge.Agents.ModelBasedReflex.Domain": set(),
+              "CSharp.AgentForge.Agents.ModelBasedReflex.Application": {
+                  "CSharp.AgentForge.Abstractions",
+                  "CSharp.AgentForge.Agents.ModelBasedReflex.Domain",
               },
-              "AgentForge.Agents.ModelBasedReflex": {
-                  "AgentForge.Abstractions",
-                  "AgentForge.Agents.ModelBasedReflex.Application",
-                  "AgentForge.Agents.ModelBasedReflex.Domain",
+              "CSharp.AgentForge.Agents.ModelBasedReflex": {
+                  "CSharp.AgentForge.Abstractions",
+                  "CSharp.AgentForge.Agents.ModelBasedReflex.Application",
+                  "CSharp.AgentForge.Agents.ModelBasedReflex.Domain",
               },
-              "AgentForge.Agents.UtilityBased.Domain": set(),
-              "AgentForge.Agents.UtilityBased.Application": {
-                  "AgentForge.Abstractions",
-                  "AgentForge.Agents.UtilityBased.Domain",
+              "CSharp.AgentForge.Agents.UtilityBased.Domain": set(),
+              "CSharp.AgentForge.Agents.UtilityBased.Application": {
+                  "CSharp.AgentForge.Abstractions",
+                  "CSharp.AgentForge.Agents.UtilityBased.Domain",
               },
-              "AgentForge.Agents.UtilityBased": {
-                  "AgentForge.Abstractions",
-                  "AgentForge.Agents.UtilityBased.Application",
-                  "AgentForge.Agents.UtilityBased.Domain",
+              "CSharp.AgentForge.Agents.UtilityBased": {
+                  "CSharp.AgentForge.Abstractions",
+                  "CSharp.AgentForge.Agents.UtilityBased.Application",
+                  "CSharp.AgentForge.Agents.UtilityBased.Domain",
               },
-              "AgentForge.Agents.GoalBased.Domain": set(),
-              "AgentForge.Agents.GoalBased.Application": {
-                  "AgentForge.Abstractions",
-                  "AgentForge.Agents.GoalBased.Domain",
+              "CSharp.AgentForge.Agents.GoalBased.Domain": set(),
+              "CSharp.AgentForge.Agents.GoalBased.Application": {
+                  "CSharp.AgentForge.Abstractions",
+                  "CSharp.AgentForge.Agents.GoalBased.Domain",
               },
-              "AgentForge.Agents.GoalBased": {
-                  "AgentForge.Abstractions",
-                  "AgentForge.Agents.GoalBased.Application",
-                  "AgentForge.Agents.GoalBased.Domain",
+              "CSharp.AgentForge.Agents.GoalBased": {
+                  "CSharp.AgentForge.Abstractions",
+                  "CSharp.AgentForge.Agents.GoalBased.Application",
+                  "CSharp.AgentForge.Agents.GoalBased.Domain",
               },
-              "AgentForge.Agents.Learning.Domain": set(),
-              "AgentForge.Agents.Learning.Application": {
-                  "AgentForge.Agents.Learning.Domain",
+              "CSharp.AgentForge.Agents.Learning.Domain": set(),
+              "CSharp.AgentForge.Agents.Learning.Application": {
+                  "CSharp.AgentForge.Agents.Learning.Domain",
               },
-              "AgentForge.Agents.Learning": {
-                  "AgentForge.Abstractions",
-                  "AgentForge.Agents.Learning.Application",
-                  "AgentForge.Agents.Learning.Domain",
+              "CSharp.AgentForge.Agents.Learning": {
+                  "CSharp.AgentForge.Abstractions",
+                  "CSharp.AgentForge.Agents.Learning.Application",
+                  "CSharp.AgentForge.Agents.Learning.Domain",
               },
-              "AgentForge.Agents.ReAct": {
-                  "AgentForge.Abstractions",
-                  "AgentForge.Models",
-                  "AgentForge.Tools",
+              "CSharp.AgentForge.Agents.ReAct": {
+                  "CSharp.AgentForge.Abstractions",
+                  "CSharp.AgentForge.Models",
+                  "CSharp.AgentForge.Tools",
               },
-              "AgentForge.Agents.Planning": {"AgentForge.Abstractions"},
-              "AgentForge.Agents.Reflection": {"AgentForge.Abstractions"},
-              "AgentForge.Agents.RuleBased": {"AgentForge.Abstractions"},
-              "AgentForge.Agents.Subsumption": {"AgentForge.Abstractions"},
+              "CSharp.AgentForge.Agents.Planning": {"CSharp.AgentForge.Abstractions"},
+              "CSharp.AgentForge.Agents.Reflection": {"CSharp.AgentForge.Abstractions"},
+              "CSharp.AgentForge.Agents.RuleBased": {"CSharp.AgentForge.Abstractions"},
+              "CSharp.AgentForge.Agents.Subsumption": {"CSharp.AgentForge.Abstractions"},
           }
 
           public_agent_packages = {
-              "AgentForge.Agents.SimpleReflex",
-              "AgentForge.Agents.ModelBasedReflex",
-              "AgentForge.Agents.UtilityBased",
-              "AgentForge.Agents.GoalBased",
-              "AgentForge.Agents.Learning",
-              "AgentForge.Agents.ReAct",
-              "AgentForge.Agents.Planning",
-              "AgentForge.Agents.Reflection",
-              "AgentForge.Agents.RuleBased",
-              "AgentForge.Agents.Subsumption",
+              "CSharp.AgentForge.Agents.SimpleReflex",
+              "CSharp.AgentForge.Agents.ModelBasedReflex",
+              "CSharp.AgentForge.Agents.UtilityBased",
+              "CSharp.AgentForge.Agents.GoalBased",
+              "CSharp.AgentForge.Agents.Learning",
+              "CSharp.AgentForge.Agents.ReAct",
+              "CSharp.AgentForge.Agents.Planning",
+              "CSharp.AgentForge.Agents.Reflection",
+              "CSharp.AgentForge.Agents.RuleBased",
+              "CSharp.AgentForge.Agents.Subsumption",
           }
 
           packages_by_id = {}
@@ -303,7 +303,7 @@ jobs:
               <Nullable>enable</Nullable>
             </PropertyGroup>
             <ItemGroup>
-              <PackageReference Include="AgentForge.Agents.SimpleReflex" Version="1.0.0" />
+              <PackageReference Include="CSharp.AgentForge.Agents.SimpleReflex" Version="1.0.0" />
             </ItemGroup>
           </Project>
           EOF
