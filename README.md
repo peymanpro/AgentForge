@@ -24,6 +24,8 @@ Install only the agent module you need. Each agent is an independently versioned
   - [Utility-Based](#utility-based-quick-start)
   - [Goal-Based](#goal-based-quick-start)
   - [Learning](#learning-quick-start)
+  - [Rule-Based / Production System](#rule-based-production-system-quick-start)
+  - [Subsumption](#subsumption-quick-start)
   - [Contextual LinUCB](#contextual-linucb-quick-start)
 - [NuGet packages](#nuget-packages)
 - [Architecture](#architecture)
@@ -84,7 +86,9 @@ Choose an agent to jump directly to its Quick Start. Full behavior, extension po
 | **Reflection** | Candidate generation, independent evaluation, and refinement. | [Build and run](#reflection-quick-start) |
 | **Utility-Based** | Candidate evaluation and maximum-utility action selection. | [Build and run](#utility-based-quick-start) |
 | **Goal-Based** | Bounded state-space search for a shortest goal-reaching action sequence. | [Build and run](#goal-based-quick-start) |
-| **Learning** | Feedback-driven action selection using an epsilon-greedy bandit policy. | [Build and run](#learning-quick-start) |
+| **Learning** | Feedback-driven action selection using epsilon-greedy and contextual LinUCB policies. | [Build and run](#learning-quick-start) |
+| **Rule-Based / Production System** | Forward-chaining condition/action rules over explicit working memory. | [Build and run](#rule-based-production-system-quick-start) |
+| **Subsumption** | Priority-ordered reactive behavior layers with suppression. | [Build and run](#subsumption-quick-start) |
 
 ## Agent Modules
 
@@ -221,6 +225,90 @@ public enum ThermostatAction
 - The host owns state persistence and supplies the previous state to each run.
 - No matching rule returns the updated state with a no-action decision.
 - No model, provider, or database is required.
+
+### Rule-Based / Production System
+
+A deterministic production-system agent that applies ordered rules to explicit working memory. After each rule firing, it restarts evaluation from the first rule until the memory is stable or a firing budget is exhausted.
+
+#### Installation
+
+\`\`\`bash
+dotnet add package AgentForge.Agents.RuleBased
+\`\`\`
+
+#### Rule-Based Production System Quick Start
+
+\`\`\`csharp
+using AgentForge.Agents.RuleBased.Builders;
+using AgentForge.Agents.RuleBased.Models;
+
+var agent = RuleBasedAgentBuilder.Create<Inventory, string>()
+    .When(
+        "reorder",
+        inventory => inventory.Stock < inventory.ReorderPoint,
+        inventory => $"Order {inventory.Sku}",
+        inventory => inventory with { Stock = inventory.Stock + inventory.ReorderQuantity })
+    .WithMaxFirings(8)
+    .Build();
+
+var result = await agent.RunAsync(new RuleBasedAgentInput<Inventory>(
+    new Inventory("SKU-42", 3, 5, 10)), cancellationToken);
+
+Console.WriteLine(result.Output?.FinalWorkingMemory);
+Console.WriteLine(string.Join(", ", result.Output?.FiredRules ?? []));
+
+public sealed record Inventory(string Sku, int Stock, int ReorderPoint, int ReorderQuantity);
+\`\`\`
+
+#### Behavior
+
+- Rules run in registration order; the first applicable rule fires.
+- The selected rule emits an action and transforms working memory; evaluation then restarts.
+- The run ends when no rule applies or returns \`BudgetExhausted\` when a firing limit is reached.
+- The host owns memory persistence, action authorization, and external side effects.
+- Unlike Simple Reflex, this module iterates over changing working memory rather than making one decision from one percept.
+
+### Subsumption
+
+A layered reactive agent inspired by the Subsumption Architecture. Independent behaviors are registered at different priorities; the highest-priority active layer selects the action and suppresses lower layers for that decision cycle.
+
+#### Installation
+
+\`\`\`bash
+dotnet add package AgentForge.Agents.Subsumption
+\`\`\`
+
+#### Subsumption Quick Start
+
+\`\`\`csharp
+using AgentForge.Agents.Subsumption.Builders;
+using AgentForge.Agents.Subsumption.Models;
+
+var agent = SubsumptionAgentBuilder.Create<RobotPercept, RobotAction>()
+    .WithLayer("emergency-stop", 100,
+        percept => percept.ObstacleDistanceMeters < 0.5, _ => RobotAction.Stop)
+    .WithLayer("avoid-obstacle", 50,
+        percept => percept.ObstacleDistanceMeters < 2, _ => RobotAction.TurnAway)
+    .WithLayer("wander", 10, _ => true, _ => RobotAction.MoveForward)
+    .Build();
+
+var result = await agent.RunAsync(
+    new SubsumptionAgentInput<RobotPercept>(new RobotPercept(0.3)),
+    cancellationToken);
+
+Console.WriteLine(result.Output?.Action);
+
+public sealed record RobotPercept(double ObstacleDistanceMeters);
+public enum RobotAction { Stop, TurnAway, MoveForward }
+\`\`\`
+
+#### Behavior
+
+- Layers are evaluated by descending priority; ties preserve registration order.
+- The first active layer wins and lower layers are not evaluated.
+- No active layer returns a successful no-action result.
+- Each run processes one percept; the host supplies the next percept on the next cycle.
+- Unlike a flat reflex rule list, the layer structure makes behavior suppression and safety overrides explicit.
 
 ### ReAct
 
@@ -563,6 +651,8 @@ Each agent is distributed as an independent package. The package IDs and package
 | `AgentForge.Agents.UtilityBased` | [Utility-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.UtilityBased/README.md) |
 | `AgentForge.Agents.GoalBased` | [Goal-Based](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.GoalBased/README.md) |
 | `AgentForge.Agents.Learning` | [Learning](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Learning/README.md) |
+| `AgentForge.Agents.RuleBased` | [Rule-Based / Production System](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.RuleBased/README.md) |
+| `AgentForge.Agents.Subsumption` | [Subsumption](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.Subsumption/README.md) |
 
 Each package project declares its module README through `PackageReadmeFile` and includes that Markdown file in the `.nupkg`. NuGet.org therefore displays the matching agent's description and Quick Start on that package's page.
 
