@@ -50,11 +50,11 @@ This phase prioritizes the developer experience: every implemented agent should 
 
 ## Phase 3 — Complete classical agent architectures
 
-- [ ] Goal-Based agent.
-- [ ] Utility-Based agent.
-- [ ] Rule-Based / Production-System agent.
-- [ ] Learning-Agent architecture (performance element, learning element, critic, problem generator).
-- [ ] Reactive / Subsumption agent.
+- [x] Goal-Based agent.
+- [x] Utility-Based agent.
+- [x] Rule-Based / Production-System agent.
+- [x] Learning-Agent architecture baseline (stationary bandit and contextual LinUCB; broader RL algorithms remain in Phase 5).
+- [x] Reactive / Subsumption agent.
 - [ ] Deliberative agent.
 - [ ] Hybrid / Three-Layer agent.
 - [ ] BDI agent (Beliefs, Desires, Intentions, commitment, reconsideration).
