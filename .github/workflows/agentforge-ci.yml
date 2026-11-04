@@ -107,6 +107,9 @@ jobs:
           set -euo pipefail
           mkdir -p artifacts/packages
           for project in \
+            src/AgentForge.Abstractions/AgentForge.Abstractions.csproj \
+            src/AgentForge.Tools/AgentForge.Tools.csproj \
+            src/AgentForge.Models/AgentForge.Models.csproj \
             src/AgentForge.Agents.SimpleReflex/AgentForge.Agents.SimpleReflex.csproj \
             src/AgentForge.Agents.ModelBasedReflex/AgentForge.Agents.ModelBasedReflex.csproj \
             src/AgentForge.Agents.ReAct/AgentForge.Agents.ReAct.csproj \
@@ -119,7 +122,7 @@ jobs:
             dotnet pack "$project" --configuration Release --no-build --no-restore --output artifacts/packages
           done
 
-      - name: Verify NuGet package readmes
+      - name: Verify NuGet package contents and dependencies
         shell: bash
         run: |
           python3 - <<'PY'
@@ -139,9 +142,43 @@ jobs:
               "AgentForge.Agents.Learning",
           ]
 
+          required_dependencies = {
+              package_id: {"AgentForge.Abstractions"}
+              for package_id in expected
+          }
+          required_dependencies["AgentForge.Agents.ReAct"].update({
+              "AgentForge.Models",
+              "AgentForge.Tools",
+          })
+
+          bundled_assemblies = {
+              "AgentForge.Agents.SimpleReflex": [
+                  "AgentForge.Agents.SimpleReflex.Application",
+                  "AgentForge.Agents.SimpleReflex.Domain",
+              ],
+              "AgentForge.Agents.ModelBasedReflex": [
+                  "AgentForge.Agents.ModelBasedReflex.Application",
+                  "AgentForge.Agents.ModelBasedReflex.Domain",
+              ],
+              "AgentForge.Agents.UtilityBased": [
+                  "AgentForge.Agents.UtilityBased.Application",
+                  "AgentForge.Agents.UtilityBased.Domain",
+              ],
+              "AgentForge.Agents.GoalBased": [
+                  "AgentForge.Agents.GoalBased.Application",
+                  "AgentForge.Agents.GoalBased.Domain",
+              ],
+              "AgentForge.Agents.Learning": [
+                  "AgentForge.Agents.Learning.Application",
+                  "AgentForge.Agents.Learning.Domain",
+              ],
+          }
+
           for package_id in expected:
-              matches = [Path(path) for path in glob.glob("artifacts/packages/*.nupkg")
-                         if Path(path).name.startswith(package_id + ".")]
+              matches = [
+                  Path(path) for path in glob.glob("artifacts/packages/*.nupkg")
+                  if Path(path).name.startswith(package_id + ".")
+              ]
               assert len(matches) == 1, f"Expected one package for {package_id}, found {matches}"
 
               with zipfile.ZipFile(matches[0]) as package:
@@ -150,16 +187,104 @@ jobs:
 
                   nuspec_name = next(name for name in entries if name.endswith(".nuspec"))
                   nuspec = ET.fromstring(package.read(nuspec_name))
-                  readme_element = next((node for node in nuspec.iter() if node.tag.endswith("readme")), None)
-                  assert readme_element is not None and readme_element.text == "README.md", \
+                  readme_element = next(
+                      (node for node in nuspec.iter() if node.tag.endswith("readme")),
+                      None,
+                  )
+                  assert readme_element is not None and readme_element.text == "README.md", (
                       f"{package_id} does not declare README.md in its nuspec"
+                  )
+
+                  dependencies = {
+                      node.attrib["id"]
+                      for node in nuspec.iter()
+                      if node.tag.endswith("dependency") and "id" in node.attrib
+                  }
+                  assert required_dependencies[package_id].issubset(dependencies), (
+                      f"{package_id} is missing required package dependencies: "
+                      f"{required_dependencies[package_id] - dependencies}"
+                  )
+                  assert not any(
+                      dependency.endswith((".Application", ".Domain"))
+                      for dependency in dependencies
+                  ), f"{package_id} exposes internal Domain/Application projects as package dependencies"
 
                   markdown = package.read("README.md").decode("utf-8")
                   assert "## Quick Start" in markdown, f"{package_id} is missing Quick Start"
                   assert "```csharp" in markdown, f"{package_id} is missing a C# code example"
 
-              print(f"Verified NuGet README: {package_id}")
+                  for assembly in bundled_assemblies.get(package_id, []):
+                      package_path = f"lib/net10.0/{assembly}.dll"
+                      assert package_path in entries, (
+                          f"{package_id} must bundle its internal layer assembly: {package_path}"
+                      )
+
+              print(f"Verified NuGet package: {package_id}")
+
+          shared_packages = {
+              "AgentForge.Abstractions",
+              "AgentForge.Tools",
+              "AgentForge.Models",
+          }
+          for package_id in shared_packages:
+              matches = [
+                  Path(path) for path in glob.glob("artifacts/packages/*.nupkg")
+                  if Path(path).name.startswith(package_id + ".")
+              ]
+              assert len(matches) == 1, f"Expected one shared package for {package_id}, found {matches}"
+
+          print("Verified all public agent packages and their shared package dependencies.")
           PY
+
+      - name: Verify single-package consumer installation
+        shell: bash
+        run: |
+          set -euo pipefail
+          consumer_dir="$(mktemp -d)"
+
+          cat > "$consumer_dir/PackageConsumer.csproj" <<'EOF'
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <OutputType>Exe</OutputType>
+              <TargetFramework>net10.0</TargetFramework>
+              <ImplicitUsings>enable</ImplicitUsings>
+              <Nullable>enable</Nullable>
+            </PropertyGroup>
+            <ItemGroup>
+              <PackageReference Include="AgentForge.Agents.SimpleReflex" Version="1.0.0" />
+            </ItemGroup>
+          </Project>
+          EOF
+
+          cat > "$consumer_dir/Program.cs" <<'EOF'
+          using AgentForge.Agents.SimpleReflex.Builders;
+
+          var agent = SimpleReflexAgentBuilder
+              .Create<ThermostatPercept, ThermostatAction>()
+              .When(
+                  "too-hot",
+                  percept => percept.TemperatureCelsius > percept.TargetCelsius + 1,
+                  ThermostatAction.Cool)
+              .Build();
+
+          var result = await agent.RunAsync(new ThermostatPercept(29, 22));
+          if (result.Output?.Decision.HasAction != true
+              || result.Output.Decision.Action != ThermostatAction.Cool)
+          {
+              throw new InvalidOperationException("The packaged Simple Reflex agent returned an unexpected decision.");
+          }
+
+          public sealed record ThermostatPercept(double TemperatureCelsius, double TargetCelsius);
+
+          public enum ThermostatAction
+          {
+              Cool,
+              Heat
+          }
+          EOF
+
+          dotnet restore "$consumer_dir/PackageConsumer.csproj" --source "$GITHUB_WORKSPACE/artifacts/packages"
+          dotnet run --project "$consumer_dir/PackageConsumer.csproj" --configuration Release --no-restore
 
   full-benchmarks:
     name: Full reproducible bandit benchmarks
