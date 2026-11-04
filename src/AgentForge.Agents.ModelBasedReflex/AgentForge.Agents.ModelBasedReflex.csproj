@@ -11,10 +11,14 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\AgentForge.Abstractions\AgentForge.Abstractions.csproj" />
-    <ProjectReference Include="..\AgentForge.Agents.ModelBasedReflex.Application\AgentForge.Agents.ModelBasedReflex.Application.csproj" />
-    <ProjectReference Include="..\AgentForge.Agents.ModelBasedReflex.Domain\AgentForge.Agents.ModelBasedReflex.Domain.csproj" />
+    <ProjectReference Include="..\AgentForge.Agents.ModelBasedReflex.Application\AgentForge.Agents.ModelBasedReflex.Application.csproj">
+      <TreatAsPackageReference>false</TreatAsPackageReference>
+    </ProjectReference>
+    <ProjectReference Include="..\AgentForge.Agents.ModelBasedReflex.Domain\AgentForge.Agents.ModelBasedReflex.Domain.csproj">
+      <TreatAsPackageReference>false</TreatAsPackageReference>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Update="README.md" Pack="true" PackagePath="\" />
+    <None Update="README.md" Pack="true" PackagePath="\\" />
   </ItemGroup>
 </Project>
