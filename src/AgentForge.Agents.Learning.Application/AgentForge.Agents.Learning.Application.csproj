@@ -1,16 +1,1 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>AgentForge.Agents.Learning.Application</AssemblyName>
-    <RootNamespace>AgentForge.Agents.Learning.Application</RootNamespace>
-    <PackageId>AgentForge.Agents.Learning.Application</PackageId>
-    <Description>Application use cases for feedback-driven learning agents.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl>
-    <PackageTags>ai;agents;learning;bandits;application</PackageTags>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AgentForge.Agents.Learning.Domain\AgentForge.Agents.Learning.Domain.csproj">
-      <TreatAsPackageReference>false</TreatAsPackageReference>
-    </ProjectReference>
-  </ItemGroup>
-</Project>
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><AssemblyName>AgentForge.Agents.Learning.Application</AssemblyName><RootNamespace>AgentForge.Agents.Learning.Application</RootNamespace><PackageId>AgentForge.Agents.Learning.Application</PackageId><Description>Application use cases for feedback-driven learning agents.</Description><PackageLicenseExpression>MIT</PackageLicenseExpression><RepositoryUrl>https://github.com/peymanpro/AgentForge</RepositoryUrl><PackageTags>ai;agents;learning;bandits;application</PackageTags></PropertyGroup><ItemGroup><ProjectReference Include="..\AgentForge.Agents.Learning.Domain\AgentForge.Agents.Learning.Domain.csproj" /></ItemGroup></Project>
