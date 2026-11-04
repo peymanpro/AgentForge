@@ -643,7 +643,7 @@ The host supplies and scales features, executes actions, evaluates rewards, and 
 Each agent is distributed as an independent package. The package IDs and package-specific READMEs are:
 
 | Package ID | NuGet | Package README |
-|---|---|
+|---|---|---|
 | `CSharp.AgentForge.Agents.SimpleReflex` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.SimpleReflex/) | [Simple Reflex](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.SimpleReflex/README.md) |
 | `CSharp.AgentForge.Agents.ModelBasedReflex` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.ModelBasedReflex/) | [Model-Based Reflex](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.ModelBasedReflex/README.md) |
 | `CSharp.AgentForge.Agents.ReAct` | [1.0.0](https://www.nuget.org/packages/CSharp.AgentForge.Agents.ReAct/) | [ReAct](https://github.com/peymanpro/AgentForge/blob/main/src/AgentForge.Agents.ReAct/README.md) |
