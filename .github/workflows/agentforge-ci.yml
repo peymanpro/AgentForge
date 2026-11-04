@@ -270,7 +270,7 @@ jobs:
                       assert "## Quick Start" in markdown, (
                           f"{package_id} is missing Quick Start"
                       )
-                      assert "\`\`\`csharp" in markdown, (
+                      assert "```csharp" in markdown, (
                           f"{package_id} is missing a C# code example"
                       )
 
