@@ -204,10 +204,17 @@ jobs:
                       f"{package_id} is missing required package dependencies: "
                       f"{required_dependencies[package_id] - dependencies}"
                   )
-                  assert not any(
-                      dependency.endswith((".Application", ".Domain"))
-                      for dependency in dependencies
-                  ), f"{package_id} exposes internal Domain/Application projects as package dependencies"
+                  internal_dependencies = sorted(
+                      dependency for dependency in dependencies
+                      if dependency.endswith((".Application", ".Domain"))
+                  )
+                  if internal_dependencies:
+                      print(f"{package_id} dependencies: {sorted(dependencies)}")
+                      print(f"{package_id} assembly entries: {sorted(entry for entry in entries if entry.endswith('.dll'))}")
+                  assert not internal_dependencies, (
+                      f"{package_id} exposes internal Domain/Application projects as package dependencies: "
+                      f"{internal_dependencies}"
+                  )
 
                   markdown = package.read("README.md").decode("utf-8")
                   assert "## Quick Start" in markdown, f"{package_id} is missing Quick Start"
